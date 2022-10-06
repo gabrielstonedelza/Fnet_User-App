@@ -19,15 +19,14 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool isObscured = true;
 
-  String resetPasswordUrl = "https://fnetghana.xyz/password-reset/";
-  Future<void> _launchInBrowser(String url) async{
-    if(await canLaunch(url)){
-      await launch(url,forceSafariVC: false,forceWebView: false);
-    }
-    else{
-      throw "Could not launch $url";
+  final Uri _url = Uri.parse('https://fnetghana.xyz/password-reset/');
+
+  Future<void> _launchInBrowser() async {
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
     }
   }
+
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController unameController = TextEditingController();
@@ -133,7 +132,7 @@ class _LoginViewState extends State<LoginView> {
                     const SizedBox(height: 15,),
                     InkWell(
                         onTap: () async{
-                          await _launchInBrowser("https://fnetghana.xyz/password-reset/");
+                          await _launchInBrowser();
                         },
                         child: Container(
                           decoration: const BoxDecoration(
