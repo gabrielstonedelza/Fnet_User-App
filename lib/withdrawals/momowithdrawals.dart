@@ -152,7 +152,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       "agent_commission": _agentCommissionController.text,
       "mtn_commission": _mtnCommissionController.text,
       "amount": _amountController.text,
-      "app_name" : "FNET"
+
     });
     if (res.statusCode == 201) {
       Get.snackbar("Congratulations", "Transaction was successful",

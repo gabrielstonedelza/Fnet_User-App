@@ -150,7 +150,6 @@ class _MakePaymentState extends State<MakePayment> {
       'Accept': 'application/json',
     },body: {
       "deposit_paid": "Paid",
-      "app_name" : "FNET"
     });
     if(response.statusCode == 200){
       Get.snackbar("Congrats", "Request was paid",
@@ -187,7 +186,6 @@ class _MakePaymentState extends State<MakePayment> {
       "transaction_id1": _referenceController1.text,
       "transaction_id2":  _referenceController2.text,
       "payment_action": _currentPaymentAction,
-      "app_name" : "FNET"
 
     });
     if (res.statusCode == 201) {
