@@ -68,7 +68,7 @@ class _UserExpenseRequestState extends State<UserExpenseRequest> {
 
       "reason": _reasonController.text,
       "amount": _amount.text,
-      "app_version" : "4"
+      "app_name" : "FNET"
     });
     if (res.statusCode == 201) {
       String telnum1 = adminPhone;

@@ -143,7 +143,6 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       "Authorization": "Token $uToken"
     }, body: {
       "customer_phone": _customerPhoneController.text,
-      // "customer_name": _customerNameController.text,
       "network": _currentSelectedNetwork,
       "type": _currentSelectedType,
       "id_type": _currentSelectedIdType,
@@ -153,7 +152,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       "agent_commission": _agentCommissionController.text,
       "mtn_commission": _mtnCommissionController.text,
       "amount": _amountController.text,
-      "app_version" : "4"
+      "app_name" : "FNET"
     });
     if (res.statusCode == 201) {
       Get.snackbar("Congratulations", "Transaction was successful",

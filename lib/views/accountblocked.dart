@@ -8,11 +8,14 @@ class AccountBlockNotification extends StatelessWidget {
     return Scaffold(
       body:Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Center(
+        children:  [
+          Image.asset("assets/images/rejected.gif",fit: BoxFit.cover,),
+          const SizedBox(height: 20),
+          const Center(
             child: Text("Sorry,your account is blocked.",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),)
           ),
-          Center(
+          const SizedBox(height: 20),
+          const Center(
               child: Text("Please contact the administrator.",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),)
           ),
         ],

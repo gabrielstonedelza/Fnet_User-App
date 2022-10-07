@@ -122,7 +122,7 @@ class _MakePaymentState extends State<MakePayment> {
       'Accept': 'application/json',
     },body: {
       "deposit_paid": "Paid",
-      "app_version" : "4"
+      "app_name" : "FNET"
     });
     if(response.statusCode == 200){
       Get.snackbar("Congrats", "Request was paid",
@@ -150,7 +150,7 @@ class _MakePaymentState extends State<MakePayment> {
       'Accept': 'application/json',
     },body: {
       "deposit_paid": "Paid",
-      "app_version" : "4"
+      "app_name" : "FNET"
     });
     if(response.statusCode == 200){
       Get.snackbar("Congrats", "Request was paid",
@@ -187,7 +187,7 @@ class _MakePaymentState extends State<MakePayment> {
       "transaction_id1": _referenceController1.text,
       "transaction_id2":  _referenceController2.text,
       "payment_action": _currentPaymentAction,
-      "app_version" : "4"
+      "app_name" : "FNET"
 
     });
     if (res.statusCode == 201) {
@@ -200,12 +200,7 @@ class _MakePaymentState extends State<MakePayment> {
       sendSms.sendMySms(telnum1, "FNET",
           "Hello Admin,${username.capitalize} just made a $_currentSelectedModeOfPayment1 of GHC${_amountController1.text} ,kindly login into Fnet and approve.Thank you");
       if (_currentSelectedModeOfPayment1 == "Cash left @") {
-        // Navigator.push(context, MaterialPageRoute(builder: (context) {
-        //   return CashAtPayments(
-        //       cashleftat: _currentCashAtLocation1,
-        //       amount_delivered: _amountController1.text,
-        //       agent: username);
-        // }));
+
       }
       if (_currentSelectedModeOfPayment1 == "Bank Payment") {
         Navigator.push(context, MaterialPageRoute(builder: (context) {

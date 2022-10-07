@@ -90,7 +90,7 @@ class _MomoDepositState extends State<MomoDeposit> {
       "amount": _amountController.text,
       "charges": _chargesController.text,
       "agent_commission": _agentCommissionController.text,
-      "app_version" : "4"
+      "app_name" : "FNET"
     });
 
     if (res.statusCode == 201) {

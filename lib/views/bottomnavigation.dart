@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:fnet_new/payments/paymentsavailable.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:fnet_new/views/withdrawpage.dart';
-
+import "package:get/get.dart";
 import 'accountblocked.dart';
 import 'closeappfortheday.dart';
 import 'depositrequest.dart';
 import 'homepage.dart';
+import 'loginview.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({Key? key}) : super(key: key);
@@ -23,6 +24,8 @@ class MyBottomNavigationBar extends StatefulWidget {
 
 class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   late String username = "";
+  bool hasToken = false;
+  late String uToken = "";
   final storage = GetStorage();
   late List allBlockedUsers = [];
   late List blockedUsernames = [];
@@ -59,39 +62,70 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       allBlockedUsers = allBlockedUsers;
     });
   }
+  logoutUser() async {
+    storage.remove("username");
+    storage.remove("usertoken");
+    Get.offAll(() => const LoginView());
+    const logoutUrl = "https://www.fnetghana.xyz/auth/token/logout";
+    final myLink = Uri.parse(logoutUrl);
+    http.Response response = await http.post(myLink, headers: {
+      'Accept': 'application/json',
+      "Authorization": "Token $uToken"
+    });
+
+    if (response.statusCode == 200) {
+      Get.snackbar("Success", "You were logged out",
+          colorText: defaultTextColor,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: snackColor);
+      storage.remove("username");
+      storage.remove("usertoken");
+      Get.offAll(() => const LoginView());
+    }
+  }
 
   void checkTheTime(){
     var hour = DateTime.now().hour;
     switch (hour) {
       case 20:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 21:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 22:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 23:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 00:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 01:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 02:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 03:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 04:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
       case 05:
         setState(() {isClosingTime = true;});
+        logoutUser();
         break;
     }
   }
@@ -101,6 +135,12 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
     if (storage.read("username") != null) {
       setState(() {
         username = storage.read("username");
+      });
+    }
+    if (storage.read("usertoken") != null) {
+      setState(() {
+        hasToken = true;
+        uToken = storage.read("usertoken");
       });
     }
     fetchBlockedAgents();
