@@ -68,9 +68,17 @@ class _MomoDepositState extends State<MomoDeposit> {
   bool isDirect = false;
 
   bool isLoading = true;
-  Future<void> dial() async {
+  Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*171\%23#');
+  }
+  Future<void> dialTigo() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
+  }
+  Future<void> dialVodafone() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
   }
 
 
@@ -128,7 +136,19 @@ class _MomoDepositState extends State<MomoDeposit> {
         storage.write("ecashnow", enow.round());
       }
       Get.offAll(() => const MyBottomNavigationBar());
-      dial();
+      if(_currentSelectedNetwork == "Mtn"){
+        dialMtn();
+        Get.back();
+      }
+      if(_currentSelectedNetwork == "Vodafone"){
+        dialVodafone();
+        Get.back();
+      }
+      if(_currentSelectedNetwork == "AirtelTigo"){
+        dialTigo();
+        Get.back();
+      }
+
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,

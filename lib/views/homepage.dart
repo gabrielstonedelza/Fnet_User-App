@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:age_calculator/age_calculator.dart';
 import 'package:badges/badges.dart';
+import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/accounts/accountdashboard.dart';
 import 'package:fnet_new/accounts/accountsummary.dart';
@@ -18,6 +19,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../sendsms.dart';
@@ -279,6 +281,18 @@ class _HomePageState extends State<HomePage> {
     // localNotificationManager.setOnApprovedPaymentNotificationReceive(onPaymentNotificationReceive);
     // localNotificationManager.setOnApprovedPaymentNotificationClick(onPaymentNotificationClick);
   }
+  Future<void> dialMtn() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*171\%23#');
+  }
+  Future<void> dialTigo() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
+  }
+  Future<void> dialVodafone() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
+  }
 
   // onNotificationReceive(ReceiveNotification notification) {
   //   // print("Notification Received: ${notification.id}");
@@ -335,8 +349,111 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: defaultColor,
-          title: Text("Welcome ${username.capitalize}"),
+          title: Text("😃 ${username.capitalize}"),
           actions: [
+            IconButton(
+              onPressed: (){
+                showMaterialModalBottomSheet(
+                  context: context,
+                  // expand: true,
+                  isDismissible: true,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.vertical(
+                          top: Radius.circular(
+                              25.0))),
+                  bounce: true,
+                  builder: (context) => Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context)
+                            .viewInsets
+                            .bottom),
+                    child: SizedBox(
+                        height: 300,
+                        child: Column(
+                          mainAxisSize:
+                          MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 30),
+                            const Center(
+                                child: Text(
+                                    "Select network",
+                                    style: TextStyle(
+                                        fontWeight:
+                                        FontWeight
+                                            .bold))),
+                            const SizedBox(height: 30),
+                            Padding(
+                              padding: const EdgeInsets.only(left:10.0,right:10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap:(){
+                                        dialMtn();
+                                        Get.back();
+                                      },
+                                        child: Card(
+                                          elevation: 12,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Image.asset("assets/images/1860906.png",width: 100,height: 100,fit: BoxFit.cover,),
+                                          ),
+                                        )
+                                    )
+                                  ),
+                                  const SizedBox(width: 10,),
+                                  Expanded(
+                                      child: GestureDetector(
+                                        onTap:(){
+                                          dialVodafone();
+                                          Get.back();
+                                        },
+                                          child: Card(
+                                              elevation: 12,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10)
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(5.0),
+                                                child: Image.asset("assets/images/vodafone.png",width: 100,height: 100,fit: BoxFit.cover,),
+                                              )
+                                          )
+                                      )
+                                  ),
+                                  const SizedBox(width: 10,),
+                                  Expanded(
+                                      child: GestureDetector(
+                                        onTap:(){
+                                          dialTigo();
+                                          Get.back();
+                                        },
+                                          child: Card(
+                                              elevation: 12,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10)
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(5.0),
+                                                child: Image.asset("assets/images/airtel-tigo-logos.jpg",width: 100,height: 100,fit: BoxFit.cover,),
+                                              )
+                                          )
+                                      )
+                                  ),
+                                ],
+                              ),
+                            )
+
+                          ],
+                        )),
+                  ),
+                );
+              },
+              icon:const Icon(Icons.local_phone),
+            ),
             IconButton(
               onPressed: () {
                 Get.to(() => const AccountView());
