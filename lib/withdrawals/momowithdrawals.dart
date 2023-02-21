@@ -118,9 +118,17 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
-  Future<void> dial() async {
+  Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*171\%23#');
+  }
+  Future<void> dialTigo() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
+  }
+  Future<void> dialVodafone() async {
+    final dialer = await DirectDialer.instance;
+    await dialer.dial('*110\%23#');
   }
 
   var _currentSelectedNetwork = "Select Network";
@@ -134,6 +142,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   late String vodafoneEcashNow = "";
   late String physicalNow = "";
   late String ecashNow = "";
+
 
   processMomoWithdrawal() async {
     const registerUrl = "https://fnetghana.xyz/post_momo_withdraw/";
@@ -195,7 +204,18 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       }
 
       Get.offAll(() => const MyBottomNavigationBar());
-      dial();
+      if(_currentSelectedNetwork == "Mtn"){
+        dialMtn();
+        Get.back();
+      }
+      if(_currentSelectedNetwork == "Vodafone"){
+        dialVodafone();
+        Get.back();
+      }
+      if(_currentSelectedNetwork == "AirtelTigo"){
+        dialTigo();
+        Get.back();
+      }
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,

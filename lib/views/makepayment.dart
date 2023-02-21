@@ -76,6 +76,12 @@ class _MakePaymentState extends State<MakePayment> {
     "KEJETIA",
     "ECOBANK",
     "PAN AFRICA",
+    "MELCOM SANTASI",
+    "MELCOM TANOSO",
+    "MELCOM MANHYIA",
+    "MELCOM TAFO",
+    "MELCOM AHODWO",
+    "MELCOM ADUM",
   ];
 
   var _currentCashAtLocation1 = "Please select cash at location";
