@@ -473,7 +473,6 @@ class _BankDepositState extends State<BankDeposit> {
   }
 
   @override
-  
   void initState() {
     // TODO: implement initState
     super.initState();

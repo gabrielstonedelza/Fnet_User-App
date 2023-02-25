@@ -760,6 +760,8 @@ class _MakePaymentState extends State<MakePayment> {
                           },
                           shape: const StadiumBorder(),
                           elevation: 8,
+                          fillColor: primaryColor,
+                          splashColor: defaultColor,
                           child: const Text(
                             "Save",
                             style: TextStyle(
@@ -767,13 +769,14 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontSize: 20,
                                 color: Colors.white),
                           ),
-                          fillColor: primaryColor,
-                          splashColor: defaultColor,
-                        )
+                        ),
+                  const SizedBox(height:20)
                 ],
               ),
+
             ),
-          )
+          ),
+
         ],
       ),
     );

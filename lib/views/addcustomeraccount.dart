@@ -74,7 +74,6 @@ class _UserRegistration extends State<AddCustomerAccount> {
     "GCB BanK LTD",
     "Ghana Pay",
     "GHL Bank Ltd",
-    "GT Bank",
     "National Investment Bank",
     "Opportunity International Savings And Loans",
     "Prudential Bank",
@@ -88,6 +87,7 @@ class _UserRegistration extends State<AddCustomerAccount> {
   ];
   final List otherBanks = [
     "Select bank",
+    "GT Bank",
     "Access Bank",
     "Cal Bank",
     "Fidelity Bank",
