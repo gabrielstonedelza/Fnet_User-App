@@ -165,6 +165,8 @@ class _BankDepositState extends State<BankDeposit> {
           }
         }
       }
+      else{
+      }
     }
     finally{
       setState(() {
@@ -597,6 +599,12 @@ class _BankDepositState extends State<BankDeposit> {
                             );
                           }).toList(),
                           onChanged: (newValueSelected) {
+                            if(newValueSelected=="GT Bank"){
+                              fetchCustomerBankAndNames("GT Bank");
+                              setState(() {
+                                bankSelected = true;
+                              });
+                            }
                             if(newValueSelected=="Access Bank"){
                               fetchCustomerBankAndNames("Access Bank");
                               setState(() {
@@ -901,6 +909,8 @@ class _BankDepositState extends State<BankDeposit> {
                         borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Save",
                       style: TextStyle(
@@ -908,8 +918,6 @@ class _BankDepositState extends State<BankDeposit> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ) : Container(),
                   const SizedBox(height: 20,),
                   const Text("Note: Please restart bank deposit session again if you want to change customers bank.Thank you.")
