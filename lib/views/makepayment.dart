@@ -719,12 +719,14 @@ class _MakePaymentState extends State<MakePayment> {
                                     backgroundColor: Colors.red);
                                 return;
                               }
-                              processPayment(context);
-                              if(depositType == "Bank"){
-                                payBankRequestDeposit();
-                              }
-                              if(depositType == "Cash"){
-                                payCashRequestDeposit();
+                             else{
+                                processPayment(context);
+                                if(depositType == "Bank"){
+                                  payBankRequestDeposit();
+                                }
+                                if(depositType == "Cash"){
+                                  payCashRequestDeposit();
+                                }
                               }
                             //  check before save
                             //   Get.defaultDialog(
