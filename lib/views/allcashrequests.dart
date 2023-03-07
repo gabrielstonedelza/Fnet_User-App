@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import '../deposits/cashdepositrequests.dart';
 import '../static/app_colors.dart';
 
 class AllCashRequests extends StatefulWidget {
@@ -83,7 +84,6 @@ class _AllCashRequestsState extends State<AllCashRequests> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: isLoading ? const Center(
           child: CircularProgressIndicator(
               strokeWidth: 8,
@@ -93,6 +93,14 @@ class _AllCashRequestsState extends State<AllCashRequests> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            actions: [
+              IconButton(
+                onPressed: (){
+                  Get.to(() => const CashDepositRequests());
+                },
+                icon: const Icon(Icons.add_circle,size:25),
+              )
+            ],
             backgroundColor: primaryColor,
             bottom: const TabBar(
               tabs: [

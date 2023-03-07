@@ -122,7 +122,7 @@ class _CashDepositRequestsState extends State<CashDepositRequests> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Cash Request"),
+          title: const Text("Request Cash"),
           backgroundColor: primaryColor,
         ),
       body:isLoading ? const Center(
@@ -137,7 +137,6 @@ class _CashDepositRequestsState extends State<CashDepositRequests> {
             child: Form(
               key: _formKey,
               child: Column(
-
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

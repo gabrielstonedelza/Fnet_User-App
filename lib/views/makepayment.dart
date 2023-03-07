@@ -92,7 +92,6 @@ class _MakePaymentState extends State<MakePayment> {
     "Not Closed",
     "Close Payment"
   ];
-  var _currentPaymentAction = "Select payment action";
 
   bool isAtLocation = false;
   bool isBank = false;
@@ -109,6 +108,9 @@ class _MakePaymentState extends State<MakePayment> {
   var amountTotal;
   bool hasErrors = false;
   bool isEqual = false;
+  bool hasAnotherPayment = false;
+  String buttonText = "Add another payment";
+  bool hasSelectedModeOfPayment = false;
 
   void _startPosting() async {
     setState(() {
@@ -191,7 +193,6 @@ class _MakePaymentState extends State<MakePayment> {
       "amount2": _amountController2.text,
       "transaction_id1": _referenceController1.text,
       "transaction_id2":  _referenceController2.text,
-      "payment_action": _currentPaymentAction,
 
     });
     if (res.statusCode == 201) {
@@ -309,6 +310,16 @@ class _MakePaymentState extends State<MakePayment> {
                                 );
                               }).toList(),
                               onChanged: (newValueSelected) {
+                                if(newValueSelected != "Select mode of payment"){
+                                  setState(() {
+                                    hasSelectedModeOfPayment = true;
+                                  });
+                                }
+                                else{
+                                  setState(() {
+                                    hasSelectedModeOfPayment = false;
+                                  });
+                                }
                                 _onDropDownItemSelectedModeOfPayment(
                                     newValueSelected);
                               },
@@ -317,123 +328,127 @@ class _MakePaymentState extends State<MakePayment> {
                           ),
                         ),
                       ),
-                      _currentSelectedModeOfPayment1 == "Bank Payment"
-                          ? Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border:
-                                        Border.all(color: Colors.grey, width: 1)),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 10.0, right: 10),
-                                  child: DropdownButton(
-                                    hint: const Text("Select bank1"),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 20),
-                                    items: banks.map((dropDownStringItem) {
-                                      return DropdownMenuItem(
-                                        value: dropDownStringItem,
-                                        child: Text(dropDownStringItem),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValueSelected) {
-                                      _onDropDownItemSelectedBank(newValueSelected);
-                                    },
-                                    value: _currentSelectedBank1,
+                      hasSelectedModeOfPayment ? Column(
+                        children: [
+                          _currentSelectedModeOfPayment1 == "Bank Payment"
+                              ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border:
+                                            Border.all(color: Colors.grey, width: 1)),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0, right: 10),
+                                      child: DropdownButton(
+                                        hint: const Text("Select bank1"),
+                                        isExpanded: true,
+                                        underline: const SizedBox(),
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                        items: banks.map((dropDownStringItem) {
+                                          return DropdownMenuItem(
+                                            value: dropDownStringItem,
+                                            child: Text(dropDownStringItem),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValueSelected) {
+                                          _onDropDownItemSelectedBank(newValueSelected);
+                                        },
+                                        value: _currentSelectedBank1,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      _currentSelectedModeOfPayment1 == "Cash left @"
-                          ? Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border:
-                                        Border.all(color: Colors.grey, width: 1)),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 10.0, right: 10),
-                                  child: DropdownButton(
-                                    hint: const Text("Please select cash at location1"),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 20),
-                                    items: cashLocation.map((dropDownStringItem) {
-                                      return DropdownMenuItem(
-                                        value: dropDownStringItem,
-                                        child: Text(dropDownStringItem),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValueSelected) {
-                                      _onDropDownItemSelectedLocation(
-                                          newValueSelected);
-                                    },
-                                    value: _currentCashAtLocation1,
+                                )
+                              : Container(),
+                          _currentSelectedModeOfPayment1 == "Cash left @"
+                              ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border:
+                                            Border.all(color: Colors.grey, width: 1)),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0, right: 10),
+                                      child: DropdownButton(
+                                        hint: const Text("Please select cash at location1"),
+                                        isExpanded: true,
+                                        underline: const SizedBox(),
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                        items: cashLocation.map((dropDownStringItem) {
+                                          return DropdownMenuItem(
+                                            value: dropDownStringItem,
+                                            child: Text(dropDownStringItem),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValueSelected) {
+                                          _onDropDownItemSelectedLocation(
+                                              newValueSelected);
+                                        },
+                                        value: _currentCashAtLocation1,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _referenceController1,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          decoration: InputDecoration(
-                              labelText: "Enter reference",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter reference";
-                            }
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _amountController1,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          decoration: InputDecoration(
-                              labelText: "Enter amount",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter amount";
-                            }
-                          },
-                        ),
-                      ),
+                                )
+                              : Container(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: _referenceController1,
+                              cursorColor: primaryColor,
+                              cursorRadius: const Radius.elliptical(10, 10),
+                              cursorWidth: 10,
+                              decoration: InputDecoration(
+                                  labelText: "Enter reference",
+                                  labelStyle: const TextStyle(color: secondaryColor),
+                                  focusColor: primaryColor,
+                                  fillColor: primaryColor,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: primaryColor, width: 2),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12))),
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please enter reference";
+                                }
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: _amountController1,
+                              cursorColor: primaryColor,
+                              cursorRadius: const Radius.elliptical(10, 10),
+                              cursorWidth: 10,
+                              decoration: InputDecoration(
+                                  labelText: "Enter amount",
+                                  labelStyle: const TextStyle(color: secondaryColor),
+                                  focusColor: primaryColor,
+                                  fillColor: primaryColor,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: primaryColor, width: 2),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12))),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please enter amount";
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ) : Container(),
 
                       const SizedBox(
                         height: 20,
@@ -599,66 +614,39 @@ class _MakePaymentState extends State<MakePayment> {
                       ),
                     ],
                   ) : Container(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey, width: 1)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10),
-                        child: DropdownButton(
-                          hint: const Text("Select payment action"),
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 20),
-                          items: paymentAction.map((dropDownStringItem) {
-                            return DropdownMenuItem(
-                              value: dropDownStringItem,
-                              child: Text(dropDownStringItem),
-                            );
-                          }).toList(),
-                          onChanged: (newValueSelected) {
-                            _onDropDownItemSelectedPaymentAction(
-                                newValueSelected);
-                            if(newValueSelected == "Select payment action"){
-                              setState(() {
-                                hasErrors = true;
-                              });
-                            }
-                          },
-                          value: _currentPaymentAction,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
+                  hasSelectedModeOfPayment ? GestureDetector(
                       onTap: (){
                         setState(() {
                           showPayment2 = !showPayment2;
+                          if(!showPayment2){
+                            buttonText = "Add another payment";
+                            hasAnotherPayment = false;
+                          }
+                          else{
+                            buttonText = "Remove field";
+                            hasAnotherPayment = true;
+                          }
                         });
-
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.only(top:12.0,bottom: 12),
-                        child: Text("Add another payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                      child:  Padding(
+                        padding: const EdgeInsets.only(top:12.0,bottom: 12),
+                        child: Text(buttonText,style: TextStyle(fontWeight: FontWeight.bold),),
                       )
-                  ),
-                  isPosting ? const Center(
+                  ) : Container(),
+                  isPosting && !hasErrors ? const Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 5,
                       color: primaryColor,
                     ),
                   ) :
-                   RawMaterialButton(
+                  hasSelectedModeOfPayment ? RawMaterialButton(
                           onPressed: () {
                             _startPosting();
                             if (!_formKey.currentState!.validate()) {
                               return;
                             } else {
 
-                              if(_currentSelectedModeOfPayment1 == "Select mode of payment" && _amountController2.text.isNotEmpty && _currentSelectedModeOfPayment2 == "Select mode of payment"){
+                              if(_currentSelectedModeOfPayment1 == "Select mode of payment"){
                                 setState(() {
                                   hasErrors = true;
                                 });
@@ -708,15 +696,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     backgroundColor: Colors.red);
                                 return;
                               }
-                              if(_currentPaymentAction == "Not Closed"){
-                                Get.snackbar(
-                                    "Payment Error", "Please choose close payment.",
-                                    colorText: defaultTextColor,
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.red);
-                                return;
-                              }
                              else{
+                                // setState(() {
+                                //   hasErrors = false;
+                                // });
                                 processPayment(context);
                                 if(depositType == "Bank"){
                                   payBankRequestDeposit();
@@ -768,7 +751,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontSize: 20,
                                 color: Colors.white),
                           ),
-                        ),
+                        ):Container(),
                   const SizedBox(height:20)
                 ],
               ),
@@ -811,9 +794,9 @@ class _MakePaymentState extends State<MakePayment> {
       _currentCashAtLocation2 = newValueSelected;
     });
   }
-  void _onDropDownItemSelectedPaymentAction(newValueSelected) {
-    setState(() {
-      _currentPaymentAction = newValueSelected;
-    });
-  }
+  // void _onDropDownItemSelectedPaymentAction(newValueSelected) {
+  //   setState(() {
+  //     _currentPaymentAction = newValueSelected;
+  //   });
+  // }
 }
