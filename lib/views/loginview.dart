@@ -21,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
 
   final Uri _url = Uri.parse('https://fnetghana.xyz/password-reset/');
 
+
   Future<void> _launchInBrowser() async {
     if (!await launchUrl(_url)) {
       throw 'Could not launch $_url';
@@ -32,7 +33,8 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController unameController = TextEditingController();
   late final TextEditingController passWordController = TextEditingController();
   bool isPosting = false;
-  final loginController = LoginController.to;
+  LoginController loginController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     Size size  = MediaQuery.of(context).size;
@@ -141,7 +143,9 @@ class _LoginViewState extends State<LoginView> {
                           child: const Text("Forgot Password",style: TextStyle(fontWeight: FontWeight.bold,color: defaultTextColor1),),
                         )),
                     const SizedBox(height: 25,),
-                    Container(
+                    loginController.isLoggingIn ? const Center(
+                        child: CircularProgressIndicator.adaptive()
+                    ) :  Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           color: primaryColor
@@ -150,6 +154,7 @@ class _LoginViewState extends State<LoginView> {
                       width: size.width * 0.8,
                       child: RawMaterialButton(
                         onPressed: () {
+                          loginController.isLoggingIn = true;
                           if (_formKey.currentState!.validate()) {
                             loginController.loginUser(unameController.text.trim(), passWordController.text.trim());
 

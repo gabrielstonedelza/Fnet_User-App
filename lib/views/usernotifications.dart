@@ -118,6 +118,9 @@ class _AllYourNotificationsState extends State<AllYourNotifications> {
                         if(items['notification_title'] == "New Report"){
                           Get.to(() => const Reports());
                         }
+                        else{
+
+                        }
                       },
                       leading: yourNotifications[i]['read'] == "Not Read" ? const CircleAvatar(
                           backgroundColor: primaryColor,

@@ -23,6 +23,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../sendsms.dart';
+import 'allcashrequests.dart';
 import 'birthdays.dart';
 import 'commission.dart';
 import 'groupchat.dart';
@@ -254,32 +255,18 @@ class _HomePageState extends State<HomePage> {
     fetchCustomers();
     fetchAllUserBankRequests();
     getAllTriggeredNotifications();
-    // _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
-    //   userController.getUserProfile(uToken);
-    // });
+
     _timer = Timer.periodic(const Duration(seconds: 12), (timer) {
       getAllTriggeredNotifications();
       getAllUnReadNotifications();
-      // for (var i in triggered) {
-      //   localNotificationManager.showApprovedBankDepositNotification(
-      //       i['notification_title'], i['notification_message']);
-      //   localNotificationManager.showApprovedPaymentNotification(
-      //       i['notification_title'], i['notification_message']);
-      // }
+
     });
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       for (var e in triggered) {
         unTriggerNotifications(e["id"]);
       }
     });
-    // localNotificationManager.setOnNotificationReceive(onNotificationReceive);
-    // localNotificationManager.setOnNotificationClick(onNotificationClick);
-    // localNotificationManager.setOnBirthDayNotificationClick(onBirthdayNotificationClick);
-    // localNotificationManager.showAddMomoAccountsNotification();
-    // localNotificationManager.setOnApprovedBankDepositNotificationReceive(onPaymentNotificationReceive);
-    // localNotificationManager.setOnApprovedBankDepositNotificationClick(onBankDepositNotificationClick);
-    // localNotificationManager.setOnApprovedPaymentNotificationReceive(onPaymentNotificationReceive);
-    // localNotificationManager.setOnApprovedPaymentNotificationClick(onPaymentNotificationClick);
+
   }
   Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
@@ -842,6 +829,64 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/cash-on-delivery.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Cash Request"),
+                        ],
+                      ),
+                      onTap: () {
+                        Get.to(() => const AllCashRequests());
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+
+                        ],
+                      ),
+                      onTap: () {
+                        // Get.to(() => const AllYourNotifications());
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+
+                        ],
+                      ),
+                      onTap: () {
+                        // Get.to(() => const Reports());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
               ),
             ],
           ),

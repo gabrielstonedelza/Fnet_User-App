@@ -1,24 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 
-
-import '../static/app_colors.dart';
 
 class UserController extends GetxController {
   final storage = GetStorage();
   var username = "";
   String uToken = "";
-  String passengerProfileId = "";
+  String userProfileId = "";
   String passengerUsername = "";
   String profileImage = "";
   String nameOnGhanaCard = "";
@@ -66,10 +59,10 @@ class UserController extends GetxController {
         fullName = jsonData['get_username'];
         companyName = jsonData['get_company_name'];
         profileImage = jsonData['get_profile_pic'];
-        passengerProfileId = jsonData['user'].toString();
+        userProfileId = jsonData['user'].toString();
         update();
         storage.write("verified", "Verified");
-        storage.write("profile_id", passengerProfileId);
+        storage.write("profile_id", userProfileId);
         storage.write("profile_name", fullName);
         storage.write("profile_pic", profileImage);
       }

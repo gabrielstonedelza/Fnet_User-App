@@ -578,7 +578,8 @@ class _BankDepositState extends State<BankDeposit> {
                   ),
                   const SizedBox(height: 10,),
 
-                  isCustomer && !fetchingCustomerAccounts ? Padding(
+                  isCustomer && !fetchingCustomerAccounts ?
+                  Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Container(
                       decoration: BoxDecoration(
@@ -845,7 +846,8 @@ class _BankDepositState extends State<BankDeposit> {
                     ],
                   ):
                   Container(),
-                  isAccountNumberAndName ? Padding(
+                  isAccountNumberAndName ?
+                  Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: TextFormField(
                       controller: _amountController,

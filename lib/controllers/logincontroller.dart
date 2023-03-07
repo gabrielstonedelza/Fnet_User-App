@@ -15,8 +15,10 @@ class LoginController extends GetxController{
   final password = "".obs;
   final hasErrors = "".obs;
   final isObscured = true.obs;
+  int agentId = 0;
+  bool isLoggingIn = false;
+  bool isUser = false;
 
-  static LoginController get to => Get.find<LoginController>();
 
   @override
   void onInit(){
@@ -59,30 +61,37 @@ class LoginController extends GetxController{
     });
 
     if(response.statusCode == 200){
-      Get.defaultDialog(
-          title: "",
-          radius: 20,
-          backgroundColor: Colors.black54,
-          barrierDismissible: false,
-          content: Row(
-            children: const [
-              Expanded(child: Center(child: CircularProgressIndicator.adaptive(
-                strokeWidth: 5,
-                backgroundColor: primaryColor,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-              ))),
-              Expanded(child: Text("Processing",style: TextStyle(color: Colors.white),))
-            ],
-          )
-      );
+
+      isLoggingIn = false;
+      isUser = true;
+      // Get.defaultDialog(
+      //     title: "",
+      //     radius: 20,
+      //     backgroundColor: Colors.black54,
+      //     barrierDismissible: false,
+      //     content: Row(
+      //       children: const [
+      //         Expanded(child: Center(child: CircularProgressIndicator.adaptive(
+      //           strokeWidth: 5,
+      //           backgroundColor: primaryColor,
+      //           valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+      //         ))),
+      //         Expanded(child: Text("Processing",style: TextStyle(color: Colors.white),))
+      //       ],
+      //     )
+      // );
       final resBody = response.body;
       var jsonData = jsonDecode(resBody);
       var userToken = jsonData['auth_token'];
       storage.write("username", uname);
       storage.write("usertoken", userToken);
-      Timer(const Duration(seconds: 1),()=> Get.offAll(()=> const MyBottomNavigationBar()));
+      if(!isLoggingIn && isUser){
+        Get.offAll(()=> const MyBottomNavigationBar());
+      }
     }
     else{
+      isLoggingIn = false;
+      isUser = false;
       setHasErrors("hasErrors");
       Get.snackbar("Error", "invalid login details",
           colorText: defaultTextColor,

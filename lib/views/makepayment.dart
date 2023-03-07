@@ -645,7 +645,7 @@ class _MakePaymentState extends State<MakePayment> {
                         child: Text("Add another payment",style: TextStyle(fontWeight: FontWeight.bold),),
                       )
                   ),
-                  isPosting && !hasErrors ? const Center(
+                  isPosting ? const Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 5,
                       color: primaryColor,
@@ -709,9 +709,6 @@ class _MakePaymentState extends State<MakePayment> {
                                 return;
                               }
                               if(_currentPaymentAction == "Not Closed"){
-                                setState(() {
-                                  hasErrors = true;
-                                });
                                 Get.snackbar(
                                     "Payment Error", "Please choose close payment.",
                                     colorText: defaultTextColor,

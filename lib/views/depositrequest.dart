@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../deposits/cashdepositrequests.dart';
+
 class Deposits extends StatefulWidget {
   const Deposits({Key? key}) : super(key: key);
 
@@ -245,11 +247,13 @@ class _DepositsState extends State<Deposits> {
                 child: GestureDetector(
                   child: Column(
                     children: [
-
+                      Image.asset("assets/images/cash-on-delivery.png",width: 70,height: 70,),
+                      const SizedBox(height: 10,),
+                      const Text("Cash Request"),
                     ],
                   ),
                   onTap: (){
-
+                    Get.to(()=> const CashDepositRequests());
                   },
                 ),
               ),
