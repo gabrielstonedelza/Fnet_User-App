@@ -24,22 +24,35 @@ class _DepositsState extends State<Deposits> {
   bool isLoading = true;
   late String uToken = "";
   late List allPaymentTotal = [];
-  late List allPending = [];
+  late List allCashPaymentTotal = [];
+  late List allBankPending = [];
+  late List allCashPending = [];
   late String username = "";
-  bool hasPaymentNotApproved = false;
+  bool hasBankPaymentNotApproved = false;
+  bool hasCashPaymentNotApproved = false;
   bool needApproval = false;
-  int notPaidCount = 0;
-  late List pendingLists = [];
-  late List allUserRequests = [];
-  late List amounts = [];
-  double sum = 0.0;
-  late List allUserPayments = [];
+  int notPaidBankCount = 0;
+  int notPaidCashCount = 0;
+  late List pendingBankLists = [];
+  late List pendingCashLists = [];
+  late List allUserBankRequests = [];
+  late List allUserCashRequests = [];
+  late List bankAmounts = [];
+  late List cashAmounts = [];
+  double bankSum = 0.0;
+  double cashSum = 0.0;
+  late List allUserBankPayments = [];
+  late List allUserCashPayments = [];
   bool hasUnpaidBankRequests = false;
+  bool hasUnpaidCashRequests = false;
   late List bankNotPaid = [];
-  late List amountsPayments = [];
-  double sumPayment = 0.0;
+  late List cashNotPaid = [];
+  late List amountsBankPayments = [];
+  late List amountsCashPayments = [];
+  double sumBankPayment = 0.0;
+  double sumCashPayment = 0.0;
 
-  fetchPaymentTotal()async{
+  fetchBankPaymentTotal()async{
     const url = "https://fnetghana.xyz/payment_summary/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink, headers: {
@@ -51,25 +64,60 @@ class _DepositsState extends State<Deposits> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allPaymentTotal = json.decode(jsonData);
       for(var i in allPaymentTotal){
-        allPending.add(i['payment_status']);
+        allBankPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allPending.contains("Pending")){
+    if(allBankPending.contains("Pending")){
       setState(() {
-        hasPaymentNotApproved = true;
+        hasBankPaymentNotApproved = true;
       });
     }
-    for(var pp in allPending){
+    for(var pp in allBankPending){
       if(pp == "Pending"){
-        pendingLists.add(pp);
+        pendingBankLists.add(pp);
       }
     }
-    if(pendingLists.length == 3){
+    if(pendingBankLists.length == 3){
       setState(() {
-        notPaidCount = 3;
+        notPaidBankCount = 3;
+        needApproval = true;
+      });
+    }
+  }
+  fetchCashPaymentTotal()async{
+    const url = "https://fnetghana.xyz/cash_payment_summary/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allCashPaymentTotal = json.decode(jsonData);
+      for(var i in allCashPaymentTotal){
+        allCashPending.add(i['payment_status']);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+    if(allCashPending.contains("Pending")){
+      setState(() {
+        hasCashPaymentNotApproved = true;
+      });
+    }
+    for(var pp in allCashPending){
+      if(pp == "Pending"){
+        pendingCashLists.add(pp);
+      }
+    }
+    if(pendingCashLists.length == 3){
+      setState(() {
+        notPaidCashCount = 3;
         needApproval = true;
       });
     }
@@ -84,22 +132,49 @@ class _DepositsState extends State<Deposits> {
     if(response.statusCode ==200){
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
-      allUserRequests = json.decode(jsonData);
-      amounts.assignAll(allUserRequests);
-      for(var i in amounts){
-        sum = sum + double.parse(i['amount']);
+      allUserBankRequests = json.decode(jsonData);
+      bankAmounts.assignAll(allUserBankRequests);
+      for(var i in bankAmounts){
+        bankSum = bankSum + double.parse(i['amount']);
         bankNotPaid.add(i['deposit_paid']);
       }
     }
 
     setState(() {
       isLoading = false;
-      allUserRequests = allUserRequests;
+      allUserBankRequests = allUserBankRequests;
       if(bankNotPaid.contains("Not Paid")){
         hasUnpaidBankRequests = true;
       }
     });
   }
+  fetchUserCashRequestsToday()async{
+    const url = "https://fnetghana.xyz/get_cash_requests_for_today/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserCashRequests = json.decode(jsonData);
+      cashAmounts.assignAll(allUserCashRequests);
+      for(var i in cashAmounts){
+        cashSum = cashSum + double.parse(i['amount']);
+        cashNotPaid.add(i['deposit_paid']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserCashRequests = allUserCashRequests;
+      if(cashNotPaid.contains("Not Paid")){
+        hasUnpaidCashRequests = true;
+      }
+    });
+  }
+
   fetchUserPayments()async{
     const url = "https://fnetghana.xyz/get_payment_approved_total/";
     var myLink = Uri.parse(url);
@@ -110,16 +185,38 @@ class _DepositsState extends State<Deposits> {
     if(response.statusCode ==200){
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
-      allUserPayments = json.decode(jsonData);
-      amountsPayments.assignAll(allUserPayments);
-      for(var i in amountsPayments){
-        sumPayment = sumPayment + double.parse(i['amount']);
+      allUserBankPayments = json.decode(jsonData);
+      amountsBankPayments.assignAll(allUserBankPayments);
+      for(var i in amountsBankPayments){
+        sumBankPayment = sumBankPayment + double.parse(i['amount']);
       }
     }
 
     setState(() {
       isLoading = false;
-      allUserPayments = allUserPayments;
+      allUserBankPayments = allUserBankPayments;
+    });
+  }
+  fetchUserCashPayments()async{
+    const url = "https://fnetghana.xyz/get_cash_payment_approved_total/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserCashPayments = json.decode(jsonData);
+      amountsCashPayments.assignAll(allUserCashPayments);
+      for(var i in amountsCashPayments){
+        sumCashPayment = sumCashPayment + double.parse(i['amount']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserCashPayments = allUserCashPayments;
     });
   }
 
@@ -142,9 +239,12 @@ class _DepositsState extends State<Deposits> {
         username = storage.read("username");
       });
     }
-    fetchPaymentTotal();
+    fetchBankPaymentTotal();
+    fetchCashPaymentTotal();
     fetchUserBankRequestsToday();
+    fetchUserCashRequestsToday();
     fetchUserPayments();
+    fetchUserCashPayments();
   }
 
   @override
@@ -167,11 +267,11 @@ class _DepositsState extends State<Deposits> {
               Expanded(
                 child: GestureDetector(
                   onTap: (){
-                    hasPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
+                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
-                    ):hasUnpaidBankRequests ? Get.snackbar("Payment Error", "You have not paid your last request,please pay,thank you.",
+                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Payment Error", "You have not paid your last request,please pay,thank you.",
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
