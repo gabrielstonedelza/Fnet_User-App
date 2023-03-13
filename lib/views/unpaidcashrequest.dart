@@ -73,100 +73,92 @@ class _UnpaidCashRequestsState extends State<UnpaidCashRequests> {
           strokeWidth: 5,
           color: secondaryColor,
         ),
-      ) : Column(
-        children: [
-          const SizedBox(height: 30,),
-          const SizedBox(height:10,),
-          SizedBox(
-            height: 130,
-            child:ListView.builder(
-                itemCount: cashRequestsNotPaid != null ? cashRequestsNotPaid.length : 0,
-                itemBuilder: (context,i){
-                  items = cashRequestsNotPaid[i];
-                  return Column(
-                    children: [
-                      const SizedBox(height: 20,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0,right: 8),
-                        child: Card(
-                          elevation: 12,
-                          color: secondaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                          // shadowColor: Colors.pink,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 18.0,bottom: 18),
-                            child: ListTile(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context){
-                                  return  MakeCashPayment(id:cashRequestsNotPaid[i]['id'],depositType:"Bank",amount:cashRequestsNotPaid[i]['amount']);
-                                }));
-                              },
-                              title: Padding(
-                                  padding: const EdgeInsets.only(bottom: 15.0),
-                                  child: Row(
-                                    children: [
-                                      const Text("Customer: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      Text(items['customer'].toString().toUpperCase(),style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                    ],
-                                  )
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+      ) :
+      ListView.builder(
+          itemCount: cashRequestsNotPaid != null ? cashRequestsNotPaid.length : 0,
+          itemBuilder: (context,i){
+            items = cashRequestsNotPaid[i];
+            return Column(
+              children: [
+                const SizedBox(height: 10,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0,right: 8),
+                  child: Card(
+                    elevation: 12,
+                    color: secondaryColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    // shadowColor: Colors.pink,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 18.0,bottom: 18),
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return  MakeCashPayment(id:cashRequestsNotPaid[i]['id'],depositType:"Bank",amount:cashRequestsNotPaid[i]['amount']);
+                          }));
+                        },
+                        title: Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: Row(
+                              children: [
+                                const Text("Agent: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                Text(items['get_agent1_username'].toString().toUpperCase(),style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                              ],
+                            )
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 15.0),
+                                child: Row(
+                                  children: [
+                                    const Text("Agent 2: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    Text(items['get_agent2_username'].toString().toUpperCase(),style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                  ],
+                                )
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10.0),
-                                    child: Row(
-                                      children: [
-                                        const Text("Bank: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                        Text(items['bank'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10.0),
-                                    child: Row(
-                                      children: [
-                                        const Text("Amount: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                        Text(items['amount'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10.0),
-                                    child: Row(
-                                      children: [
-                                        const Text("Deposit Paid: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                        Text(items['deposit_paid'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      ],
-                                    ),
-                                  ),
-
-                                  Row(
-                                    children: [
-                                      const Text("Date Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      Text(items['date_requested'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text("Time Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                      Text(items['time_requested'].toString().split(".").first,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                    ],
-                                  ),
+                                  const Text("Amount: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                  Text(items['amount'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                 ],
                               ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Row(
+                                children: [
+                                  const Text("Request Paid: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                  Text(items['request_paid'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                ],
+                              ),
+                            ),
+
+                            Row(
+                              children: [
+                                const Text("Date Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                Text(items['date_requested'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text("Time Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                Text(items['time_requested'].toString().split(".").first,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                              ],
+                            ),
+                          ],
                         ),
-                      )
-                    ],
-                  );
-                }
-            ),
-          ),
-        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
+          }
       ),
     );
   }
