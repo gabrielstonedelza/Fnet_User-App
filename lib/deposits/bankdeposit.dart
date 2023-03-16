@@ -91,7 +91,6 @@ class _BankDepositState extends State<BankDeposit> {
   late final TextEditingController _idTypeController = TextEditingController();
   late final TextEditingController _idNumberController = TextEditingController();
   late final TextEditingController _customerAccountNameController = TextEditingController();
-  late final TextEditingController _oTPController = TextEditingController();
   bool isAboveFiveThousand = false;
   late List allUserRequests = [];
   late List amounts = [];
@@ -600,72 +599,79 @@ class _BankDepositState extends State<BankDeposit> {
                             );
                           }).toList(),
                           onChanged: (newValueSelected) {
-                            if(newValueSelected=="GT Bank"){
-                              fetchCustomerBankAndNames("GT Bank");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Access Bank"){
-                              fetchCustomerBankAndNames("Access Bank");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Cal Bank"){
-                              fetchCustomerBankAndNames("Cal Bank");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Fidelity Bank"){
-                              fetchCustomerBankAndNames("Fidelity Bank");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Ecobank"){
-                              fetchCustomerBankAndNames("Ecobank");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Pan Africa"){
-                              fetchCustomerBankAndNames("Pan Africa");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="First Bank of Nigeria"){
-                              fetchCustomerBankAndNames("First Bank of Nigeria");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="SGSSB"){
-                              fetchCustomerBankAndNames("SGSSB");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Mtn"){
-                              fetchCustomerBankAndNames("Mtn");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Vodafone"){
-                              fetchCustomerBankAndNames("Vodafone");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
-                            if(newValueSelected=="Tigoairtel"){
-                              fetchCustomerBankAndNames("Tigoairtel");
-                              setState(() {
-                                bankSelected = true;
-                              });
-                            }
+                            fetchCustomerBankAndNames(newValueSelected.toString());
+                            // if(newValueSelected=="Stanbic Bank"){
+                            //   fetchCustomerBankAndNames("Stanbic Bank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="GT Bank"){
+                            //   fetchCustomerBankAndNames("GT Bank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Access Bank"){
+                            //   fetchCustomerBankAndNames("Access Bank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Cal Bank"){
+                            //   fetchCustomerBankAndNames("Cal Bank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Fidelity Bank"){
+                            //   fetchCustomerBankAndNames("Fidelity Bank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Ecobank"){
+                            //   fetchCustomerBankAndNames("Ecobank");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Pan Africa"){
+                            //   fetchCustomerBankAndNames("Pan Africa");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="First Bank of Nigeria"){
+                            //   fetchCustomerBankAndNames("First Bank of Nigeria");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="SGSSB"){
+                            //   fetchCustomerBankAndNames("SGSSB");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Mtn"){
+                            //   fetchCustomerBankAndNames("Mtn");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Vodafone"){
+                            //   fetchCustomerBankAndNames("Vodafone");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
+                            // if(newValueSelected=="Tigoairtel"){
+                            //   fetchCustomerBankAndNames("Tigoairtel");
+                            //   setState(() {
+                            //     bankSelected = true;
+                            //   });
+                            // }
 
                             _onDropDownItemSelectedBank(newValueSelected);
                           },

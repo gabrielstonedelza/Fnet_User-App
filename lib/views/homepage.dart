@@ -257,13 +257,13 @@ class _HomePageState extends State<HomePage> {
     getAllTriggeredNotifications();
 
     _timer = Timer.periodic(const Duration(seconds: 12), (timer) {
-      getAllTriggeredNotifications();
-      getAllUnReadNotifications();
+      // getAllTriggeredNotifications();
+      // getAllUnReadNotifications();
 
     });
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       for (var e in triggered) {
-        unTriggerNotifications(e["id"]);
+        // unTriggerNotifications(e["id"]);
       }
     });
 
