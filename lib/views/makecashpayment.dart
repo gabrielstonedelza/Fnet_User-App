@@ -15,17 +15,21 @@ class MakeCashPayment extends StatefulWidget {
   final id;
   final depositType;
   final amount;
-  const MakeCashPayment({Key? key,this.id,this.depositType,this.amount}) : super(key: key);
+  final agent1;
+  final agent2;
+  const MakeCashPayment({Key? key,this.id,this.depositType,this.amount,required this.agent1,required this.agent2}) : super(key: key);
 
   @override
-  _MakeCashPaymentState createState() => _MakeCashPaymentState(id:this.id,depositType:this.depositType,amount:this.amount);
+  _MakeCashPaymentState createState() => _MakeCashPaymentState(id:this.id,depositType:this.depositType,amount:this.amount,agent1:this.agent1,agent2:this.agent2);
 }
 
 class _MakeCashPaymentState extends State<MakeCashPayment> {
   final id;
   final depositType;
   final amount;
-  _MakeCashPaymentState({ required this.id, required this.depositType, required this.amount});
+  final agent1;
+  final agent2;
+  _MakeCashPaymentState({ required this.id, required this.depositType, required this.amount,required this.agent1,required this.agent2});
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
@@ -130,6 +134,8 @@ class _MakeCashPaymentState extends State<MakeCashPayment> {
       'Accept': 'application/json',
     },body: {
       "request_paid": "Paid",
+      "agent1": agent1,
+      "agent2": agent2,
       "app_name" : "FNET"
     });
     if(response.statusCode == 200){

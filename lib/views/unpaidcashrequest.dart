@@ -95,7 +95,7 @@ class _UnpaidCashRequestsState extends State<UnpaidCashRequests> {
                       child: ListTile(
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return  MakeCashPayment(id:cashRequestsNotPaid[i]['id'],depositType:"Bank",amount:cashRequestsNotPaid[i]['amount']);
+                            return  MakeCashPayment(id:cashRequestsNotPaid[i]['id'],depositType:"Bank",amount:cashRequestsNotPaid[i]['amount'],agent1:cashRequestsNotPaid[i]['agent1'].toString(),agent2:cashRequestsNotPaid[i]['agent2'].toString());
                           }));
                         },
                         title: Padding(
