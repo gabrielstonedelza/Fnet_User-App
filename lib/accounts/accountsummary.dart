@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import 'agent2agent.dart';
 import 'bankrequestsummary.dart';
+import 'bankwithdrawalsummary.dart';
 import 'cashrequestsummary.dart';
 import 'mtndepositsummary.dart';
 import 'mtnwithdrawsummary.dart';
@@ -71,6 +72,59 @@ class TransactionSummary extends StatelessWidget {
                   ),
                   onTap: (){
                     Get.to(()=> const PaymentRequestSummary());
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height:10),
+          const Divider(),
+          const SizedBox(height:10),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  child: Column(
+                    children: [
+                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+                      const SizedBox(height: 10,),
+                      const Text("Bank Withdrawal"),
+                      const Text("Summary"),
+                    ],
+                  ),
+                  onTap: (){
+                    Get.to(()=> const BankWithdrawalSummary());
+                  },
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  child: Column(
+                    children: [
+                      // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+                      // const SizedBox(height: 10,),
+                      // const Text("Cash "),
+                      // const Text("Summary"),
+                    ],
+                  ),
+                  onTap: (){
+                    // Get.to(()=> const CashRequestSummary());
+
+                  },
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  child: Column(
+                    children: [
+                      // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+                      // const SizedBox(height: 10,),
+                      // const Text("Payment "),
+                      // const Text("Summary"),
+                    ],
+                  ),
+                  onTap: (){
+                    // Get.to(()=> const PaymentRequestSummary());
                   },
                 ),
               ),

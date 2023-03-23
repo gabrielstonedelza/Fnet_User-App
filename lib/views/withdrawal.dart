@@ -122,7 +122,7 @@ class _WithDrawalState extends State<WithDrawal> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      // dial();
+      dial();
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return AddWithdrawReference(
             withdrawal_amount: _amountController.text,
