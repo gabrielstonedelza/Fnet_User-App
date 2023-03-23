@@ -24,35 +24,36 @@ class _BirthdaysState extends State<Birthdays> {
   late List todaysBirthdayPhones = [];
   bool hasbdinfive = false;
   bool hasbdintoday = false;
-  late DateDuration duration;
+  // late DateDuration duration;
   late String username = "";
   final storage = GetStorage();
   bool hasToken = false;
   late String uToken = "";
   final SendSmsController sendSms = SendSmsController();
 
-  fetchCustomers()async{
+  Future<void> fetchCustomers(String token) async {
     const url = "https://fnetghana.xyz/user_customers/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink, headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": "Token $uToken"
+      "Authorization": "Token $token"
     });
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allCustomers = json.decode(jsonData);
-      for(var i in allCustomers){
+      for (var i in allCustomers) {
+        DateDuration duration;
         DateTime birthday = DateTime.parse(i['date_of_birth']);
         duration = AgeCalculator.timeToNextBirthday(birthday);
-        if(duration.months == 0 && duration.days == 5){
+        if (duration.months == 0 && duration.days == 5) {
           setState(() {
             hasBirthDayInFive.add(i['name']);
             hasbdinfive = true;
           });
         }
-        if(duration.months == 0 && duration.days == 0){
+        if (duration.months == 0 && duration.days == 0) {
           setState(() {
             hasbdintoday = true;
             hasBirthDayToday.add(i['name']);
@@ -64,11 +65,8 @@ class _BirthdaysState extends State<Birthdays> {
 
     setState(() {
       isLoading = false;
-      allCustomers = allCustomers;
     });
-
   }
-
 
   @override
   void initState() {
@@ -87,8 +85,9 @@ class _BirthdaysState extends State<Birthdays> {
         uToken = storage.read("usertoken");
       });
     }
-    fetchCustomers();
+    fetchCustomers(uToken);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,130 +101,178 @@ class _BirthdaysState extends State<Birthdays> {
               setState(() {
                 isLoading = true;
               });
-              fetchCustomers();
+              fetchCustomers(uToken);
             },
           )
         ],
       ),
       body: SafeArea(
-          child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) :
-          hasbdinfive ? ListView.builder(
-              itemCount: hasBirthDayInFive != null ? hasBirthDayInFive.length : 0,
-              itemBuilder: (context,i){
-                return Column(
-                  children: [
-                    const SizedBox(height: 20,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0,right: 8),
-                      child: Card(
-                        color: secondaryColor,
-                        elevation: 12,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        // shadowColor: Colors.pink,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 18.0,bottom: 18),
-                          child: ListTile(
-                            leading: const CircleAvatar(
-                                backgroundColor: primaryColor,
-                                foregroundColor: Colors.white,
-                                child: Icon(Icons.person)
-                            ),
-                            trailing: Image.asset("assets/images/cake.png",width: 30,height: 30,),
-                            title: Padding(
-                              padding: const EdgeInsets.only(bottom: 15.0),
-                              child: Row(
-                                children: [
-                                  const Text("Name: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                  Text(hasBirthDayInFive[i],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                                ],
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: const [
-                                    Text("Birthday is coming up in five days",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+          child: isLoading
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Center(
+                        child: CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 5,
+                    )),
                   ],
-                );
-              }
-          ) : hasbdintoday ? ListView.builder(
-              itemCount: hasBirthDayToday != null ? hasBirthDayToday.length : 0,
-              itemBuilder: (context,i){
-                return Column(
-                  children: [
-                    const SizedBox(height: 20,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0,right: 8),
-                      child: Card(
-                        elevation: 12,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        // shadowColor: Colors.pink,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 18.0,bottom: 18),
-                          child: ListTile(
-                            leading: const CircleAvatar(
-                                backgroundColor: primaryColor,
-                                foregroundColor: Colors.white,
-                                child: Icon(Icons.person)
+                )
+              : hasbdinfive
+                  ? ListView.builder(
+                      itemCount: hasBirthDayInFive != null
+                          ? hasBirthDayInFive.length
+                          : 0,
+                      itemBuilder: (context, i) {
+                        return Column(
+                          children: [
+                            const SizedBox(
+                              height: 20,
                             ),
-                            trailing: Image.asset("assets/images/cake.png",width: 30,height: 30,),
-                            title: Padding(
-                              padding: const EdgeInsets.only(bottom: 15.0),
-                              child: Row(
-                                children: [
-                                  const Text("Name: "),
-                                  Text(hasBirthDayToday[i],style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-                                ],
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: const [
-                                    Text("Birthday is today",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-
-                                  ],
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, right: 8),
+                              child: Card(
+                                color: secondaryColor,
+                                elevation: 12,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                // shadowColor: Colors.pink,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 18.0, bottom: 18),
+                                  child: ListTile(
+                                    leading: const CircleAvatar(
+                                        backgroundColor: primaryColor,
+                                        foregroundColor: Colors.white,
+                                        child: Icon(Icons.person)),
+                                    trailing: Image.asset(
+                                      "assets/images/cake.png",
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    title: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 15.0),
+                                      child: Row(
+                                        children: [
+                                          const Text(
+                                            "Name: ",
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                          Text(
+                                            hasBirthDayInFive[i],
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: const [
+                                            Text(
+                                              "Birthday is coming up in five days",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-
+                              ),
+                            )
+                          ],
+                        );
+                      })
+                  : hasbdintoday
+                      ? ListView.builder(
+                          itemCount: hasBirthDayToday != null
+                              ? hasBirthDayToday.length
+                              : 0,
+                          itemBuilder: (context, i) {
+                            return Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, right: 8),
+                                  child: Card(
+                                    elevation: 12,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    // shadowColor: Colors.pink,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 18.0, bottom: 18),
+                                      child: ListTile(
+                                        leading: const CircleAvatar(
+                                            backgroundColor: primaryColor,
+                                            foregroundColor: Colors.white,
+                                            child: Icon(Icons.person)),
+                                        trailing: Image.asset(
+                                          "assets/images/cake.png",
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                        title: Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 15.0),
+                                          child: Row(
+                                            children: [
+                                              const Text("Name: "),
+                                              Text(
+                                                hasBirthDayToday[i],
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: const [
+                                                Text(
+                                                  "Birthday is today",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              }
-          ) : const Center(
-            child: Text("No birthdays available"),
-          )
-      ),
+                            );
+                          })
+                      : const Center(
+                          child: Text("No birthdays available"),
+                        )),
     );
   }
 }

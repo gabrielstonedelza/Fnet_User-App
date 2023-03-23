@@ -45,7 +45,7 @@ class _AddWithdrawReferenceState extends State<AddWithdrawReference> {
     }, body: {
       "amount": _amountController.text,
       "customer_phone": _customerPhoneController.text,
-      "reference_id": _referenceIdController.text,
+      "reference": _referenceIdController.text,
     });
     if(res.statusCode == 201){
       Get.snackbar("Congratulations", "your reference was added",
@@ -55,7 +55,8 @@ class _AddWithdrawReferenceState extends State<AddWithdrawReference> {
       Get.offAll(() => const MyBottomNavigationBar());
     }
     else{
-      Get.snackbar("Request Error", res.body.toString(),
+
+      Get.snackbar("Request Error", "something went wrong,please try again",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
@@ -216,31 +217,34 @@ class _AddWithdrawReferenceState extends State<AddWithdrawReference> {
                         if (!_formKey.currentState!.validate()) {
                           return;
                         } else {
+                          processWithdrawReference();
                           Get.snackbar("Please wait", "sending your request",
                               colorText: defaultTextColor,
                               snackPosition: SnackPosition.BOTTOM,
                               backgroundColor: snackColor);
-                          Get.defaultDialog(
-                              buttonColor: primaryColor,
-                              title: "Confirm Reference",
-                              middleText: "Are you sure you want to proceed?",
-                              confirm: RawMaterialButton(
-                                  shape: const StadiumBorder(),
-                                  fillColor: primaryColor,
-                                  onPressed: (){
-                                    processWithdrawReference();
-                                    Get.back();
-                                  }, child: const Text("Yes",style: TextStyle(color: Colors.white),)),
-                              cancel: RawMaterialButton(
-                                  shape: const StadiumBorder(),
-                                  fillColor: primaryColor,
-                                  onPressed: (){Get.back();},
-                                  child: const Text("Cancel",style: TextStyle(color: Colors.white),))
-                          );
+                          // Get.defaultDialog(
+                          //     buttonColor: primaryColor,
+                          //     title: "Confirm Reference",
+                          //     middleText: "Are you sure you want to proceed?",
+                          //     confirm: RawMaterialButton(
+                          //         shape: const StadiumBorder(),
+                          //         fillColor: primaryColor,
+                          //         onPressed: (){
+                          //
+                          //           Get.back();
+                          //         }, child: const Text("Yes",style: TextStyle(color: Colors.white),)),
+                          //     cancel: RawMaterialButton(
+                          //         shape: const StadiumBorder(),
+                          //         fillColor: primaryColor,
+                          //         onPressed: (){Get.back();},
+                          //         child: const Text("Cancel",style: TextStyle(color: Colors.white),))
+                          // );
                         }
                       },
                       shape: const StadiumBorder(),
                       elevation: 8,
+                      fillColor: primaryColor,
+                      splashColor: defaultColor,
                       child: const Text(
                         "Save",
                         style: TextStyle(
@@ -248,8 +252,6 @@ class _AddWithdrawReferenceState extends State<AddWithdrawReference> {
                             fontSize: 20,
                             color: Colors.white),
                       ),
-                      fillColor: primaryColor,
-                      splashColor: defaultColor,
                     ),
                   ],
                 ),
