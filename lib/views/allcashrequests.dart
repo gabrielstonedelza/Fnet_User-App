@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import '../deposits/cashdepositrequests.dart';
 import '../static/app_colors.dart';
+import 'cashrequestfromdetails.dart';
+import 'cashrequesttodetails.dart';
 
 class AllCashRequests extends StatefulWidget {
   const AllCashRequests({Key? key}) : super(key: key);
@@ -16,12 +18,18 @@ class AllCashRequests extends StatefulWidget {
 class _AllCashRequestsState extends State<AllCashRequests> {
   List allCashRequestsFrom = [];
   List allCashRequestsTo = [];
+  List allCashRequestFromDates = [];
+  List allCashRequestToDates = [];
+
   var itemsTo;
   var itemsFrom;
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
   late String username = "";
+  double fromSum = 0.0;
+  double toSum = 0.0;
+
   fetchCashRequestsFrom() async {
     const url = "https://fnetghana.xyz/get_agent1_cash_request_all/";
     var myLink = Uri.parse(url);
@@ -35,11 +43,15 @@ class _AllCashRequestsState extends State<AllCashRequests> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       var agents = json.decode(jsonData);
       allCashRequestsFrom.assignAll(agents);
-
+      for(var i in allCashRequestsFrom){
+        fromSum = fromSum + double.parse(i['amount']);
+        if(!allCashRequestFromDates.contains(i['date_requested'])){
+          allCashRequestFromDates.add(i['date_requested']);
+        }
+      }
     }
     setState(() {
       isLoading = false;
-      allCashRequestsFrom = allCashRequestsFrom;
     });
   }
   fetchCashRequestsTo() async {
@@ -55,11 +67,17 @@ class _AllCashRequestsState extends State<AllCashRequests> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       var agents = json.decode(jsonData);
       allCashRequestsTo.assignAll(agents);
+      for(var i in allCashRequestsTo){
+        toSum = toSum + double.parse(i['amount']);
+        if(!allCashRequestToDates.contains(i['date_requested'])){
+          allCashRequestToDates.add(i['date_requested']);
+        }
+      }
 
     }
     setState(() {
       isLoading = false;
-      allCashRequestsTo = allCashRequestsTo;
+
     });
   }
 
@@ -119,9 +137,9 @@ class _AllCashRequestsState extends State<AllCashRequests> {
           body: TabBarView(
             children: [
               ListView.builder(
-                itemCount: allCashRequestsFrom != null ? allCashRequestsFrom.length : 0,
+                itemCount: allCashRequestFromDates != null ? allCashRequestFromDates.length : 0,
                 itemBuilder: (BuildContext context, int index) {
-                  itemsFrom = allCashRequestsFrom[index];
+                  itemsFrom = allCashRequestFromDates[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -132,98 +150,22 @@ class _AllCashRequestsState extends State<AllCashRequests> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
+                          onTap: (){
+                            Get.to(() => CashRequestFromDetails(date_requested:allCashRequestFromDates[index]));
+                          },
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Text("From :",style: TextStyle(
+                              const Text("Date :",style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                   )),
                               const SizedBox(width:10),
-                              Text("${itemsFrom['get_agent1_username'].toString().capitalize}",style: const TextStyle(
+                              Text(itemsFrom,style: const TextStyle(
                               fontWeight: FontWeight.bold,
                                   fontSize: 18,
                               )),
                             ],
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top:18.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("To :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text("${itemsFrom['get_agent2_username'].toString().capitalize}",style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Amount :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text("₵ ${itemsFrom['amount']}",style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Status :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text(itemsFrom['request_status'],style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Date/Time: ",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    Row(
-
-                                      children: [
-                                        Text(itemsFrom['date_requested'],style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        )),
-                                        const Padding(
-                                          padding: EdgeInsets.only(left:8.0,right:8.0),
-                                          child: Text("/"),
-                                        ),
-                                        Text(itemsFrom['time_requested'].toString().split(".").first,style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        )),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                           ),
                         ),
                       ),
@@ -231,9 +173,9 @@ class _AllCashRequestsState extends State<AllCashRequests> {
                   );
                 },),
               ListView.builder(
-                itemCount: allCashRequestsTo != null ? allCashRequestsTo.length : 0,
+                itemCount: allCashRequestToDates != null ? allCashRequestToDates.length : 0,
                 itemBuilder: (BuildContext context, int index) {
-                  itemsFrom = allCashRequestsTo[index];
+                  itemsTo = allCashRequestToDates[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -244,98 +186,22 @@ class _AllCashRequestsState extends State<AllCashRequests> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
+                          onTap: (){
+                            Get.to(() => CashRequestToDetails(date_requested:allCashRequestFromDates[index]));
+                          },
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Text("From :",style: TextStyle(
+                              const Text("Date :",style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               )),
                               const SizedBox(width:10),
-                              Text("${itemsFrom['get_agent1_username'].toString().capitalize}",style: const TextStyle(
+                              Text(itemsTo,style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               )),
                             ],
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top:18.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("To :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text("${itemsFrom['get_agent2_username'].toString().capitalize}",style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Amount :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text("₵ ${itemsFrom['amount']}",style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Status :",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    const SizedBox(width:10),
-                                    Text(itemsFrom['request_status'],style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Text("Date/Time: ",style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    )),
-                                    Row(
-
-                                      children: [
-                                        Text(itemsFrom['date_requested'],style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        )),
-                                        const Padding(
-                                          padding: EdgeInsets.only(left:8.0,right:8.0),
-                                          child: Text("/"),
-                                        ),
-                                        Text(itemsFrom['time_requested'].toString().split(".").first,style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        )),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                           ),
                         ),
                       ),

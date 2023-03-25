@@ -24,6 +24,7 @@ import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../sendsms.dart';
 import 'allcashrequests.dart';
+import 'allmycashpayments.dart';
 import 'birthdays.dart';
 import 'commission.dart';
 import 'groupchat.dart';
@@ -86,7 +87,6 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       isLoading = false;
-      allBankDeposits = allBankDeposits;
       if (depositPaidBank.contains("Not Paid")) {
         hasPreviousDepositUnPaid = true;
       }
@@ -152,7 +152,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isLoading = false;
       isFetching = false;
-      allCustomers = allCustomers;
     });
   }
 
@@ -259,23 +258,24 @@ class _HomePageState extends State<HomePage> {
     _timer = Timer.periodic(const Duration(seconds: 12), (timer) {
       getAllTriggeredNotifications();
       getAllUnReadNotifications();
-
     });
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       for (var e in triggered) {
         unTriggerNotifications(e["id"]);
       }
     });
-
   }
+
   Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*171\%23#');
   }
+
   Future<void> dialTigo() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
   }
+
   Future<void> dialVodafone() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
@@ -339,107 +339,115 @@ class _HomePageState extends State<HomePage> {
           title: Text("😃 ${username.capitalize}"),
           actions: [
             IconButton(
-              onPressed: (){
+              onPressed: () {
                 showMaterialModalBottomSheet(
                   context: context,
                   // expand: true,
                   isDismissible: true,
                   shape: const RoundedRectangleBorder(
                       borderRadius:
-                      BorderRadius.vertical(
-                          top: Radius.circular(
-                              25.0))),
+                          BorderRadius.vertical(top: Radius.circular(25.0))),
                   bounce: true,
                   builder: (context) => Padding(
                     padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context)
-                            .viewInsets
-                            .bottom),
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: SizedBox(
                         height: 300,
                         child: Column(
-                          mainAxisSize:
-                          MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const SizedBox(height: 30),
                             const Center(
-                                child: Text(
-                                    "Select network",
+                                child: Text("Select network",
                                     style: TextStyle(
-                                        fontWeight:
-                                        FontWeight
-                                            .bold))),
+                                        fontWeight: FontWeight.bold))),
                             const SizedBox(height: 30),
                             Padding(
-                              padding: const EdgeInsets.only(left:10.0,right:10),
+                              padding:
+                                  const EdgeInsets.only(left: 10.0, right: 10),
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: GestureDetector(
-                                      onTap:(){
-                                        dialMtn();
-                                        Get.back();
-                                      },
-                                        child: Card(
-                                          elevation: 12,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10)
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Image.asset("assets/images/1860906.png",width: 100,height: 100,fit: BoxFit.cover,),
-                                          ),
-                                        )
-                                    )
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            dialMtn();
+                                            Get.back();
+                                          },
+                                          child: Card(
+                                            elevation: 12,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Image.asset(
+                                                "assets/images/1860906.png",
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ))),
+                                  const SizedBox(
+                                    width: 10,
                                   ),
-                                  const SizedBox(width: 10,),
                                   Expanded(
                                       child: GestureDetector(
-                                        onTap:(){
-                                          dialVodafone();
-                                          Get.back();
-                                        },
+                                          onTap: () {
+                                            dialVodafone();
+                                            Get.back();
+                                          },
                                           child: Card(
                                               elevation: 12,
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10)
-                                              ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(5.0),
-                                                child: Image.asset("assets/images/vodafone.png",width: 100,height: 100,fit: BoxFit.cover,),
-                                              )
-                                          )
-                                      )
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Image.asset(
+                                                  "assets/images/vodafone.png",
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )))),
+                                  const SizedBox(
+                                    width: 10,
                                   ),
-                                  const SizedBox(width: 10,),
                                   Expanded(
                                       child: GestureDetector(
-                                        onTap:(){
-                                          dialTigo();
-                                          Get.back();
-                                        },
+                                          onTap: () {
+                                            dialTigo();
+                                            Get.back();
+                                          },
                                           child: Card(
                                               elevation: 12,
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10)
-                                              ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(5.0),
-                                                child: Image.asset("assets/images/airtel-tigo-logos.jpg",width: 100,height: 100,fit: BoxFit.cover,),
-                                              )
-                                          )
-                                      )
-                                  ),
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Image.asset(
+                                                  "assets/images/airtel-tigo-logos.jpg",
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )))),
                                 ],
                               ),
                             )
-
                           ],
                         )),
                   ),
                 );
               },
-              icon:const Icon(Icons.local_phone),
+              icon: const Icon(Icons.local_phone),
             ),
             IconButton(
               onPressed: () {
@@ -863,20 +871,26 @@ class _HomePageState extends State<HomePage> {
                     child: GestureDetector(
                       child: Column(
                         children: [
-
+                          Image.asset(
+                            "assets/images/cash-on-delivery.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Cash Payments"),
                         ],
                       ),
                       onTap: () {
-                        // Get.to(() => const AllYourNotifications());
+                        Get.to(() => const AllMyCashPayments());
                       },
                     ),
                   ),
                   Expanded(
                     child: GestureDetector(
                       child: Column(
-                        children: [
-
-                        ],
+                        children: [],
                       ),
                       onTap: () {
                         // Get.to(() => const Reports());

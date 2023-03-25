@@ -54,12 +54,9 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           blockedUsernames.add(i['username']);
         }
       }
-
     }
-
     setState(() {
       isLoading = false;
-      allBlockedUsers = allBlockedUsers;
     });
   }
   logoutUser() async {
