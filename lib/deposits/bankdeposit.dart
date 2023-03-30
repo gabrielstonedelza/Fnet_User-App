@@ -262,6 +262,7 @@ class _BankDepositState extends State<BankDeposit> {
       "depositor_name": _depositorController.text,
       "account_number": _currentAccountNumberSelected,
       "account_name": _customerAccountNameController.text,
+      "app_version": "1",
     });
     if (res.statusCode == 201) {
       Get.snackbar("Congratulations", "Transaction sent for approval",
