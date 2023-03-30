@@ -271,13 +271,12 @@ class _DepositsState extends State<Deposits> {
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
-                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Payment Error", "You have not paid your last request,please pay,thank you.",
+                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
                     ):
                     Get.to(()=> const BankDeposit());
-
                   },
                   child: Column(
                     children: [
@@ -353,7 +352,15 @@ class _DepositsState extends State<Deposits> {
                     ],
                   ),
                   onTap: (){
-                    Get.to(()=> const CashDepositRequests());
+                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
+                        colorText: defaultTextColor,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red
+                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
+                        colorText: defaultTextColor,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red
+                    ): Get.to(()=> const CashDepositRequests());
                   },
                 ),
               ),

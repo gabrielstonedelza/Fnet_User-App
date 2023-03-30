@@ -86,6 +86,7 @@ class _MakeCashPaymentState extends State<MakeCashPayment> {
     "MELCOM TAFO",
     "MELCOM AHODWO",
     "MELCOM ADUM",
+    "MELCOM SUAME",
   ];
 
   var _currentCashAtLocation1 = "Please select cash at location";
