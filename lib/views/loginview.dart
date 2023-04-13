@@ -30,10 +30,26 @@ class _LoginViewState extends State<LoginView> {
 
 
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController unameController = TextEditingController();
-  late final TextEditingController passWordController = TextEditingController();
+  late final TextEditingController unameController;
+  late final TextEditingController passWordController;
   bool isPosting = false;
   LoginController loginController = Get.find();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _usernameFocusNode = FocusNode();
+
+  @override
+  void initState(){
+    super.initState();
+    unameController = TextEditingController();
+    passWordController = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    unameController.dispose();
+    passWordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +83,7 @@ class _LoginViewState extends State<LoginView> {
                       child: Center(
                         child: TextFormField(
                           controller: unameController,
+                          focusNode: _usernameFocusNode,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: Icon(Icons.person,color: defaultTextColor1,),
@@ -99,6 +116,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       child: Center(
                         child: TextFormField(
+                          focusNode: _passwordFocusNode,
                           controller: passWordController,
                           decoration: InputDecoration(
                             suffixIcon: IconButton(
@@ -154,6 +172,11 @@ class _LoginViewState extends State<LoginView> {
                       width: size.width * 0.8,
                       child: RawMaterialButton(
                         onPressed: () {
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+
+                          if (!currentFocus.hasPrimaryFocus) {
+                            currentFocus.unfocus();
+                          }
                           loginController.isLoggingIn = true;
                           if (_formKey.currentState!.validate()) {
                             loginController.loginUser(unameController.text.trim(), passWordController.text.trim());

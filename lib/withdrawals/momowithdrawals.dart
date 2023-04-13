@@ -7,6 +7,7 @@ import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../sendsms.dart';
 
@@ -35,16 +36,14 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController = TextEditingController();
   late final TextEditingController _customerPhoneController =
-      TextEditingController();
-  // late final TextEditingController _customerNameController = TextEditingController();
-  late final TextEditingController _customerIdNumberController =
-      TextEditingController();
+  TextEditingController();
+
   late final TextEditingController _mtnCommissionController =
-      TextEditingController();
+  TextEditingController();
   late final TextEditingController _agentCommissionController =
-      TextEditingController();
+  TextEditingController();
   late final TextEditingController _cashoutCommissionController =
-      TextEditingController();
+  TextEditingController();
   late final TextEditingController _chargesController = TextEditingController();
   late final TextEditingController _amountToPush = TextEditingController();
   bool hasAmount = false;
@@ -58,7 +57,6 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
 
   final List justMtnNetwork = [
     "Select Withdraw Type",
-    'MomoPay',
     'Cash Out',
     'Agent to Agent'
   ];
@@ -69,13 +67,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     "Agent to Agent",
   ];
 
-  final List idTypes = [
-    "Select Id Type",
-    "Passport",
-    "Ghana Card",
-    "Drivers License",
-    "Voters Id"
-  ];
+
   bool isMtn = false;
 
   late List allMomoWithdrawUsers = [];
@@ -118,6 +110,10 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
+  Future<void> dialCashOutMtn(String customerNumber,String amount) async {
+    UssdAdvanced.multisessionUssd(code: "*171*2*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  }
+
   Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*171\%23#');
@@ -133,7 +129,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
 
   var _currentSelectedNetwork = "Select Network";
   var _currentSelectedType = "Select Withdraw Type";
-  var _currentSelectedIdType = "Select Id Type";
+
   late String uToken = "";
   final storage = GetStorage();
   late String username = "";
@@ -154,8 +150,6 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       "customer_phone": _customerPhoneController.text,
       "network": _currentSelectedNetwork,
       "type": _currentSelectedType,
-      "id_type": _currentSelectedIdType,
-      "id_number": _customerIdNumberController.text,
       "charges": _chargesController.text,
       "cash_out_commission": _cashoutCommissionController.text,
       "agent_commission": _agentCommissionController.text,
@@ -205,7 +199,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
 
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
-        dialMtn();
+        dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
         Get.back();
       }
       if(_currentSelectedNetwork == "Vodafone"){
@@ -273,7 +267,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Momo Withdrawal"),
+        title: const Text("Momo Cash Out"),
         backgroundColor: primaryColor,
       ),
       body: ListView(
@@ -310,7 +304,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                       cursorWidth: 10,
                       decoration: InputDecoration(
 
-                          labelText: "Enter customer number",
+                          labelText: "Customer or Agent Number",
                           labelStyle: const TextStyle(color: secondaryColor),
                           focusColor: primaryColor,
                           fillColor: primaryColor,
@@ -323,7 +317,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Please enter customer number";
+                          return "Enter agent or customer number";
                         }
                       },
                     ),
@@ -367,7 +361,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                               border: Border.all(color: Colors.grey, width: 1)),
                           child: Padding(
                             padding:
-                                const EdgeInsets.only(left: 10.0, right: 10),
+                            const EdgeInsets.only(left: 10.0, right: 10),
                             child: DropdownButton(
                               hint: const Text("Select Network"),
                               isExpanded: true,
@@ -375,7 +369,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                               // style: const TextStyle(
                               //     color: Colors.black, fontSize: 20),
                               items:
-                                  mobileMoneyNetworks.map((dropDownStringItem) {
+                              mobileMoneyNetworks.map((dropDownStringItem) {
                                 return DropdownMenuItem(
                                   value: dropDownStringItem,
                                   child: Text(dropDownStringItem),
@@ -385,12 +379,10 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                                 if (newValueSelected == "Mtn") {
                                   setState(() {
                                     isMtn = true;
-                                    withdrawTypes.add("MomoPay");
                                   });
                                 } else {
                                   setState(() {
                                     isMtn = false;
-                                    withdrawTypes.remove("MomoPay");
                                   });
                                 }
                                 _onDropDownItemSelectedNetwork(
@@ -403,126 +395,68 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                       ),
                       _currentSelectedNetwork == "Mtn"
                           ? Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: Colors.grey, width: 1)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10),
-                                  child: DropdownButton(
-                                    hint: const Text("Select Withdrawal Type"),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    // style: const TextStyle(
-                                    //     color: Colors.black, fontSize: 20),
-                                    items: justMtnNetwork
-                                        .map((dropDownStringItem) {
-                                      return DropdownMenuItem(
-                                        value: dropDownStringItem,
-                                        child: Text(dropDownStringItem),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValueSelected) {
-                                      _onDropDownItemSelectedWithdrawTypes(
-                                          newValueSelected);
-                                    },
-                                    value: _currentSelectedType,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: Colors.grey, width: 1)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10),
-                                  child: DropdownButton(
-                                    hint: const Text("Select Withdrawal Type"),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    items:
-                                        withdrawTypes.map((dropDownStringItem) {
-                                      return DropdownMenuItem(
-                                        value: dropDownStringItem,
-                                        child: Text(dropDownStringItem),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValueSelected) {
-                                      _onDropDownItemSelectedWithdrawTypes(
-                                          newValueSelected);
-                                    },
-                                    value: _currentSelectedType,
-                                  ),
-                                ),
-                              ),
-                            ),
-                      Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey, width: 1)),
+                              border: Border.all(
+                                  color: Colors.grey, width: 1)),
                           child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 10.0, right: 10),
+                            padding: const EdgeInsets.only(
+                                left: 10.0, right: 10),
                             child: DropdownButton(
-                              hint: const Text("Select Id Type"),
+                              hint: const Text("Select Withdrawal Type"),
                               isExpanded: true,
                               underline: const SizedBox(),
                               // style: const TextStyle(
                               //     color: Colors.black, fontSize: 20),
-                              items: idTypes.map((dropDownStringItem) {
+                              items: justMtnNetwork
+                                  .map((dropDownStringItem) {
                                 return DropdownMenuItem(
                                   value: dropDownStringItem,
                                   child: Text(dropDownStringItem),
                                 );
                               }).toList(),
                               onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedIdTypes(
+                                _onDropDownItemSelectedWithdrawTypes(
                                     newValueSelected);
                               },
-                              value: _currentSelectedIdType,
+                              value: _currentSelectedType,
+                            ),
+                          ),
+                        ),
+                      )
+                          : Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Colors.grey, width: 1)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10.0, right: 10),
+                            child: DropdownButton(
+                              hint: const Text("Select Withdrawal Type"),
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              items:
+                              withdrawTypes.map((dropDownStringItem) {
+                                return DropdownMenuItem(
+                                  value: dropDownStringItem,
+                                  child: Text(dropDownStringItem),
+                                );
+                              }).toList(),
+                              onChanged: (newValueSelected) {
+                                _onDropDownItemSelectedWithdrawTypes(
+                                    newValueSelected);
+                              },
+                              value: _currentSelectedType,
                             ),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _customerIdNumberController,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.person,
-                                  color: secondaryColor),
-                              labelText: "Enter id number",
-                              labelStyle:
-                                  const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter id number";
-                            }
-                          },
-                        ),
-                      ),
+
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: TextFormField(
@@ -665,135 +599,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                                 });
                               }
                             }
-                            //momo pay
-                            if (_currentSelectedType == "MomoPay") {
-                              if (int.parse(value) >= 10 &&
-                                  int.parse(value) <= 1000) {
-                                var charges = double.parse(value) / 100 * 1;
-                                var agentcommission = double.parse(value) / 100;
-                                // var agentCommission = 2.5;
-                                int commissionDivide = 2;
-                                var acommission = agentcommission / commissionDivide;
-                                _agentCommissionController.text = acommission.toString();
-                                _chargesController.text = charges.toString();
-                                var amountToPush = double.parse(value) + acommission;
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              // if (int.parse(value) >= 51 &&
-                              //     int.parse(value) <= 1000) {
-                              //   var charges = double.parse(value) / 100 * 1;
-                              //   var agentCommission =
-                              //       double.parse(value) / 100 * 0.8;
-                              //   var amountToPush =
-                              //       double.parse(value) + agentCommission;
-                              //
-                              //   _agentCommissionController.text =
-                              //       agentCommission.toString();
-                              //   _chargesController.text = charges.toString();
-                              //   _amountToPush.text = amountToPush.toString();
-                              // }
 
-                              if (int.parse(value) >= 1000 &&
-                                  int.parse(value) <= 1900) {
-                                var charges = 10;
-                                var agentCommission = 5;
-                                var amountToPush =
-                                    double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 2000 &&
-                                  int.parse(value) <= 2900) {
-                                var charges = 15;
-                                var agentCommission = 10;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 3000 &&
-                                  int.parse(value) <= 3900) {
-                                var charges = 20;
-                                var agentCommission = 15;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 4000 &&
-                                  int.parse(value) <= 4900) {
-                                var charges = 25;
-                                var agentCommission = 20;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 5000 &&
-                                  int.parse(value) <= 5900) {
-                                var charges = 30;
-                                var agentCommission = 25;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 6000 &&
-                                  int.parse(value) <= 6900) {
-                                var charges = 35;
-                                var agentCommission = 30;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 7000 &&
-                                  int.parse(value) <= 7900) {
-                                var charges = 40;
-                                var agentCommission = 35;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 8000 &&
-                                  int.parse(value) <= 8999) {
-                                var charges = 45;
-                                var agentCommission = 40;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                              if (int.parse(value) >= 9000 && int.parse(value) <= 10000) {
-                                var charges = 50;
-                                var agentCommission = 45;
-                                var amountToPush = double.parse(value) + agentCommission;
-
-                                _agentCommissionController.text =
-                                    agentCommission.toString();
-                                _chargesController.text = charges.toString();
-                                _amountToPush.text = amountToPush.toString();
-                              }
-                            }
                             //  agent to agent
                             if (_currentSelectedType == "Agent to Agent") {
                               if (int.parse(value) > 0 &&
@@ -928,7 +734,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                                   color: secondaryColor),
                               labelText: "Enter amount",
                               labelStyle:
-                                  const TextStyle(color: secondaryColor),
+                              const TextStyle(color: secondaryColor),
                               focusColor: primaryColor,
                               fillColor: primaryColor,
                               focusedBorder: OutlineInputBorder(
@@ -947,144 +753,142 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                       ),
                       hasAmount
                           ? Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: TextFormField(
-                                    controller: _amountToPush,
-                                    cursorColor: primaryColor,
-                                    cursorRadius:
-                                        const Radius.elliptical(10, 10),
-                                    cursorWidth: 10,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                        prefixIcon: const Icon(Icons.person,
-                                            color: secondaryColor),
-                                        labelText: "Amout to push",
-                                        labelStyle: const TextStyle(
-                                            color: secondaryColor),
-                                        focusColor: primaryColor,
-                                        fillColor: primaryColor,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: primaryColor, width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12))),
-                                    keyboardType: TextInputType.text,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: TextFormField(
-                                    controller: _agentCommissionController,
-                                    cursorColor: primaryColor,
-                                    cursorRadius:
-                                        const Radius.elliptical(10, 10),
-                                    cursorWidth: 10,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                        prefixIcon: const Icon(Icons.person,
-                                            color: secondaryColor),
-                                        labelText: "Agent Commission",
-                                        labelStyle: const TextStyle(
-                                            color: secondaryColor),
-                                        focusColor: primaryColor,
-                                        fillColor: primaryColor,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: primaryColor, width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12))),
-                                    keyboardType: TextInputType.text,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: TextFormField(
-                                    controller: _chargesController,
-                                    cursorColor: primaryColor,
-                                    cursorRadius:
-                                        const Radius.elliptical(10, 10),
-                                    cursorWidth: 10,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                        prefixIcon: const Icon(Icons.person,
-                                            color: secondaryColor),
-                                        labelText: "Charges",
-                                        labelStyle: const TextStyle(
-                                            color: secondaryColor),
-                                        focusColor: primaryColor,
-                                        fillColor: primaryColor,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: primaryColor, width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12))),
-                                    keyboardType: TextInputType.text,
-                                  ),
-                                ),
-                              ],
-                            )
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: _amountToPush,
+                              cursorColor: primaryColor,
+                              cursorRadius:
+                              const Radius.elliptical(10, 10),
+                              cursorWidth: 10,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.person,
+                                      color: secondaryColor),
+                                  labelText: "Amount to push",
+                                  labelStyle: const TextStyle(
+                                      color: secondaryColor),
+                                  focusColor: primaryColor,
+                                  fillColor: primaryColor,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: primaryColor, width: 2),
+                                      borderRadius:
+                                      BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(12))),
+                              keyboardType: TextInputType.text,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: _agentCommissionController,
+                              cursorColor: primaryColor,
+                              cursorRadius:
+                              const Radius.elliptical(10, 10),
+                              cursorWidth: 10,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.person,
+                                      color: secondaryColor),
+                                  labelText: "Agent Commission",
+                                  labelStyle: const TextStyle(
+                                      color: secondaryColor),
+                                  focusColor: primaryColor,
+                                  fillColor: primaryColor,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: primaryColor, width: 2),
+                                      borderRadius:
+                                      BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(12))),
+                              keyboardType: TextInputType.text,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: _chargesController,
+                              cursorColor: primaryColor,
+                              cursorRadius:
+                              const Radius.elliptical(10, 10),
+                              cursorWidth: 10,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.person,
+                                      color: secondaryColor),
+                                  labelText: "Charges",
+                                  labelStyle: const TextStyle(
+                                      color: secondaryColor),
+                                  focusColor: primaryColor,
+                                  fillColor: primaryColor,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: primaryColor, width: 2),
+                                      borderRadius:
+                                      BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(12))),
+                              keyboardType: TextInputType.text,
+                            ),
+                          ),
+                        ],
+                      )
                           : Container(),
                       const SizedBox(
                         height: 20,
                       ),
                       isPosting
                           ? const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 5,
-                                color: primaryColor,
-                              ),
-                            )
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5,
+                          color: primaryColor,
+                        ),
+                      )
                           : RawMaterialButton(
-                              onPressed: () {
-                                _startPosting();
-                                if (!_formKey.currentState!.validate()) {
-                                  return;
-                                } else {
-                                  if (_currentSelectedType ==
-                                          "Select Withdraw Type" ||
-                                      _currentSelectedNetwork ==
-                                          "Select Network" ||
-                                      _currentSelectedIdType ==
-                                          "Select Id Type") {
-                                    Get.snackbar("Bank Error",
-                                        "Please select all necessary items from the dropdowns",
-                                        colorText: Colors.white,
-                                        backgroundColor: Colors.red,
-                                        snackPosition: SnackPosition.BOTTOM);
-                                    return;
-                                  } else {
-                                    Get.snackbar("Please wait", "processing",
-                                        colorText: defaultTextColor,
-                                        snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor: snackColor);
-                                    processMomoWithdrawal();
-                                  }
-                                }
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              elevation: 8,
-                              child: const Text(
-                                "Save",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ),
-                              fillColor: primaryColor,
-                              splashColor: defaultColor,
-                            ),
+                        onPressed: () {
+                          _startPosting();
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          } else {
+                            if (_currentSelectedType ==
+                                "Select Withdraw Type" ||
+                                _currentSelectedNetwork ==
+                                    "Select Network" ) {
+                              Get.snackbar("Bank Error",
+                                  "Please select all necessary items from the dropdowns",
+                                  colorText: Colors.white,
+                                  backgroundColor: Colors.red,
+                                  snackPosition: SnackPosition.BOTTOM);
+                              return;
+                            } else {
+                              Get.snackbar("Please wait", "processing",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: snackColor);
+                              processMomoWithdrawal();
+                            }
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        elevation: 8,
+                        fillColor: primaryColor,
+                        splashColor: defaultColor,
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),
+                        ),
+                      ),
                     ],
                   )
                 ],
@@ -1108,9 +912,4 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
-  void _onDropDownItemSelectedIdTypes(newValueSelected) {
-    setState(() {
-      _currentSelectedIdType = newValueSelected;
-    });
-  }
 }

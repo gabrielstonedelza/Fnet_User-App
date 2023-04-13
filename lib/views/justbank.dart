@@ -1,28 +1,23 @@
 import 'dart:convert';
-import 'package:direct_dialer/direct_dialer.dart';
+
 import 'package:flutter/material.dart';
-import 'package:fnet_new/deposits/bankdeposit.dart';
-import 'package:fnet_new/deposits/expensedeposit.dart';
-import 'package:fnet_new/deposits/momodeposit.dart';
-import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/searchmomotransactions.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:ussd_advanced/ussd_advanced.dart';
+import 'package:get/get.dart';
 
+import '../deposits/bankdeposit.dart';
 import '../deposits/cashdepositrequests.dart';
-import 'justbank.dart';
-import 'justmomo.dart';
+import '../deposits/expensedeposit.dart';
+import '../static/app_colors.dart';
 
-class Deposits extends StatefulWidget {
-  const Deposits({Key? key}) : super(key: key);
+class BankDeposits extends StatefulWidget {
+  const BankDeposits({Key? key}) : super(key: key);
 
   @override
-  State<Deposits> createState() => _DepositsState();
+  State<BankDeposits> createState() => _BankDepositsState();
 }
 
-class _DepositsState extends State<Deposits> {
+class _BankDepositsState extends State<BankDeposits> {
   final storage = GetStorage();
   bool hasAccountsToday = false;
   bool isLoading = true;
@@ -250,18 +245,11 @@ class _DepositsState extends State<Deposits> {
     fetchUserPayments();
     fetchUserCashPayments();
   }
-
-
-  // Future<void> dialCashInMtn(String customerNumber,String amount) async {
-  //   UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Deposit type"),
+        title: const Text("Deposit"),
         backgroundColor: primaryColor,
       ),
       body: isLoading ? const Center(
@@ -269,27 +257,45 @@ class _DepositsState extends State<Deposits> {
           strokeWidth: 5,
           color: secondaryColor,
         ),
-      ) :  Column(
+      ) :  ListView(
         children: [
           const SizedBox(height: 40,),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 child: GestureDetector(
+                  onTap: (){
+                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
+                        colorText: defaultTextColor,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red
+                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
+                        colorText: defaultTextColor,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red
+                    ):
+                    Get.to(()=> const BankDeposit());
+                  },
                   child: Column(
                     children: [
                       Image.asset("assets/images/bank.png",width: 70,height: 70,),
                       const SizedBox(height: 10,),
-                      const Text("Bank"),
+                      const Text("Bank Deposit"),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  child: Column(
+                    children: [
+                      Image.asset("assets/images/deposit.png",width: 70,height: 70,),
+                      const SizedBox(height: 10,),
+                      const Text("Expense Request"),
                     ],
                   ),
                   onTap: (){
-                    hasAccountsToday ? Get.to(()=> const BankDeposits()): Get.snackbar("Error", "Please add momo accounts for today first",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    );
+                    Get.to(()=> const UserExpenseRequest());
                   },
                 ),
               ),
@@ -297,22 +303,30 @@ class _DepositsState extends State<Deposits> {
                 child: GestureDetector(
                   child: Column(
                     children: [
-                      Image.asset("assets/images/momo.png",width: 70,height: 70,),
+                      Image.asset("assets/images/cash-on-delivery.png",width: 70,height: 70,),
                       const SizedBox(height: 10,),
-                      const Text("Momo"),
+                      const Text("Cash Request"),
                     ],
                   ),
                   onTap: (){
-                    hasAccountsToday ? Get.to(()=> const MomoDeposits()): Get.snackbar("Error", "Please add momo accounts for today first",
+                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
-                    );
+                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
+                        colorText: defaultTextColor,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red
+                    ): Get.to(()=> const CashDepositRequests());
                   },
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 20,),
+          const Divider(),
+          const SizedBox(height: 20,),
+
         ],
       ),
     );

@@ -6,6 +6,7 @@ import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../sendsms.dart';
 
@@ -48,8 +49,8 @@ class _MomoDepositState extends State<MomoDeposit> {
 
   final List depositTypes = [
     "Select Deposit Type",
-    "Loading",
-    "Direct",
+    "Customer",
+    "Merchant",
     "Agent to Agent",
   ];
 
@@ -68,10 +69,20 @@ class _MomoDepositState extends State<MomoDeposit> {
   bool isDirect = false;
 
   bool isLoading = true;
-  Future<void> dialMtn() async {
-    final dialer = await DirectDialer.instance;
-    await dialer.dial('*171\%23#');
+
+  Future<void> dialCashInMtn(String customerNumber,String amount) async {
+    UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
   }
+
+  Future<void> dialPayToAgent(String customerNumber,String amount) async {
+    UssdAdvanced.multisessionUssd(code: "*171*1*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  }
+
+  Future<void> dialPayToMerchant(String customerNumber,String amount) async {
+    UssdAdvanced.multisessionUssd(code: "*171*1*2*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  }
+
+
   Future<void> dialTigo() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
@@ -137,8 +148,18 @@ class _MomoDepositState extends State<MomoDeposit> {
       }
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
-        dialMtn();
-        Get.back();
+        if(_currentSelectedType == "Customer" && _currentSelectedNetwork == "Mtn"){
+          dialCashInMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
+          Get.back();
+        }
+        if(_currentSelectedType == "Merchant" && _currentSelectedNetwork == "Mtn"){
+          dialPayToMerchant(_customerPhoneController.text.trim(),_amountController.text.trim());
+          Get.back();
+        }
+        if(_currentSelectedType == "Agent to Agent" && _currentSelectedNetwork == "Mtn"){
+          dialPayToAgent(_customerPhoneController.text.trim(),_amountController.text.trim());
+          Get.back();
+        }
       }
       if(_currentSelectedNetwork == "Vodafone"){
         dialVodafone();
@@ -227,7 +248,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                       decoration: InputDecoration(
                           prefixIcon:
                           const Icon(Icons.person, color: secondaryColor),
-                          labelText: "Enter customer number",
+                          labelText: "Customer or agent number",
                           labelStyle: const TextStyle(color: secondaryColor),
                           focusColor: primaryColor,
                           fillColor: primaryColor,
@@ -240,7 +261,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Please enter customer number";
+                          return "Please enter phone number";
                         }
                       },
                     ),
@@ -321,7 +342,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                           }).toList(),
                           onChanged: (newValueSelected) {
                             _onDropDownItemSelectedDepositTypes(newValueSelected);
-                            if(newValueSelected == "Direct") {
+                            if(newValueSelected == "Customer") {
                               setState(() {
                                 isDirect = true;
                               });

@@ -58,6 +58,8 @@ dependencies:
   grouped_list: ^5.1.2
   animate_do:
   get_time_ago: ^1.1.6
+  ussd_advanced: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:
