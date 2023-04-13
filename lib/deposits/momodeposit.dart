@@ -34,11 +34,9 @@ class _MomoDepositState extends State<MomoDeposit> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController = TextEditingController();
   late final TextEditingController _customerPhoneController = TextEditingController();
-  // late final TextEditingController _customerNameController = TextEditingController();
-  late final TextEditingController _agentCommissionController = TextEditingController();
-  late final TextEditingController _chargesController = TextEditingController();
   late final TextEditingController _depositorNameController = TextEditingController();
   late final TextEditingController _depositorPhoneController = TextEditingController();
+  late final TextEditingController _referenceController = TextEditingController();
 
   final List mobileMoneyNetworks = [
     "Select Network",
@@ -51,7 +49,7 @@ class _MomoDepositState extends State<MomoDeposit> {
     "Select Deposit Type",
     "Customer",
     "Merchant",
-    "Agent to Agent",
+    "Agent",
   ];
 
   var _currentSelectedNetwork = "Select Network";
@@ -70,16 +68,16 @@ class _MomoDepositState extends State<MomoDeposit> {
 
   bool isLoading = true;
 
-  Future<void> dialCashInMtn(String customerNumber,String amount) async {
-    UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  Future<void> dialCashInMtn(String customerNumber,String amount,String reference) async {
+    UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount*$reference#",subscriptionId: 1);
   }
 
-  Future<void> dialPayToAgent(String customerNumber,String amount) async {
-    UssdAdvanced.multisessionUssd(code: "*171*1*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  Future<void> dialPayToAgent(String customerNumber,String amount,String reference) async {
+    UssdAdvanced.multisessionUssd(code: "*171*1*1*$customerNumber*$customerNumber*$amount*$reference#",subscriptionId: 1);
   }
 
-  Future<void> dialPayToMerchant(String customerNumber,String amount) async {
-    UssdAdvanced.multisessionUssd(code: "*171*1*2*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  Future<void> dialPayToMerchant(String merchantId,String amount,String reference) async {
+    UssdAdvanced.multisessionUssd(code: "*171*1*2*$merchantId*$amount*$reference#",subscriptionId: 1);
   }
 
 
@@ -100,15 +98,13 @@ class _MomoDepositState extends State<MomoDeposit> {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Token $uToken"
     }, body: {
-      "customer_phone": _customerPhoneController.text,
-      // "customer_name": _customerNameController.text,
-      "depositor_name": _depositorNameController.text,
-      "depositor_number": _depositorPhoneController.text,
+      "customer_phone": _customerPhoneController.text.trim(),
+      "reference": _referenceController.text.trim(),
+      "depositor_name": _depositorNameController.text.trim(),
+      "depositor_number": _depositorPhoneController.text.trim(),
       "network": _currentSelectedNetwork,
       "type": _currentSelectedType,
-      "amount": _amountController.text,
-      "charges": _chargesController.text,
-      "agent_commission": _agentCommissionController.text,
+      "amount": _amountController.text.trim(),
     });
 
     if (res.statusCode == 201) {
@@ -149,15 +145,15 @@ class _MomoDepositState extends State<MomoDeposit> {
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
         if(_currentSelectedType == "Customer" && _currentSelectedNetwork == "Mtn"){
-          dialCashInMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
+          dialCashInMtn(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
           Get.back();
         }
         if(_currentSelectedType == "Merchant" && _currentSelectedNetwork == "Mtn"){
-          dialPayToMerchant(_customerPhoneController.text.trim(),_amountController.text.trim());
+          dialPayToMerchant(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
           Get.back();
         }
-        if(_currentSelectedType == "Agent to Agent" && _currentSelectedNetwork == "Mtn"){
-          dialPayToAgent(_customerPhoneController.text.trim(),_amountController.text.trim());
+        if(_currentSelectedType == "Agent" && _currentSelectedNetwork == "Mtn"){
+          dialPayToAgent(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
           Get.back();
         }
       }
@@ -266,34 +262,6 @@ class _MomoDepositState extends State<MomoDeposit> {
                       },
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(bottom: 10.0),
-                  //   child: TextFormField(
-                  //     // controller: _customerNameController,
-                  //     cursorColor: primaryColor,
-                  //     cursorRadius: const Radius.elliptical(10, 10),
-                  //     cursorWidth: 10,
-                  //     decoration: InputDecoration(
-                  //         prefixIcon:
-                  //         const Icon(Icons.person, color: secondaryColor),
-                  //         labelText: "Enter customer name",
-                  //         labelStyle: const TextStyle(color: secondaryColor),
-                  //         focusColor: primaryColor,
-                  //         fillColor: primaryColor,
-                  //         focusedBorder: OutlineInputBorder(
-                  //             borderSide: const BorderSide(
-                  //                 color: primaryColor, width: 2),
-                  //             borderRadius: BorderRadius.circular(12)),
-                  //         border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(12))),
-                  //     keyboardType: TextInputType.text,
-                  //     validator: (value) {
-                  //       if (value!.isEmpty) {
-                  //         return "Please enter customer name";
-                  //       }
-                  //     },
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Container(
@@ -428,164 +396,13 @@ class _MomoDepositState extends State<MomoDeposit> {
                             hasAmount = false;
                           });
                         }
-                        if(_currentSelectedType == "Direct"){
-                          if(int.parse(value) > 0 && int.parse(value) <= 50){
-                            setState(() {
-                              _agentCommissionController.text = .50.toString();
-                              _chargesController.text = .50.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 51 && int.parse(value) <= 1000){
-                            setState(() {
-                              var charges = double.parse(value) / 100;
-                              var agentcommission = double.parse(value) / 100;
-                              _agentCommissionController.text = agentcommission.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 1000 && int.parse(value) <= 2900){
-                            setState(() {
-                              int charges = 10;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 3000 && int.parse(value) <= 3900){
-                            setState(() {
-                              int charges = 15;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 4000 && int.parse(value) <= 4900){
-                            setState(() {
-                              int charges = 20;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 5000 && int.parse(value) <= 5900){
-                            setState(() {
-                              int charges = 25;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 6000 && int.parse(value) <= 6900){
-                            setState(() {
-                              int charges = 30;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 7000 && int.parse(value) <= 7900){
-                            setState(() {
-                              int charges = 35;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 8000 && int.parse(value) <= 8900){
-                            setState(() {
-                              int charges = 40;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 9000 && int.parse(value) <= 9999){
-                            setState(() {
-                              int charges = 45;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 10000){
-                            setState(() {
-                              int charges = 50;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                        }
-                      //  agent to agent
-                        if(_currentSelectedType == "Agent to Agent"){
-                          if(int.parse(value) >= 1000 && int.parse(value) <= 2900){
-                            setState(() {
-                              int charges = 10;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 3000 && int.parse(value) <= 3900){
-                            setState(() {
-                              int charges = 15;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 4000 && int.parse(value) <= 4900){
-                            setState(() {
-                              int charges = 20;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 5000 && int.parse(value) <= 5900){
-                            setState(() {
-                              int charges = 25;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 6000 && int.parse(value) <= 6900){
-                            setState(() {
-                              int charges = 30;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 7000 && int.parse(value) <= 7900){
-                            setState(() {
-                              int charges = 35;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 8000 && int.parse(value) <= 8900){
-                            setState(() {
-                              int charges = 40;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 9000 && int.parse(value) <= 9999){
-                            setState(() {
-                              int charges = 45;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                          if(int.parse(value) >= 10000){
-                            setState(() {
-                              int charges = 50;
-                              _agentCommissionController.text = charges.toString();
-                              _chargesController.text = charges.toString();
-                            });
-                          }
-                        }
-                        if(_currentSelectedType == "Regular"){
-                          setState(() {
-                            isRegular = true;
-                          });
-                        }
                       },
                       controller: _amountController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
                       decoration: InputDecoration(
-                          prefixIcon:
-                          const Icon(Icons.person, color: secondaryColor),
+
                           labelText: "Enter amount",
                           labelStyle: const TextStyle(color: secondaryColor),
                           focusColor: primaryColor,
@@ -604,60 +421,34 @@ class _MomoDepositState extends State<MomoDeposit> {
                       },
                     ),
                   ),
-                hasAmount ?  Column(
-                    children: [
-                     !isRegular ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _agentCommissionController,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                              prefixIcon:
-                              const Icon(Icons.person, color: secondaryColor),
-                              labelText: "Agent Commission",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.text,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: TextFormField(
+                      controller: _referenceController,
+                      cursorColor: primaryColor,
+                      cursorRadius: const Radius.elliptical(10, 10),
+                      cursorWidth: 10,
+                      decoration: InputDecoration(
 
-                        ),
-                      ):Container(),
-                      !isRegular ?  Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _chargesController,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                              prefixIcon:
-                              const Icon(Icons.person, color: secondaryColor),
-                              labelText: "Charges",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.text,
+                          labelText: "Enter reference",
+                          labelStyle: const TextStyle(color: secondaryColor),
+                          focusColor: primaryColor,
+                          fillColor: primaryColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: primaryColor, width: 2),
+                              borderRadius: BorderRadius.circular(12)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please enter reference";
+                        }
+                      },
+                    ),
+                  ),
 
-                        ),
-                      ):Container(),
-                    ],
-                  ):Container(),
                   const SizedBox(
                     height: 20,
                   ),

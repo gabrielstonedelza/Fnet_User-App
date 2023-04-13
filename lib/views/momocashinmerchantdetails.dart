@@ -1,54 +1,29 @@
-import 'dart:convert';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart' as http;
 
-class CashRequestFromDetails extends StatefulWidget {
-  final date_requested;
-  const CashRequestFromDetails({Key? key,required this.date_requested}) : super(key: key);
+class MomoCashInMerchantsDetails extends StatefulWidget {
+  final date_deposited;
+  final merchantCashIn;
+  const MomoCashInMerchantsDetails({Key? key,required this.date_deposited,required this.merchantCashIn}) : super(key: key);
 
   @override
-  State<CashRequestFromDetails> createState() => _CashRequestFromDetailsState(date_requested:this.date_requested);
+  State<MomoCashInMerchantsDetails> createState() => _MomoCashInMerchantsDetailsState(date_deposited:this.date_deposited,merchantCashIn:this.merchantCashIn);
 }
 
-class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
-  final date_requested;
-  _CashRequestFromDetailsState({required this.date_requested});
-  List allCashRequestsFrom = [];
-  List allCashRequestFromDates = [];
-  var itemsFrom;
+class _MomoCashInMerchantsDetailsState extends State<MomoCashInMerchantsDetails> {
+  final date_deposited;
+  final merchantCashIn;
+  _MomoCashInMerchantsDetailsState({required this.date_deposited,required this.merchantCashIn});
+  List allCashInForAgents = [];
+  var items;
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
   late String username = "";
   double sum = 0.0;
 
-  fetchCashRequestsFrom() async {
-    const url = "https://fnetghana.xyz/get_agent1_cash_request_all/";
-    var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": "Token $uToken"
-    },);
-
-    if (response.statusCode == 200) {
-      final codeUnits = response.body.codeUnits;
-      var jsonData = const Utf8Decoder().convert(codeUnits);
-      var agents = json.decode(jsonData);
-      allCashRequestFromDates.assignAll(agents);
-      for(var i in allCashRequestFromDates){
-        if(i['date_requested'] == date_requested){
-          allCashRequestsFrom.add(i);
-          sum = sum + double.parse(i['amount']);
-        }
-      }
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   @override
   void initState(){
@@ -63,7 +38,15 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
         username = storage.read("username");
       });
     }
-    fetchCashRequestsFrom();
+    for (var i in merchantCashIn){
+      if(i['date_deposited'] == date_deposited){
+        allCashInForAgents.add(i);
+      }
+      for(var p in allCashInForAgents){
+        sum = sum + double.parse(p['amount']);
+      }
+
+    }
   }
 
 
@@ -71,24 +54,25 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cash Requests for $date_requested"),
-        backgroundColor:primaryColor
+          title: Text("Cash in for $date_deposited"),
+          backgroundColor:primaryColor
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(),
-      ) : ListView.builder(
-        itemCount: allCashRequestsFrom != null ? allCashRequestsFrom.length : 0,
+      body:  ListView.builder(
+        itemCount: allCashInForAgents != null ? allCashInForAgents.length : 0,
         itemBuilder: (context,index){
-          itemsFrom = allCashRequestsFrom[index];
+          items = allCashInForAgents[index];
           return Card(
             elevation: 12,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
+                onTap: (){
+
+                },
                 title: Row(
                   children: [
-                    const Text("Agent1 : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                    Text(itemsFrom['get_agent1_username'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                    const Text("Customer : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                    Text(items['customer_phone'],style:const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 subtitle: Column(
@@ -98,17 +82,35 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
                       padding: const EdgeInsets.only(top:8.0),
                       child: Row(
                         children: [
-                          const Text("Agent2 : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['get_agent2_username'],style:const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:8.0),
-                      child: Row(
-                        children: [
                           const Text("Amount : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['amount'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['amount'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                    items['depositor_name'] != "" ? Padding(
+                      padding: const EdgeInsets.only(top:8.0),
+                      child: Row(
+                        children: [
+                          const Text("Depositor Name : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['depositor_name'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ): Container(),
+                    items['depositor_number'] != "" ?    Padding(
+                      padding: const EdgeInsets.only(top:8.0),
+                      child: Row(
+                        children: [
+                          const Text("Depositor # : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['depositor_number'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ) : Container(),
+                    Padding(
+                      padding: const EdgeInsets.only(top:8.0),
+                      child: Row(
+                        children: [
+                          const Text("Network : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['network'],style:const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -116,8 +118,8 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
                       padding: const EdgeInsets.only(top:8.0),
                       child: Row(
                         children: [
-                          const Text("Status : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['request_status'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                          const Text("Type : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['type'],style:const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -125,8 +127,8 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
                       padding: const EdgeInsets.only(top:8.0),
                       child: Row(
                         children: [
-                          const Text("Paid : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['request_paid'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                          const Text("Reference : ",style:TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['reference'],style:const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -135,7 +137,7 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
                       child: Row(
                         children: [
                           const Text("Date : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['date_requested'],style:const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['date_deposited'],style:const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -144,7 +146,7 @@ class _CashRequestFromDetailsState extends State<CashRequestFromDetails> {
                       child: Row(
                         children: [
                           const Text("Time : ",style:TextStyle(fontWeight: FontWeight.bold)),
-                          Text(itemsFrom['time_requested'].toString().split(".").first,style:const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(items['time_deposited'].toString().split(".").first,style:const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),

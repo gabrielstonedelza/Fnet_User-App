@@ -37,15 +37,8 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   late final TextEditingController _amountController = TextEditingController();
   late final TextEditingController _customerPhoneController =
   TextEditingController();
+  late final TextEditingController _referenceController = TextEditingController();
 
-  late final TextEditingController _mtnCommissionController =
-  TextEditingController();
-  late final TextEditingController _agentCommissionController =
-  TextEditingController();
-  late final TextEditingController _cashoutCommissionController =
-  TextEditingController();
-  late final TextEditingController _chargesController = TextEditingController();
-  late final TextEditingController _amountToPush = TextEditingController();
   bool hasAmount = false;
 
   final List mobileMoneyNetworks = [
@@ -58,13 +51,12 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   final List justMtnNetwork = [
     "Select Withdraw Type",
     'Cash Out',
-    'Agent to Agent'
+    'Agent'
   ];
 
   final List withdrawTypes = [
     "Select Withdraw Type",
     "Cash Out",
-    "Agent to Agent",
   ];
 
 
@@ -110,18 +102,20 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
-  Future<void> dialCashOutMtn(String customerNumber,String amount) async {
-    UssdAdvanced.multisessionUssd(code: "*171*2*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
+  Future<void> dialCashOutMtn(String customerNumber,String amount,String reference) async {
+    UssdAdvanced.multisessionUssd(code: "*171*2*1*$customerNumber*$customerNumber*$amount*$reference#",subscriptionId: 1);
   }
 
   Future<void> dialMtn() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*171\%23#');
   }
+
   Future<void> dialTigo() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
   }
+
   Future<void> dialVodafone() async {
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
@@ -149,11 +143,8 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     }, body: {
       "customer_phone": _customerPhoneController.text,
       "network": _currentSelectedNetwork,
-      "type": _currentSelectedType,
-      "charges": _chargesController.text,
-      "cash_out_commission": _cashoutCommissionController.text,
-      "agent_commission": _agentCommissionController.text,
-      "mtn_commission": _mtnCommissionController.text,
+      "reference": _referenceController.text.trim(),
+      // "type": _currentSelectedType,
       "amount": _amountController.text,
 
     });
@@ -199,7 +190,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
 
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
-        dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
+        dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
         Get.back();
       }
       if(_currentSelectedNetwork == "Vodafone"){
@@ -393,69 +384,69 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                           ),
                         ),
                       ),
-                      _currentSelectedNetwork == "Mtn"
-                          ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color: Colors.grey, width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10),
-                            child: DropdownButton(
-                              hint: const Text("Select Withdrawal Type"),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              // style: const TextStyle(
-                              //     color: Colors.black, fontSize: 20),
-                              items: justMtnNetwork
-                                  .map((dropDownStringItem) {
-                                return DropdownMenuItem(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedWithdrawTypes(
-                                    newValueSelected);
-                              },
-                              value: _currentSelectedType,
-                            ),
-                          ),
-                        ),
-                      )
-                          : Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color: Colors.grey, width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10),
-                            child: DropdownButton(
-                              hint: const Text("Select Withdrawal Type"),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              items:
-                              withdrawTypes.map((dropDownStringItem) {
-                                return DropdownMenuItem(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedWithdrawTypes(
-                                    newValueSelected);
-                              },
-                              value: _currentSelectedType,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // _currentSelectedNetwork == "Mtn"
+                      //     ? Padding(
+                      //   padding: const EdgeInsets.only(bottom: 10.0),
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(12),
+                      //         border: Border.all(
+                      //             color: Colors.grey, width: 1)),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.only(
+                      //           left: 10.0, right: 10),
+                      //       child: DropdownButton(
+                      //         hint: const Text("Select Withdrawal Type"),
+                      //         isExpanded: true,
+                      //         underline: const SizedBox(),
+                      //         // style: const TextStyle(
+                      //         //     color: Colors.black, fontSize: 20),
+                      //         items: justMtnNetwork
+                      //             .map((dropDownStringItem) {
+                      //           return DropdownMenuItem(
+                      //             value: dropDownStringItem,
+                      //             child: Text(dropDownStringItem),
+                      //           );
+                      //         }).toList(),
+                      //         onChanged: (newValueSelected) {
+                      //           _onDropDownItemSelectedWithdrawTypes(
+                      //               newValueSelected);
+                      //         },
+                      //         value: _currentSelectedType,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // )
+                      //     : Padding(
+                      //   padding: const EdgeInsets.only(bottom: 10.0),
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(12),
+                      //         border: Border.all(
+                      //             color: Colors.grey, width: 1)),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.only(
+                      //           left: 10.0, right: 10),
+                      //       child: DropdownButton(
+                      //         hint: const Text("Select Withdrawal Type"),
+                      //         isExpanded: true,
+                      //         underline: const SizedBox(),
+                      //         items:
+                      //         withdrawTypes.map((dropDownStringItem) {
+                      //           return DropdownMenuItem(
+                      //             value: dropDownStringItem,
+                      //             child: Text(dropDownStringItem),
+                      //           );
+                      //         }).toList(),
+                      //         onChanged: (newValueSelected) {
+                      //           _onDropDownItemSelectedWithdrawTypes(
+                      //               newValueSelected);
+                      //         },
+                      //         value: _currentSelectedType,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
 
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
@@ -471,267 +462,13 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                                 hasAmount = false;
                               });
                             }
-                            if (_currentSelectedType == "Cash Out") {
-                              if(int.parse(value) > 0 && int.parse(value) <= 50){
-                                setState(() {
-                                  _mtnCommissionController.text = 0.30.toString();
-                                  _cashoutCommissionController.text = 0.20.toString();
-                                  _chargesController.text = .50.toString();
-                                });
-                              }
-                              if(int.parse(value) >= 51 && int.parse(value) <= 1000){
-                                setState(() {
-                                  var charges = double.parse(value) / 100;
-                                  _mtnCommissionController.text = 0.60.toString();
-                                  _cashoutCommissionController.text = 0.40.toString();
-                                  _chargesController.text = charges.toString();
-                                });
-                              }
-
-                              if (int.parse(value) >= 1000 &&
-                                  int.parse(value) <= 2900) {
-                                setState(() {
-                                  int charges = 10;
-                                  var amounttopush = charges + int.parse(value);
-                                  _agentCommissionController.text =
-                                      0.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text =
-                                      charges.toString();
-                                  _cashoutCommissionController.text =
-                                      0.40.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 3000 &&
-                                  int.parse(value) <= 3900) {
-                                setState(() {
-                                  int charges = 15;
-                                  var amounttopush = 5 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      5.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 4000 &&
-                                  int.parse(value) <= 4900) {
-                                setState(() {
-                                  int charges = 20;
-                                  var amounttopush = 10 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      10.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 5000 &&
-                                  int.parse(value) <= 5900) {
-                                setState(() {
-                                  int charges = 25;
-                                  var amounttopush = 15 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      10.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 6000 &&
-                                  int.parse(value) <= 6900) {
-                                setState(() {
-                                  int charges = 30;
-                                  var amounttopush = 20 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      20.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 7000 &&
-                                  int.parse(value) <= 7900) {
-                                setState(() {
-                                  int charges = 35;
-                                  var amounttopush = 25 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      25.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 8000 &&
-                                  int.parse(value) <= 8900) {
-                                setState(() {
-                                  int charges = 40;
-                                  var amounttopush = 30 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      30.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 9000 &&
-                                  int.parse(value) <= 9999) {
-                                setState(() {
-                                  int charges = 50;
-                                  var amounttopush = 40 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      40.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 10000) {
-                                setState(() {
-                                  int charges = 50;
-                                  var amounttopush = 40 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      40.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                            }
-
-                            //  agent to agent
-                            if (_currentSelectedType == "Agent to Agent") {
-                              if (int.parse(value) > 0 &&
-                                  int.parse(value) <= 50) {
-                                setState(() {
-                                  var charges = double.parse(value) / 100;
-                                  var agentcommission =
-                                      double.parse(value) / 100;
-                                  _agentCommissionController.text =
-                                      agentcommission.toString();
-                                  _chargesController.text = charges.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 1000 &&
-                                  int.parse(value) <= 2900) {
-                                setState(() {
-                                  int charges = 10;
-                                  var amounttopush = charges + int.parse(value);
-                                  _agentCommissionController.text =
-                                      0.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text =
-                                      charges.toString();
-                                  _cashoutCommissionController.text =
-                                      0.40.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 3000 &&
-                                  int.parse(value) <= 3900) {
-                                setState(() {
-                                  int charges = 15;
-                                  var amounttopush = 5 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      5.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 4000 &&
-                                  int.parse(value) <= 4900) {
-                                setState(() {
-                                  int charges = 20;
-                                  var amounttopush = 10 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      10.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 5000 &&
-                                  int.parse(value) <= 5900) {
-                                setState(() {
-                                  int charges = 25;
-                                  var amounttopush = 15 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      10.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 6000 &&
-                                  int.parse(value) <= 6900) {
-                                setState(() {
-                                  int charges = 30;
-                                  var amounttopush = 20 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      20.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 7000 &&
-                                  int.parse(value) <= 7900) {
-                                setState(() {
-                                  int charges = 35;
-                                  var amounttopush = 25 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      25.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 8000 &&
-                                  int.parse(value) <= 8900) {
-                                setState(() {
-                                  int charges = 40;
-                                  var amounttopush = 30 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      30.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 9000 &&
-                                  int.parse(value) <= 9999) {
-                                setState(() {
-                                  int charges = 50;
-                                  var amounttopush = 40 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      40.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                              if (int.parse(value) >= 10000) {
-                                setState(() {
-                                  int charges = 50;
-                                  var amounttopush = 40 + int.parse(value);
-                                  _agentCommissionController.text =
-                                      40.toString();
-                                  _chargesController.text = charges.toString();
-                                  _amountToPush.text = amounttopush.toString();
-                                  _mtnCommissionController.text = 10.toString();
-                                });
-                              }
-                            }
                           },
                           controller: _amountController,
                           cursorColor: primaryColor,
                           cursorRadius: const Radius.elliptical(10, 10),
                           cursorWidth: 10,
                           decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.person,
-                                  color: secondaryColor),
+
                               labelText: "Enter amount",
                               labelStyle:
                               const TextStyle(color: secondaryColor),
@@ -751,96 +488,34 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                           },
                         ),
                       ),
-                      hasAmount
-                          ? Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              controller: _amountToPush,
-                              cursorColor: primaryColor,
-                              cursorRadius:
-                              const Radius.elliptical(10, 10),
-                              cursorWidth: 10,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.person,
-                                      color: secondaryColor),
-                                  labelText: "Amount to push",
-                                  labelStyle: const TextStyle(
-                                      color: secondaryColor),
-                                  focusColor: primaryColor,
-                                  fillColor: primaryColor,
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: primaryColor, width: 2),
-                                      borderRadius:
-                                      BorderRadius.circular(12)),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(12))),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              controller: _agentCommissionController,
-                              cursorColor: primaryColor,
-                              cursorRadius:
-                              const Radius.elliptical(10, 10),
-                              cursorWidth: 10,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.person,
-                                      color: secondaryColor),
-                                  labelText: "Agent Commission",
-                                  labelStyle: const TextStyle(
-                                      color: secondaryColor),
-                                  focusColor: primaryColor,
-                                  fillColor: primaryColor,
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: primaryColor, width: 2),
-                                      borderRadius:
-                                      BorderRadius.circular(12)),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(12))),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              controller: _chargesController,
-                              cursorColor: primaryColor,
-                              cursorRadius:
-                              const Radius.elliptical(10, 10),
-                              cursorWidth: 10,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.person,
-                                      color: secondaryColor),
-                                  labelText: "Charges",
-                                  labelStyle: const TextStyle(
-                                      color: secondaryColor),
-                                  focusColor: primaryColor,
-                                  fillColor: primaryColor,
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: primaryColor, width: 2),
-                                      borderRadius:
-                                      BorderRadius.circular(12)),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(12))),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                        ],
-                      )
-                          : Container(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          controller: _referenceController,
+                          cursorColor: primaryColor,
+                          cursorRadius: const Radius.elliptical(10, 10),
+                          cursorWidth: 10,
+                          decoration: InputDecoration(
+
+                              labelText: "Enter reference",
+                              labelStyle: const TextStyle(color: secondaryColor),
+                              focusColor: primaryColor,
+                              fillColor: primaryColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: primaryColor, width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter reference";
+                            }
+                          },
+                        ),
+                      ),
+
                       const SizedBox(
                         height: 20,
                       ),

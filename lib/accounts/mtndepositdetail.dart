@@ -131,13 +131,7 @@ class _MtnDepositSummaryDetailState extends State<MtnDepositSummaryDetail> {
                                     Text(items['amount'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    const Text("Commission: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
-                                    Text(items['agent_commission'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
-                                  ],
-                                ),
                                 Row(
                                   children: [
                                     const Text("Date Deposited: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),

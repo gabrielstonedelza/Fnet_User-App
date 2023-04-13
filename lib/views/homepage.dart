@@ -20,6 +20,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:ussd_advanced/ussd_advanced.dart';
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../sendsms.dart';
@@ -68,6 +69,13 @@ class _HomePageState extends State<HomePage> {
   late List triggeredNotifications = [];
   late List allNotifications = [];
   late List allNots = [];
+
+  Future<void> checkMtnCommission() async {
+    UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
+  }
+  Future<void> checkMtnBalance() async {
+    UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
+  }
 
   fetchAllUserBankRequests() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
@@ -890,10 +898,75 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: GestureDetector(
                       child: Column(
-                        children: [],
+                        children: [
+                          Image.asset(
+                            "assets/images/commission1.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Commission"),
+                        ],
                       ),
                       onTap: () {
-                        // Get.to(() => const Reports());
+                        checkMtnCommission();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/law.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Balance"),
+                        ],
+                      ),
+                      onTap: () {
+                        checkMtnBalance();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+
+                        ],
+                      ),
+                      onTap: () {
+                        // Get.to(() => const AllMyCashPayments());
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+
+                        ],
+                      ),
+                      onTap: () {
+                        // Get.to(() => const AllMyCashPayments());
                       },
                     ),
                   ),

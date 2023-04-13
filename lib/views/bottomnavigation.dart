@@ -14,6 +14,7 @@ import 'closeappfortheday.dart';
 import 'depositrequest.dart';
 import 'homepage.dart';
 import 'loginview.dart';
+import 'momopage.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   bool isClosingTime = false;
   int selectedIndex = 0;
   bool isBlocked = false;
-  final List _pages = [const HomePage(),const Deposits(),const WithdrawalPage(),const PaymentsAvailable()];
+  final List _pages = [const HomePage(),const MomoPage(),const Deposits(),const PaymentsAvailable()];
   void onSelectedIndex(int index){
     setState(() {
       selectedIndex = index;
@@ -82,49 +83,49 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   }
 
   void checkTheTime(){
-    var hour = DateTime.now().hour;
-    switch (hour) {
-      case 20:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 21:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 22:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 23:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 00:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 01:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 02:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 03:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 04:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 05:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-    }
+    // var hour = DateTime.now().hour;
+    // switch (hour) {
+    //   case 20:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 21:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 22:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 23:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 00:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 01:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 02:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 03:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 04:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 05:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    // }
   }
   @override
   void initState(){
@@ -154,8 +155,8 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   Widget build(BuildContext context) {
     final items = <Widget>[
       const Icon(Icons.home,size:30),
+      Image.asset("assets/images/momo.png",width: 30,height: 30,),
       Image.asset("assets/images/deposit.png",width: 30,height: 30,),
-      Image.asset("assets/images/money-withdrawal.png",width: 30,height: 30,),
       Image.asset("assets/images/cashless-payment.png",width: 30,height: 30,),
       // Image.asset("assets/images/user.png",width: 30,height: 30,),
     ];

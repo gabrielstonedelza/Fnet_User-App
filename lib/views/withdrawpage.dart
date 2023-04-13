@@ -24,7 +24,6 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
   late String username = "";
 
 
-
   @override
   void initState() {
     // TODO: implement initState

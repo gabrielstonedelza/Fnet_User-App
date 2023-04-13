@@ -131,13 +131,7 @@ class _MtnWithdrawalSummaryDetailState extends State<MtnWithdrawalSummaryDetail>
                                     Text(items['amount'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    const Text("Commission: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
-                                    Text(items['agent_commission'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
-                                  ],
-                                ),
                                 Row(
                                   children: [
                                     const Text("Withdrawal date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),

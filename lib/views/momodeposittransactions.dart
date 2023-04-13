@@ -6,15 +6,18 @@ import 'package:http/http.dart' as http;
 import '../static/app_colors.dart';
 import 'cashrequestfromdetails.dart';
 import 'cashrequesttodetails.dart';
+import 'momocashinagentsdetails.dart';
+import 'momocashincustomerdetail.dart';
+import 'momocashinmerchantdetails.dart';
 
-class MomoWithdrawTransactions extends StatefulWidget {
-  const MomoWithdrawTransactions({Key? key}) : super(key: key);
+class MomoDepositsTransactions extends StatefulWidget {
+  const MomoDepositsTransactions({Key? key}) : super(key: key);
 
   @override
-  State<MomoWithdrawTransactions> createState() => _MomoWithdrawTransactionsState();
+  State<MomoDepositsTransactions> createState() => _MomoDepositsTransactionsState();
 }
 
-class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
+class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
   late List allMomoDeposits = [];
   List allCashInForCustomers = [];
   List allCashInForCustomersDates = [];
@@ -23,8 +26,9 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
   List allCashInForMerchants = [];
   List allCashInForMerchantsDates = [];
 
-  var itemsTo;
-  var itemsFrom;
+  var customersItem;
+  var agentItems;
+  var merchantItems;
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
@@ -45,20 +49,35 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       var agents = json.decode(jsonData);
       allMomoDeposits.assignAll(agents);
-      for(var i in allCashInForCustomers){
+      for(var i in allMomoDeposits){
         if(i['type'] == "Customer"){
           if(!allCashInForCustomers.contains(i)){
             allCashInForCustomers.add(i);
+            for(var t in allCashInForCustomers){
+              if(!allCashInForCustomersDates.contains(t['date_deposited'])){
+                allCashInForCustomersDates.add(t['date_deposited']);
+              }
+            }
           }
         }
         if(i['type'] == "Merchant"){
           if(!allCashInForMerchants.contains(i)){
             allCashInForMerchants.add(i);
+            for(var t in allCashInForMerchants){
+              if(!allCashInForMerchantsDates.contains(t['date_deposited'])){
+                allCashInForMerchantsDates.add(t['date_deposited']);
+              }
+            }
           }
         }
         if(i['type'] == "Agent"){
           if(!allCashInForAgents.contains(i)){
             allCashInForAgents.add(i);
+            for(var t in allCashInForAgents){
+              if(!allCashInForAgentsDates.contains(t['date_deposited'])){
+                allCashInForAgentsDates.add(t['date_deposited']);
+              }
+            }
           }
         }
       }
@@ -82,7 +101,6 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
       });
     }
     fetchAllMyMomoDeposits();
-
   }
 
   @override
@@ -98,20 +116,44 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: primaryColor,
-            bottom: const TabBar(
+            bottom: TabBar(
               tabs: [
-                Tab(child: Text("Customers",style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white)),),
-                Tab(child: Text("Agents",style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white)),),
-                Tab(child: Text("Merchants",style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white)),),
+                Tab(child: Column(
+                  children: [
+                    const Text("Customers",style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white)),
+                    Text("(${allCashInForCustomers.length})",style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white))
+                  ],
+                ),),
+                Tab(child: Column(
+                  children: [
+                    const Text("Agents",style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white)),
+                    Text("(${allCashInForAgents.length})",style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white)),
+                  ],
+                ),),
+                Tab(child: Column(
+                  children: [
+                    const Text("Merchants",style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white)),
+                    Text("(${allCashInForMerchants.length})",style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white)),
+                  ],
+                ),),
               ],
             ),
             title: const Text('Momo Cash In Transactions'),
@@ -121,7 +163,7 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
               ListView.builder(
                 itemCount: allCashInForCustomersDates != null ? allCashInForCustomersDates.length : 0,
                 itemBuilder: (BuildContext context, int index) {
-                  itemsFrom = allCashInForCustomersDates[index];
+                  customersItem = allCashInForCustomersDates[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -133,7 +175,7 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
                           onTap: (){
-                            Get.to(() => CashRequestFromDetails(date_requested:allCashInForCustomersDates[index]));
+                            Get.to(() => MomoCashInCustomersDetails(date_deposited:allCashInForCustomersDates[index],customersCashIn:allCashInForCustomers));
                           },
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -143,7 +185,7 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
                                 fontSize: 18,
                               )),
                               const SizedBox(width:10),
-                              Text(itemsFrom,style: const TextStyle(
+                              Text(customersItem,style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               )),
@@ -157,7 +199,7 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
               ListView.builder(
                 itemCount: allCashInForAgentsDates != null ? allCashInForAgentsDates.length : 0,
                 itemBuilder: (BuildContext context, int index) {
-                  itemsTo = allCashInForAgentsDates[index];
+                  agentItems = allCashInForAgentsDates[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -169,7 +211,7 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
                           onTap: (){
-                            Get.to(() => CashRequestToDetails(date_requested:allCashInForCustomersDates[index]));
+                            Get.to(() => MomoCashInAgentsDetails(date_deposited:allCashInForCustomersDates[index],agentCashIn:allCashInForAgents));
                           },
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -179,7 +221,43 @@ class _MomoWithdrawTransactionsState extends State<MomoWithdrawTransactions> {
                                 fontSize: 18,
                               )),
                               const SizedBox(width:10),
-                              Text(itemsTo,style: const TextStyle(
+                              Text(agentItems,style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              )),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },),
+              ListView.builder(
+                itemCount: allCashInForMerchantsDates != null ? allCashInForMerchantsDates.length : 0,
+                itemBuilder: (BuildContext context, int index) {
+                  merchantItems = allCashInForMerchantsDates[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 12,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          onTap: (){
+                            Get.to(() => MomoCashInMerchantsDetails(date_deposited:allCashInForCustomersDates[index],merchantCashIn:allCashInForMerchants));
+                          },
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text("Date :",style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              )),
+                              const SizedBox(width:10),
+                              Text(merchantItems,style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               )),
