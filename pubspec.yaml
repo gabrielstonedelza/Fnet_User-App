@@ -51,7 +51,11 @@ dependencies:
   new_version: ^0.3.0
   lottie: ^1.2.2
 
-  modal_bottom_sheet: ^2.0.1
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/CoolDude53/modal_bottom_sheet.git
+      ref: main
+      path: modal_bottom_sheet
   font_awesome_flutter: ^10.1.0
   google_fonts:
   water_drop_nav_bar: ^2.2.0+3
@@ -59,6 +63,8 @@ dependencies:
   animate_do:
   get_time_ago: ^1.1.6
   ussd_advanced: ^1.0.0
+
+
 
 
 dev_dependencies:

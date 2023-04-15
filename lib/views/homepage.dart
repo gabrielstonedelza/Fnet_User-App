@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:age_calculator/age_calculator.dart';
+import 'package:badges/badges.dart' as badge;
 import 'package:badges/badges.dart';
 import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
@@ -39,11 +40,206 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String username = "";
   final storage = GetStorage();
-  bool hasToken = false;
-  late String uToken = "";
   bool hasAccountsToday = false;
+  bool isLoading = true;
+  late String uToken = "";
+  late List allPaymentTotal = [];
+  late List allCashPaymentTotal = [];
+  late List allBankPending = [];
+  late List allCashPending = [];
+  late String username = "";
+  bool hasBankPaymentNotApproved = false;
+  bool hasCashPaymentNotApproved = false;
+  bool needApproval = false;
+  int notPaidBankCount = 0;
+  int notPaidCashCount = 0;
+  late List pendingBankLists = [];
+  late List pendingCashLists = [];
+  late List allUserBankRequests = [];
+  late List allUserCashRequests = [];
+  late List bankAmounts = [];
+  late List cashAmounts = [];
+  double bankSum = 0.0;
+  double cashSum = 0.0;
+  late List allUserBankPayments = [];
+  late List allUserCashPayments = [];
+  bool hasUnpaidBankRequests = false;
+  bool hasUnpaidCashRequests = false;
+  late List bankNotPaid = [];
+  late List cashNotPaid = [];
+  late List amountsBankPayments = [];
+  late List amountsCashPayments = [];
+  double sumBankPayment = 0.0;
+  double sumCashPayment = 0.0;
+
+  fetchBankPaymentTotal()async{
+    const url = "https://fnetghana.xyz/payment_summary/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allPaymentTotal = json.decode(jsonData);
+      for(var i in allPaymentTotal){
+        allBankPending.add(i['payment_status']);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+    if(allBankPending.contains("Pending")){
+      setState(() {
+        hasBankPaymentNotApproved = true;
+      });
+    }
+    for(var pp in allBankPending){
+      if(pp == "Pending"){
+        pendingBankLists.add(pp);
+      }
+    }
+    if(pendingBankLists.length == 3){
+      setState(() {
+        notPaidBankCount = 3;
+        needApproval = true;
+      });
+    }
+  }
+  fetchCashPaymentTotal()async{
+    const url = "https://fnetghana.xyz/cash_payment_summary/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allCashPaymentTotal = json.decode(jsonData);
+      for(var i in allCashPaymentTotal){
+        allCashPending.add(i['payment_status']);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+    if(allCashPending.contains("Pending")){
+      setState(() {
+        hasCashPaymentNotApproved = true;
+      });
+    }
+    for(var pp in allCashPending){
+      if(pp == "Pending"){
+        pendingCashLists.add(pp);
+      }
+    }
+    if(pendingCashLists.length == 3){
+      setState(() {
+        notPaidCashCount = 3;
+        needApproval = true;
+      });
+    }
+  }
+  fetchUserBankRequestsToday()async{
+    const url = "https://fnetghana.xyz/get_bank_total_today/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserBankRequests = json.decode(jsonData);
+      bankAmounts.assignAll(allUserBankRequests);
+      for(var i in bankAmounts){
+        bankSum = bankSum + double.parse(i['amount']);
+        bankNotPaid.add(i['deposit_paid']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserBankRequests = allUserBankRequests;
+      if(bankNotPaid.contains("Not Paid")){
+        hasUnpaidBankRequests = true;
+      }
+    });
+  }
+  fetchUserCashRequestsToday()async{
+    const url = "https://fnetghana.xyz/get_cash_requests_for_today/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserCashRequests = json.decode(jsonData);
+      cashAmounts.assignAll(allUserCashRequests);
+      for(var i in cashAmounts){
+        cashSum = cashSum + double.parse(i['amount']);
+        cashNotPaid.add(i['deposit_paid']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserCashRequests = allUserCashRequests;
+      if(cashNotPaid.contains("Not Paid")){
+        hasUnpaidCashRequests = true;
+      }
+    });
+  }
+
+  fetchUserPayments()async{
+    const url = "https://fnetghana.xyz/get_payment_approved_total/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserBankPayments = json.decode(jsonData);
+      amountsBankPayments.assignAll(allUserBankPayments);
+      for(var i in amountsBankPayments){
+        sumBankPayment = sumBankPayment + double.parse(i['amount']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserBankPayments = allUserBankPayments;
+    });
+  }
+  fetchUserCashPayments()async{
+    const url = "https://fnetghana.xyz/get_cash_payment_approved_total/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if(response.statusCode ==200){
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allUserCashPayments = json.decode(jsonData);
+      amountsCashPayments.assignAll(allUserCashPayments);
+      for(var i in amountsCashPayments){
+        sumCashPayment = sumCashPayment + double.parse(i['amount']);
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+      allUserCashPayments = allUserCashPayments;
+    });
+  }
   late List hasBirthDayInFive = [];
   late List hasBirthDayToday = [];
   late List todaysBirthdayPhones = [];
@@ -51,7 +247,6 @@ class _HomePageState extends State<HomePage> {
   bool hasbdintoday = false;
   late List allCustomers = [];
   late int sentCount = 1;
-  bool isLoading = true;
   bool isFetching = true;
   late DateDuration duration;
   final SendSmsController sendSms = SendSmsController();
@@ -69,13 +264,17 @@ class _HomePageState extends State<HomePage> {
   late List triggeredNotifications = [];
   late List allNotifications = [];
   late List allNots = [];
+  bool hasToken = false;
+
 
   Future<void> checkMtnCommission() async {
-    UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
+    await UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
   }
   Future<void> checkMtnBalance() async {
-    UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
+    await UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
   }
+
+
 
   fetchAllUserBankRequests() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
@@ -262,6 +461,14 @@ class _HomePageState extends State<HomePage> {
     fetchCustomers();
     fetchAllUserBankRequests();
     getAllTriggeredNotifications();
+
+    //
+    fetchBankPaymentTotal();
+    fetchCashPaymentTotal();
+    fetchUserBankRequestsToday();
+    fetchUserCashRequestsToday();
+    fetchUserPayments();
+    fetchUserCashPayments();
 
     _timer = Timer.periodic(const Duration(seconds: 12), (timer) {
       getAllTriggeredNotifications();
@@ -550,7 +757,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 18.0),
-                            child: Badge(
+                            child: badge.Badge(
                               position: BadgePosition.bottomStart(),
                               toAnimate: false,
                               shape: BadgeShape.square,
@@ -787,7 +994,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 18.0),
-                            child: Badge(
+                            child: badge.Badge(
                               position: BadgePosition.bottomStart(),
                               toAnimate: false,
                               shape: BadgeShape.square,
@@ -871,7 +1078,15 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       onTap: () {
-                        Get.to(() => const AllCashRequests());
+                        hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
+                            colorText: defaultTextColor,
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red
+                        ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
+                            colorText: defaultTextColor,
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red
+                        ): Get.to(() => const AllCashRequests());
                       },
                     ),
                   ),

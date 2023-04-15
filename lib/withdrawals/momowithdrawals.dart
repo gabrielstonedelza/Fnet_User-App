@@ -102,8 +102,8 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
-  Future<void> dialCashOutMtn(String customerNumber,String amount,String reference) async {
-    UssdAdvanced.multisessionUssd(code: "*171*2*1*$customerNumber*$customerNumber*$amount*$reference#",subscriptionId: 1);
+  Future<void> dialCashOutMtn(String customerNumber,String amount) async {
+    UssdAdvanced.multisessionUssd(code: "*171*2*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
   }
 
   Future<void> dialMtn() async {
@@ -190,7 +190,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
 
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
-        dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
+        dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
         Get.back();
       }
       if(_currentSelectedNetwork == "Vodafone"){

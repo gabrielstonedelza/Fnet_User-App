@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import '../deposits/momodeposit.dart';
 import '../static/app_colors.dart';
 

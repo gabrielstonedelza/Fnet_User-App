@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:ussd_advanced/ussd_advanced.dart';
 import '../deposits/momodeposit.dart';
 import '../static/app_colors.dart';
 import '../withdrawals/momowithdrawals.dart';
@@ -21,6 +22,17 @@ class _MomoPageState extends State<MomoPage> {
   bool hasAccountsToday = false;
   bool isLoading = true;
   late String uToken = "";
+  late String  rs = "";
+
+  Future<void> checkMtnCommission() async {
+    UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
+  }
+  Future<void> checkMtnBalance() async {
+    String? res = await UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
+    setState(() {
+      rs = res!;
+    });
+  }
 
   @override
   void initState() {
@@ -51,7 +63,6 @@ class _MomoPageState extends State<MomoPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               Expanded(
                 child: GestureDetector(
                   child: Column(
@@ -147,6 +158,7 @@ class _MomoPageState extends State<MomoPage> {
               ),
             ],
           ),
+          Text(rs)
         ],
       )
     );
