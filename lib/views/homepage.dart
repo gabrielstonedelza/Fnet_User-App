@@ -372,12 +372,12 @@ class _HomePageState extends State<HomePage> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       triggeredNotifications = json.decode(jsonData);
       triggered.assignAll(triggeredNotifications);
+      setState(() {
+        isLoading = false;
+        isFetching = false;
+      });
     }
-    setState(() {
-      isLoading = false;
-      triggeredNotifications = triggeredNotifications;
-      isFetching = false;
-    });
+
   }
 
   getAllUnReadNotifications() async {
@@ -389,15 +389,13 @@ class _HomePageState extends State<HomePage> {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       yourNotifications = json.decode(jsonData);
+      notRead.assignAll(yourNotifications);
       setState(() {
-        notRead.assignAll(yourNotifications);
+        isLoading = false;
+        isFetching = false;
       });
     }
-    setState(() {
-      isLoading = false;
-      yourNotifications = yourNotifications;
-      isFetching = false;
-    });
+
   }
 
   getAllNotifications() async {
@@ -433,6 +431,12 @@ class _HomePageState extends State<HomePage> {
 
   late Timer _timer;
   UserController userController = Get.find();
+
+  @override
+  void dispose(){
+    super.dispose();
+    _timer.cancel();
+  }
 
   @override
   void initState() {
@@ -496,25 +500,6 @@ class _HomePageState extends State<HomePage> {
     await dialer.dial('*110\%23#');
   }
 
-  // onNotificationReceive(ReceiveNotification notification) {
-  //   // print("Notification Received: ${notification.id}");
-  // }
-  //
-  // onNotificationClick(String payload) {
-  //   Get.to(() => const HomePage());
-  // }
-  //
-  // onPaymentNotificationReceive(ReceiveNotification notification) {
-  //   // print("Notification Received: ${notification.id}");
-  // }
-  //
-  // onPaymentNotificationClick(String payload) {
-  //   Get.to(() => const AllYourNotifications());
-  // }
-  //
-  // onBankDepositNotificationReceive(ReceiveNotification notification) {
-  //   // print("Notification Received: ${notification.id}");
-  // }
 
   onBankDepositNotificationClick(String payload) {
     Get.to(() => const AllYourNotifications());

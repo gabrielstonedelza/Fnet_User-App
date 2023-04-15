@@ -56,9 +56,9 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
         }
       }
     }
-    setState(() {
-      isLoading = false;
-    });
+    // setState(() {
+    //   isLoading = false;
+    // });
   }
   logoutUser() async {
     storage.remove("username");
@@ -149,6 +149,12 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       fetchBlockedAgents();
     });
 
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _timer.cancel();
   }
 
   @override

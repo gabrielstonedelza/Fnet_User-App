@@ -122,7 +122,6 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
   }
 
   var _currentSelectedNetwork = "Select Network";
-  var _currentSelectedType = "Select Withdraw Type";
 
   late String uToken = "";
   final storage = GetStorage();
@@ -191,15 +190,12 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
         dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
-        Get.back();
       }
       if(_currentSelectedNetwork == "Vodafone"){
         dialVodafone();
-        Get.back();
       }
       if(_currentSelectedNetwork == "AirtelTigo"){
         dialTigo();
-        Get.back();
       }
     } else {
       Get.snackbar("Request Error", res.body.toString(),
@@ -532,12 +528,9 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
                           if (!_formKey.currentState!.validate()) {
                             return;
                           } else {
-                            if (_currentSelectedType ==
-                                "Select Withdraw Type" ||
-                                _currentSelectedNetwork ==
-                                    "Select Network" ) {
-                              Get.snackbar("Bank Error",
-                                  "Please select all necessary items from the dropdowns",
+                            if (_currentSelectedNetwork == "Select Network" ) {
+                              Get.snackbar("Network Error",
+                                  "Please select network from the dropdowns",
                                   colorText: Colors.white,
                                   backgroundColor: Colors.red,
                                   snackPosition: SnackPosition.BOTTOM);
@@ -581,10 +574,5 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
     });
   }
 
-  void _onDropDownItemSelectedWithdrawTypes(newValueSelected) {
-    setState(() {
-      _currentSelectedType = newValueSelected;
-    });
-  }
 
 }
