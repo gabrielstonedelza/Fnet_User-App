@@ -278,31 +278,31 @@ class _MomoDepositState extends State<MomoDeposit> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: TextFormField(
-                      onChanged: (value) {
-                        if (value.length == 10 &&
-                            customersPhone.contains(value)) {
-                          Get.snackbar("Success", "Customer is in system",
-                              colorText: defaultTextColor,
-                              snackPosition: SnackPosition.TOP,
-                              backgroundColor: snackColor);
-
-                          setState(() {
-                            isCustomer = true;
-                          });
-                        } else if (value.length == 10 &&
-                            !customersPhone.contains(value)) {
-                          Get.snackbar(
-                              "Customer Error", "Customer is not in system",
-                              colorText: defaultTextColor,
-                              snackPosition: SnackPosition.TOP,
-                              backgroundColor: Colors.red);
-                          setState(() {
-                            isCustomer = false;
-                          });
-                          Timer(const Duration(seconds: 3),
-                                  () => Get.to(() => const CustomerRegistration()));
-                        }
-                      },
+                      // onChanged: (value) {
+                      //   if (value.length == 10 &&
+                      //       customersPhone.contains(value)) {
+                      //     Get.snackbar("Success", "Customer is in system",
+                      //         colorText: defaultTextColor,
+                      //         snackPosition: SnackPosition.TOP,
+                      //         backgroundColor: snackColor);
+                      //
+                      //     setState(() {
+                      //       isCustomer = true;
+                      //     });
+                      //   } else if (value.length == 10 &&
+                      //       !customersPhone.contains(value)) {
+                      //     Get.snackbar(
+                      //         "Customer Error", "Customer is not in system",
+                      //         colorText: defaultTextColor,
+                      //         snackPosition: SnackPosition.TOP,
+                      //         backgroundColor: Colors.red);
+                      //     setState(() {
+                      //       isCustomer = false;
+                      //     });
+                      //     Timer(const Duration(seconds: 3),
+                      //             () => Get.to(() => const CustomerRegistration()));
+                      //   }
+                      // },
                       controller: _customerPhoneController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
@@ -329,7 +329,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                       },
                     ),
                   ),
-                  isCustomer ? Column(
+                  Column(
                     children: [
                       const SizedBox(height: 10,),
                       Padding(
@@ -563,7 +563,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                         ),
                       ),
                     ],
-                  ) : Container(),
+                  ),
                 ],
               ),
             ),
