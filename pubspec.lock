@@ -302,6 +302,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  flutter_sms_inbox:
+    dependency: "direct main"
+    description:
+      name: flutter_sms_inbox
+      sha256: b45fb15ac1fe866d6a3c9ebe54c85984e9b974363c347b58593a9bceb828a859
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -657,6 +665,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.5"
+  sim_data_plus:
+    dependency: "direct main"
+    description:
+      name: sim_data_plus
+      sha256: bc2136ec8f9292f8959063e78fd9fdf9425b308762b48db1db2ce749b28f7955
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.4"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -702,6 +718,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  telephony:
+    dependency: "direct main"
+    description:
+      name: telephony
+      sha256: "821e074acec3c611e48edadd50a6d9fef864943771a545da7924adcc8509ada9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   term_glyph:
     dependency: transitive
     description:

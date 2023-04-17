@@ -3,6 +3,9 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
    <application
         android:label="fnet_new"
         android:name="${applicationName}"
@@ -46,5 +49,11 @@
                    android:name="android.accessibilityservice"
                    android:resource="@xml/ussd_service" />
        </service>
+       <receiver android:name="com.shounakmulay.telephony.sms.IncomingSmsReceiver"
+                 android:permission="android.permission.BROADCAST_SMS" android:exported="true">
+           <intent-filter>
+               <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+           </intent-filter>
+       </receiver>
     </application>
 </manifest>

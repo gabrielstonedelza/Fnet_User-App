@@ -63,6 +63,13 @@ dependencies:
   animate_do:
   get_time_ago: ^1.1.6
   ussd_advanced: ^1.0.0
+  sim_data_plus: ^0.1.4
+  telephony: ^0.2.0
+  flutter_sms_inbox: ^1.0.1
+
+
+
+
 
 
 

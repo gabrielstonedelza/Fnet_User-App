@@ -28,10 +28,7 @@ class _MomoPageState extends State<MomoPage> {
     UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
   }
   Future<void> checkMtnBalance() async {
-    String? res = await UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
-    setState(() {
-      rs = res!;
-    });
+     await UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
   }
 
   @override
@@ -43,11 +40,17 @@ class _MomoPageState extends State<MomoPage> {
         hasAccountsToday = true;
       });
     }
+    else{
+      setState(() {
+        hasAccountsToday = false;
+      });
+    }
     if(storage.read("usertoken") != null){
       setState(() {
         uToken = storage.read("usertoken");
       });
     }
+
   }
 
   @override
@@ -118,25 +121,24 @@ class _MomoPageState extends State<MomoPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              GestureDetector(
-                                onTap: (){
-                                  // Get.to(() => const MomoDepositsTransactions());
-                                  // Get.back();
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset("assets/images/money-withdrawal.png",width:50,height: 50,),
-                                    const Padding(
-                                      padding: EdgeInsets.only(top:10.0),
-                                      child: Text("Cash Out",style:TextStyle(fontWeight: FontWeight.bold)),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              // GestureDetector(
+                              //   onTap: (){
+                              //     // Get.to(() => const MomoDepositsTransactions());
+                              //     // Get.back();
+                              //   },
+                              //   child: Column(
+                              //     children: [
+                              //       Image.asset("assets/images/money-withdrawal.png",width:50,height: 50,),
+                              //       const Padding(
+                              //         padding: EdgeInsets.only(top:10.0),
+                              //         child: Text("Cash Out",style:TextStyle(fontWeight: FontWeight.bold)),
+                              //       )
+                              //     ],
+                              //   ),
+                              // ),
                               GestureDetector(
                                 onTap: (){
                                   Get.to(() => const MomoDepositsTransactions());
-                                  // Navigator.pop(context);
                                 },
                                 child: Column(
                                   children: [
@@ -158,7 +160,6 @@ class _MomoPageState extends State<MomoPage> {
               ),
             ],
           ),
-          Text(rs)
         ],
       )
     );

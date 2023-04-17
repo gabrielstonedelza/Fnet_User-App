@@ -1,6 +1,10 @@
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:get/get.dart';
@@ -9,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../sendsms.dart';
+import '../views/customerregistration.dart';
 
 class MomoDeposit extends StatefulWidget {
   const MomoDeposit({Key? key}) : super(key: key);
@@ -65,8 +70,32 @@ class _MomoDepositState extends State<MomoDeposit> {
   bool isRegular = false;
   final SendSmsController sendSms = SendSmsController();
   bool isDirect = false;
-
+  bool isCustomer = false;
+  late List customersPhone = [];
+  bool fetchingCustomerAccounts = true;
   bool isLoading = true;
+  late List customer = [];
+  late List allCustomers = [];
+
+
+  fetchCustomers() async {
+    const url = "https://fnetghana.xyz/all_customers/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink);
+
+    if (response.statusCode == 200) {
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allCustomers = json.decode(jsonData);
+      for (var i in allCustomers) {
+        customersPhone.add(i['phone']);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
 
   Future<void> dialCashInMtn(String customerNumber,String amount) async {
     UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
@@ -173,6 +202,7 @@ class _MomoDepositState extends State<MomoDeposit> {
           backgroundColor: snackColor);
     }
   }
+  late List mySmss = [];
 
   @override
   void initState() {
@@ -215,6 +245,17 @@ class _MomoDepositState extends State<MomoDeposit> {
         vodafoneEcashNow = storage.read("vodafoneecashnow").toString();
       });
     }
+    fetchCustomers();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _amountController.dispose();
+    _customerPhoneController.dispose();
+    _depositorNameController.dispose();
+    _depositorPhoneController.dispose();
+    _referenceController.dispose();
   }
 
   @override
@@ -237,6 +278,31 @@ class _MomoDepositState extends State<MomoDeposit> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: TextFormField(
+                      onChanged: (value) {
+                        if (value.length == 10 &&
+                            customersPhone.contains(value)) {
+                          Get.snackbar("Success", "Customer is in system",
+                              colorText: defaultTextColor,
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: snackColor);
+
+                          setState(() {
+                            isCustomer = true;
+                          });
+                        } else if (value.length == 10 &&
+                            !customersPhone.contains(value)) {
+                          Get.snackbar(
+                              "Customer Error", "Customer is not in system",
+                              colorText: defaultTextColor,
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.red);
+                          setState(() {
+                            isCustomer = false;
+                          });
+                          Timer(const Duration(seconds: 3),
+                                  () => Get.to(() => const CustomerRegistration()));
+                        }
+                      },
                       controller: _customerPhoneController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
@@ -244,7 +310,7 @@ class _MomoDepositState extends State<MomoDeposit> {
                       decoration: InputDecoration(
                           prefixIcon:
                           const Icon(Icons.person, color: secondaryColor),
-                          labelText: "Customer or agent number",
+                          labelText: "Enter customer number",
                           labelStyle: const TextStyle(color: secondaryColor),
                           focusColor: primaryColor,
                           fillColor: primaryColor,
@@ -253,245 +319,251 @@ class _MomoDepositState extends State<MomoDeposit> {
                                   color: primaryColor, width: 2),
                               borderRadius: BorderRadius.circular(12)),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
+                              borderRadius: BorderRadius.circular(12))
+                      ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Please enter phone number";
+                          return "Please enter customer number";
                         }
                       },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey, width: 1)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10),
-                        child: DropdownButton(
-                          hint: const Text("Select Network"),
-                          isExpanded: true,
-                          underline: const SizedBox(),
+                  isCustomer ? Column(
+                    children: [
+                      const SizedBox(height: 10,),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey, width: 1)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0, right: 10),
+                            child: DropdownButton(
+                              hint: const Text("Select Network"),
+                              isExpanded: true,
+                              underline: const SizedBox(),
 
-                          items: mobileMoneyNetworks.map((dropDownStringItem) {
-                            return DropdownMenuItem(
-                              value: dropDownStringItem,
-                              child: Text(dropDownStringItem),
-                            );
-                          }).toList(),
-                          onChanged: (newValueSelected) {
-                            _onDropDownItemSelectedNetwork(newValueSelected);
-                          },
-                          value: _currentSelectedNetwork,
+                              items: mobileMoneyNetworks.map((dropDownStringItem) {
+                                return DropdownMenuItem(
+                                  value: dropDownStringItem,
+                                  child: Text(dropDownStringItem),
+                                );
+                              }).toList(),
+                              onChanged: (newValueSelected) {
+                                _onDropDownItemSelectedNetwork(newValueSelected);
+                              },
+                              value: _currentSelectedNetwork,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey, width: 1)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10),
-                        child: DropdownButton(
-                          hint: const Text("Select Deposit Type"),
-                          isExpanded: true,
-                          underline: const SizedBox(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey, width: 1)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0, right: 10),
+                            child: DropdownButton(
+                              hint: const Text("Select Deposit Type"),
+                              isExpanded: true,
+                              underline: const SizedBox(),
 
-                          items: depositTypes.map((dropDownStringItem) {
-                            return DropdownMenuItem(
-                              value: dropDownStringItem,
-                              child: Text(dropDownStringItem),
-                            );
-                          }).toList(),
-                          onChanged: (newValueSelected) {
-                            _onDropDownItemSelectedDepositTypes(newValueSelected);
-                            if(newValueSelected == "Customer") {
+                              items: depositTypes.map((dropDownStringItem) {
+                                return DropdownMenuItem(
+                                  value: dropDownStringItem,
+                                  child: Text(dropDownStringItem),
+                                );
+                              }).toList(),
+                              onChanged: (newValueSelected) {
+                                _onDropDownItemSelectedDepositTypes(newValueSelected);
+                                if(newValueSelected == "Customer") {
+                                  setState(() {
+                                    isDirect = true;
+                                  });
+                                }
+                                else{
+                                  setState(() {
+                                    isDirect = false;
+                                  });
+                                }
+                              },
+                              value: _currentSelectedType,
+                            ),
+                          ),
+                        ),
+                      ),
+               isDirect ?  Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          controller: _depositorNameController,
+                          cursorColor: primaryColor,
+                          cursorRadius: const Radius.elliptical(10, 10),
+                          cursorWidth: 10,
+                          decoration: InputDecoration(
+                              prefixIcon:
+                              const Icon(Icons.person, color: secondaryColor),
+                              labelText: "Enter depositors name",
+                              labelStyle: const TextStyle(color: secondaryColor),
+                              focusColor: primaryColor,
+                              fillColor: primaryColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: primaryColor, width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter depositors name";
+                            }
+                          },
+                        ),
+                      ) : Container(),
+                      isDirect ? Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          controller: _depositorPhoneController,
+                          cursorColor: primaryColor,
+                          cursorRadius: const Radius.elliptical(10, 10),
+                          cursorWidth: 10,
+                          decoration: InputDecoration(
+                              prefixIcon:
+                              const Icon(Icons.person, color: secondaryColor),
+                              labelText: "Enter depositors phone number",
+                              labelStyle: const TextStyle(color: secondaryColor),
+                              focusColor: primaryColor,
+                              fillColor: primaryColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: primaryColor, width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter depositors phone number";
+                            }
+                          },
+                        ),
+                      ) : Container(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          onChanged: (value){
+                            if(value.length > 1){
                               setState(() {
-                                isDirect = true;
+                                hasAmount = true;
                               });
+                            }
+                            if(value == ""){
+                              setState(() {
+                                hasAmount = false;
+                              });
+                            }
+                          },
+                          controller: _amountController,
+                          cursorColor: primaryColor,
+                          cursorRadius: const Radius.elliptical(10, 10),
+                          cursorWidth: 10,
+                          decoration: InputDecoration(
+
+                              labelText: "Enter amount",
+                              labelStyle: const TextStyle(color: secondaryColor),
+                              focusColor: primaryColor,
+                              fillColor: primaryColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: primaryColor, width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter amount";
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          controller: _referenceController,
+                          cursorColor: primaryColor,
+                          cursorRadius: const Radius.elliptical(10, 10),
+                          cursorWidth: 10,
+                          decoration: InputDecoration(
+
+                              labelText: "Enter reference",
+                              labelStyle: const TextStyle(color: secondaryColor),
+                              focusColor: primaryColor,
+                              fillColor: primaryColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: primaryColor, width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter reference";
+                            }
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      isPosting ? const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5,
+                          color: primaryColor,
+                        ),
+                      ) : RawMaterialButton(
+                        onPressed: () {
+                          _startPosting();
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          } else {
+
+                            if(_currentSelectedType == "Select Deposit Type" || _currentSelectedNetwork == "Select Network"){
+                              Get.snackbar("Bank Error", "Please select customers bank from the list",colorText: Colors.white,backgroundColor: Colors.red,snackPosition: SnackPosition.BOTTOM);
+
+                              return;
                             }
                             else{
-                              setState(() {
-                                isDirect = false;
-                              });
+                              Get.snackbar("Please wait", "processing",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: snackColor);
+                              processMomoDeposit();
                             }
-                          },
-                          value: _currentSelectedType,
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        elevation: 8,
+                        fillColor: primaryColor,
+                        splashColor: defaultColor,
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),
                         ),
                       ),
-                    ),
-                  ),
-               isDirect ?  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      controller: _depositorNameController,
-                      cursorColor: primaryColor,
-                      cursorRadius: const Radius.elliptical(10, 10),
-                      cursorWidth: 10,
-                      decoration: InputDecoration(
-                          prefixIcon:
-                          const Icon(Icons.person, color: secondaryColor),
-                          labelText: "Enter depositors name",
-                          labelStyle: const TextStyle(color: secondaryColor),
-                          focusColor: primaryColor,
-                          fillColor: primaryColor,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: primaryColor, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Please enter depositors name";
-                        }
-                      },
-                    ),
+                    ],
                   ) : Container(),
-                  isDirect ? Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      controller: _depositorPhoneController,
-                      cursorColor: primaryColor,
-                      cursorRadius: const Radius.elliptical(10, 10),
-                      cursorWidth: 10,
-                      decoration: InputDecoration(
-                          prefixIcon:
-                          const Icon(Icons.person, color: secondaryColor),
-                          labelText: "Enter depositors phone number",
-                          labelStyle: const TextStyle(color: secondaryColor),
-                          focusColor: primaryColor,
-                          fillColor: primaryColor,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: primaryColor, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Please enter depositors phone number";
-                        }
-                      },
-                    ),
-                  ) : Container(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      onChanged: (value){
-                        if(value.length > 1){
-                          setState(() {
-                            hasAmount = true;
-                          });
-                        }
-                        if(value == ""){
-                          setState(() {
-                            hasAmount = false;
-                          });
-                        }
-                      },
-                      controller: _amountController,
-                      cursorColor: primaryColor,
-                      cursorRadius: const Radius.elliptical(10, 10),
-                      cursorWidth: 10,
-                      decoration: InputDecoration(
-
-                          labelText: "Enter amount",
-                          labelStyle: const TextStyle(color: secondaryColor),
-                          focusColor: primaryColor,
-                          fillColor: primaryColor,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: primaryColor, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Please enter amount";
-                        }
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      controller: _referenceController,
-                      cursorColor: primaryColor,
-                      cursorRadius: const Radius.elliptical(10, 10),
-                      cursorWidth: 10,
-                      decoration: InputDecoration(
-
-                          labelText: "Enter reference",
-                          labelStyle: const TextStyle(color: secondaryColor),
-                          focusColor: primaryColor,
-                          fillColor: primaryColor,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: primaryColor, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Please enter reference";
-                        }
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  isPosting ? const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: primaryColor,
-                    ),
-                  ) : RawMaterialButton(
-                    onPressed: () {
-                      _startPosting();
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      } else {
-
-                        if(_currentSelectedType == "Select Deposit Type" || _currentSelectedNetwork == "Select Network"){
-                          Get.snackbar("Bank Error", "Please select customers bank from the list",colorText: Colors.white,backgroundColor: Colors.red,snackPosition: SnackPosition.BOTTOM);
-
-                          return;
-                        }
-                        else{
-                          Get.snackbar("Please wait", "processing",
-                              colorText: defaultTextColor,
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: snackColor);
-                          processMomoDeposit();
-                        }
-                      }
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    elevation: 8,
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
-                  ),
                 ],
               ),
             ),

@@ -4,7 +4,11 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:badges/badges.dart';
 import 'package:direct_dialer/direct_dialer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart' as mySms;
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:fnet_new/accounts/accountdashboard.dart';
 import 'package:fnet_new/accounts/accountsummary.dart';
 import 'package:fnet_new/accounts/addaccounts.dart';
@@ -21,7 +25,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:telephony/telephony.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
+
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../sendsms.dart';
@@ -33,13 +39,16 @@ import 'groupchat.dart';
 import 'loginview.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final message;
+  const HomePage({Key? key,required this.message}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(message:this.message);
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+  final message;
+  _HomePageState({required this.message});
   final storage = GetStorage();
   bool hasAccountsToday = false;
   bool isLoading = true;
@@ -265,16 +274,32 @@ class _HomePageState extends State<HomePage> {
   late List allNotifications = [];
   late List allNots = [];
   bool hasToken = false;
-
+  bool isCheckingBalance = false;
+  bool isCheckingCommission = false;
+  int backgroundCount = 0;
+  late Timer _timer;
+  UserController userController = Get.find();
+  final Telephony telephony = Telephony.instance;
 
   Future<void> checkMtnCommission() async {
     await UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
   }
-  Future<void> checkMtnBalance() async {
-    await UssdAdvanced.multisessionUssd(code: "*171*7*1#",subscriptionId: 1);
+  Future checkMtnBalance() async {
+    fetchInbox();
+   Get.defaultDialog(
+     content: Column(
+       children: [
+         Text(mySmss.first)
+       ],
+     ),
+     confirm: TextButton(
+       onPressed: (){
+         Get.back();
+       },
+       child: const Text("OK",style:TextStyle(fontWeight:FontWeight.bold)),
+     )
+   );
   }
-
-
 
   fetchAllUserBankRequests() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
@@ -372,12 +397,11 @@ class _HomePageState extends State<HomePage> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       triggeredNotifications = json.decode(jsonData);
       triggered.assignAll(triggeredNotifications);
-      setState(() {
-        isLoading = false;
-        isFetching = false;
-      });
+      // setState(() {
+      //   isLoading = false;
+      //   isFetching = false;
+      // });
     }
-
   }
 
   getAllUnReadNotifications() async {
@@ -390,12 +414,11 @@ class _HomePageState extends State<HomePage> {
       var jsonData = const Utf8Decoder().convert(codeUnits);
       yourNotifications = json.decode(jsonData);
       notRead.assignAll(yourNotifications);
-      setState(() {
-        isLoading = false;
-        isFetching = false;
-      });
+      // setState(() {
+      //   isLoading = false;
+      //   isFetching = false;
+      // });
     }
-
   }
 
   getAllNotifications() async {
@@ -428,20 +451,26 @@ class _HomePageState extends State<HomePage> {
     });
     if (response.statusCode == 200) {}
   }
+  bool isActive = true;
+  SmsQuery query = SmsQuery();
+  late List mySmss = [];
 
-  late Timer _timer;
-  UserController userController = Get.find();
-
-  @override
-  void dispose(){
-    super.dispose();
-    _timer.cancel();
+  fetchInbox()async {
+    List<mySms.SmsMessage> messages = await query.getAllSms;
+    for (var message in messages) {
+      if(message.address == "MobileMoney") {
+        if(!mySmss.contains(message.body)){
+          mySmss.add(message.body);
+        }
+      }
+    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     if (storage.read("username") != null) {
       setState(() {
@@ -462,6 +491,7 @@ class _HomePageState extends State<HomePage> {
     }
     // _checkVersion();
     userController.getUserProfile(uToken);
+
     fetchCustomers();
     fetchAllUserBankRequests();
     getAllTriggeredNotifications();
@@ -483,6 +513,15 @@ class _HomePageState extends State<HomePage> {
         unTriggerNotifications(e["id"]);
       }
     });
+
+    fetchInbox();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _timer.cancel();
   }
 
   Future<void> dialMtn() async {
@@ -529,6 +568,7 @@ class _HomePageState extends State<HomePage> {
       Get.offAll(() => const LoginView());
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

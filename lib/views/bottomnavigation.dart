@@ -7,7 +7,6 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/payments/paymentsavailable.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/withdrawpage.dart';
 import "package:get/get.dart";
 import 'accountblocked.dart';
 import 'closeappfortheday.dart';
@@ -35,7 +34,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   bool isClosingTime = false;
   int selectedIndex = 0;
   bool isBlocked = false;
-  final List _pages = [const HomePage(),const MomoPage(),const Deposits(),const PaymentsAvailable()];
+  final List _pages = [const HomePage(message: null,),const MomoPage(),const Deposits(),const PaymentsAvailable()];
   void onSelectedIndex(int index){
     setState(() {
       selectedIndex = index;
@@ -83,49 +82,49 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   }
 
   void checkTheTime(){
-    var hour = DateTime.now().hour;
-    switch (hour) {
-      case 20:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 21:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 22:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 23:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 00:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 01:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 02:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 03:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 04:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-      case 05:
-        setState(() {isClosingTime = true;});
-        logoutUser();
-        break;
-    }
+    // var hour = DateTime.now().hour;
+    // switch (hour) {
+    //   case 20:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 21:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 22:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 23:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 00:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 01:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 02:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 03:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 04:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    //   case 05:
+    //     setState(() {isClosingTime = true;});
+    //     logoutUser();
+    //     break;
+    // }
   }
   @override
   void initState(){
@@ -143,7 +142,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
     }
     fetchBlockedAgents();
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      checkTheTime();
+      // checkTheTime();
     });
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       fetchBlockedAgents();

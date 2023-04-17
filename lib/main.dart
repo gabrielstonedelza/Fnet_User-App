@@ -7,11 +7,15 @@ import 'package:fnet_new/views/loginview.dart';
 import 'package:fnet_new/views/splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:telephony/telephony.dart';
 
 import 'controllers/accountcontroller.dart';
 import 'controllers/logincontroller.dart';
 import 'controllers/usercontroller.dart';
 
+onBackgroundMessage(SmsMessage message) {
+  debugPrint("onBackgroundMessage called");
+}
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +28,52 @@ void main() async{
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String _message = "";
+  final telephony = Telephony.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  onMessage(SmsMessage message) async {
+    setState(() {
+      _message = message.body ?? "Error reading message body.";
+    });
+  }
+
+  onSendStatus(SendStatus status) {
+    setState(() {
+      _message = status == SendStatus.SENT ? "sent" : "delivered";
+    });
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+
+    final bool? result = await telephony.requestPhoneAndSmsPermissions;
+
+    if (result != null && result) {
+      telephony.listenIncomingSms(
+          onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
+    }
+
+
+    if (!mounted) return;
+  }
 
   // This widget is the root of your application.
   @override
@@ -43,7 +91,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: "/", page:()=> const Splash()),
         GetPage(name: "/login", page:()=> const LoginView()),
-        GetPage(name: "/homepage", page:()=> const HomePage()),
+        GetPage(name: "/homepage", page:()=> HomePage(message:_message)),
       ],
     );
   }

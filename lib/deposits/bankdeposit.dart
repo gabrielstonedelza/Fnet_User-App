@@ -494,6 +494,17 @@ class _BankDepositState extends State<BankDeposit> {
     fetchAllInstalled();
     fetchUserBankRequestsToday();
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _amountController.dispose();
+    _customerController.dispose();
+    _amountController.dispose();
+    _depositorController.dispose();
+    _idNumberController.dispose();
+    _customerAccountNameController.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
