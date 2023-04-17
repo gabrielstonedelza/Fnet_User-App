@@ -82,49 +82,49 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   }
 
   void checkTheTime(){
-    // var hour = DateTime.now().hour;
-    // switch (hour) {
-    //   case 20:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 21:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 22:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 23:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 00:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 01:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 02:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 03:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 04:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    //   case 05:
-    //     setState(() {isClosingTime = true;});
-    //     logoutUser();
-    //     break;
-    // }
+    var hour = DateTime.now().hour;
+    switch (hour) {
+      case 20:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 21:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 22:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 23:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 00:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 01:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 02:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 03:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 04:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+      case 05:
+        setState(() {isClosingTime = true;});
+        logoutUser();
+        break;
+    }
   }
   @override
   void initState(){
@@ -142,7 +142,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
     }
     fetchBlockedAgents();
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      // checkTheTime();
+      checkTheTime();
     });
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       fetchBlockedAgents();
