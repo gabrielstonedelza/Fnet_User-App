@@ -33,7 +33,6 @@ import '../controllers/usercontroller.dart';
 import '../payments/paymentsavailable.dart';
 import '../points.dart';
 import '../sendsms.dart';
-import 'allcashrequests.dart';
 import 'allmycashpayments.dart';
 import 'birthdays.dart';
 import 'depositrequest.dart';
@@ -284,7 +283,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   UserController userController = Get.find();
   final Telephony telephony = Telephony.instance;
 
-  final Uri _url = Uri.parse('http://aop.ecobank.com/');
+  final Uri _url = Uri.parse('https://aop.ecobank.com/register');
 
   Future<void> _launchInBrowser() async {
     if (!await launchUrl(_url)) {
@@ -1180,18 +1179,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/images/cash-on-delivery.png",
+                            "assets/images/ecomobile.png",
                             width: 70,
                             height: 70,
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text("Cash Payments"),
+                          const Text("Open Account"),
                         ],
                       ),
-                      onTap: () {
-                        Get.to(() => const AllMyCashPayments());
+                      onTap: () async{
+                        await _launchInBrowser();
                       },
                     ),
                   ),
@@ -1205,89 +1204,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          // Image.asset(
-                          //   "assets/images/cash-on-delivery.png",
-                          //   width: 70,
-                          //   height: 70,
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // const Text("Cash Request"),
-                        ],
-                      ),
-                      onTap: () {
-                        // hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
-                        //     colorText: defaultTextColor,
-                        //     snackPosition: SnackPosition.BOTTOM,
-                        //     backgroundColor: Colors.red
-                        // ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
-                        //     colorText: defaultTextColor,
-                        //     snackPosition: SnackPosition.BOTTOM,
-                        //     backgroundColor: Colors.red
-                        // ): Get.to(() => const AllCashRequests());
-                      },
-                    ),
-                  ),
 
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          // Image.asset(
-                          //   "assets/images/commission.png",
-                          //   width: 70,
-                          //   height: 70,
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // const Text("Commission"),
-                        ],
-                      ),
-                      onTap: () {
-                        // Get.to(() => const AgentCommission());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          // Image.asset(
-                          //   "assets/images/business-report.png",
-                          //   width: 70,
-                          //   height: 70,
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // const Text("Momo"),
-                          // const Text("Dashboard"),
-                        ],
-                      ),
-                      onTap: () {
-                        // hasAccountsToday
-                        //     ? Get.to(() => const AccountDashBoard())
-                        //     : Get.snackbar("Sorry",
-                        //         "You have already closed accounts for today",
-                        //         colorText: defaultTextColor,
-                        //         snackPosition: SnackPosition.BOTTOM,
-                        //         backgroundColor: Colors.red);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
             ],
           ),
         ),

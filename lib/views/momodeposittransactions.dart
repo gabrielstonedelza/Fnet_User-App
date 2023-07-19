@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import '../loadingui.dart';
 import '../static/app_colors.dart';
 import 'momocashinagentsdetails.dart';
-import 'momocashincustomerdetail.dart';
 import 'momocashinmerchantdetails.dart';
 
 class MomoDepositsTransactions extends StatefulWidget {
@@ -112,18 +111,6 @@ class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
             backgroundColor: primaryColor,
             bottom: TabBar(
               tabs: [
-                // Tab(child: Column(
-                //   children: [
-                //     const Text("Customers",style: TextStyle(
-                //         fontWeight: FontWeight.bold,
-                //         fontSize: 15,
-                //         color: Colors.white)),
-                //     Text("(${allCashInForCustomers.length})",style: const TextStyle(
-                //         fontWeight: FontWeight.bold,
-                //         fontSize: 15,
-                //         color: Colors.white))
-                //   ],
-                // ),),
                 Tab(child: Column(
                   children: [
                     const Text("Agents",style: TextStyle(
@@ -154,42 +141,6 @@ class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
           ),
           body: TabBarView(
             children: [
-              ListView.builder(
-                itemCount: allCashInForCustomersDates != null ? allCashInForCustomersDates.length : 0,
-                itemBuilder: (BuildContext context, int index) {
-                  customersItem = allCashInForCustomersDates[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      elevation: 12,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          onTap: (){
-                            Get.to(() => MomoCashInCustomersDetails(date_deposited:allCashInForCustomersDates[index],customersCashIn:allCashInForCustomers));
-                          },
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Text("Date :",style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              )),
-                              const SizedBox(width:10),
-                              Text(customersItem,style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              )),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },),
               ListView.builder(
                 itemCount: allCashInForAgentsDates != null ? allCashInForAgentsDates.length : 0,
                 itemBuilder: (BuildContext context, int index) {
@@ -231,14 +182,14 @@ class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
                 itemBuilder: (BuildContext context, int index) {
                   merchantItems = allCashInForMerchantsDates[index];
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: Card(
                       elevation: 12,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: ListTile(
                           onTap: (){
                             Get.to(() => MomoCashInMerchantsDetails(date_deposited:allCashInForCustomersDates[index],merchantCashIn:allCashInForMerchants));
