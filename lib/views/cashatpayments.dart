@@ -4,12 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/sendsms.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/customerregistration.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
-import 'bottomnavigation.dart';
 import 'homepage.dart';
 
 class CashAtPayments extends StatefulWidget {
@@ -88,7 +86,7 @@ class _CashAtPaymentsState extends State<CashAtPayments> {
           "Hello ${agent},reference for your payment GHC$amount_delivered is ${_referenceIdController.text}.Thank you");
       sendSms.sendMySms(telnum2, "FNET",
           "Hello ${_leftWithController.text.capitalize},this (${_referenceIdController.text}) reference shows that $agent delivered an amount of GHC$amount_delivered to you successfully,.Thank you");
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     }
     else{
       Get.snackbar("Request Error", res.body.toString(),

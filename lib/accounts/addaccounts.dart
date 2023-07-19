@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fnet_new/controllers/accountcontroller.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
-import 'package:fnet_new/views/homepage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../loadingui.dart';
+import '../views/homepage.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({Key? key}) : super(key: key);
@@ -78,7 +77,7 @@ class _AccountViewState extends State<AccountView> {
       storage.write("ecashnow", enow);
 
       storage.write("accountcreatedtoday", accountsToday);
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Account", response.body.toString(),
           colorText: defaultTextColor,

@@ -5,10 +5,9 @@ import 'package:get/get_navigation/get_navigation.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../static/app_colors.dart';
-import 'bottomnavigation.dart';
+
 import 'homepage.dart';
 
 
@@ -105,7 +104,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
           backgroundColor: snackColor
       );
 
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
     }
     else{
 

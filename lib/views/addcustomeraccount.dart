@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../loadingui.dart';
 import '../sendsms.dart';
-import 'bottomnavigation.dart';
+
 import 'homepage.dart';
 
 class AddCustomerAccount extends StatefulWidget {
@@ -144,7 +144,7 @@ class _UserRegistration extends State<AddCustomerAccount> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.TOP,
           backgroundColor: snackColor);
-      Get.offAll(()=>const MyBottomNavigationBar());
+      Get.offAll(()=>const HomePage(message: null,));
     }
     else{
       Get.snackbar("Error", res.body.toString(),

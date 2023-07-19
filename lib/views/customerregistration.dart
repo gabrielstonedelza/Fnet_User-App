@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 
 import '../loadingui.dart';
 import '../sendsms.dart';
-import 'bottomnavigation.dart';
+
+import 'homepage.dart';
 
 class CustomerRegistration extends StatefulWidget {
 
@@ -101,7 +102,7 @@ class _UserRegistration extends State<CustomerRegistration> {
       telnum = telnum.replaceFirst("0", '+233');
       sendSms.sendMySms(telnum, "FNET",
           "Welcome ${name.text}, you are now registered on FNET App.For more information please kindly call 0244950505.");
-      Get.offAll(()=>const MyBottomNavigationBar());
+      Get.offAll(()=>const HomePage(message: null,));
     }
     else{
       Get.snackbar("Error", res.body.toString(),

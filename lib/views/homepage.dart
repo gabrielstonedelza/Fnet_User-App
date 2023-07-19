@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart' as mySms;
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
-import 'package:fnet_new/accounts/accountdashboard.dart';
 import 'package:fnet_new/accounts/accountsummary.dart';
 import 'package:fnet_new/accounts/addaccounts.dart';
 import 'package:fnet_new/static/app_colors.dart';
@@ -31,13 +30,16 @@ import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
+import '../payments/paymentsavailable.dart';
 import '../points.dart';
 import '../sendsms.dart';
 import 'allcashrequests.dart';
 import 'allmycashpayments.dart';
 import 'birthdays.dart';
+import 'depositrequest.dart';
 import 'groupchat.dart';
 import 'loginview.dart';
+import 'momopage.dart';
 
 class HomePage extends StatefulWidget {
   final message;
@@ -753,6 +755,112 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
+                        Get.to(() => const MomoPage());
+                      },
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/momo.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Pay To"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/deposit.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Bank"),
+                          const Text("Deposit"),
+                        ],
+                      ),
+                      onTap: () {
+                        Get.to(() => const Deposits());
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: badge.Badge(
+                              position: BadgePosition.bottomStart(),
+                              toAnimate: false,
+                              shape: BadgeShape.square,
+                              badgeColor: Colors.red,
+                              borderRadius: BorderRadius.circular(8),
+                              badgeContent: isFetching
+                                  ? const Center(
+                                child: Text("loading..",
+                                    style:
+                                    TextStyle(color: Colors.white)),
+                              )
+                                  : Column(
+                                children: [
+                                  hasbdinfive
+                                      ? Text(
+                                      "${hasBirthDayInFive.length}",
+                                      style: const TextStyle(
+                                          color: Colors.white))
+                                      : hasbdintoday
+                                      ? Text(
+                                      "${hasBirthDayToday.length}",
+                                      style: const TextStyle(
+                                          color: Colors.white))
+                                      : const Text("0",
+                                      style: TextStyle(
+                                          color: Colors.white)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Image.asset(
+                            "assets/images/cashless-payment.png",
+                            width: 70,
+                            height: 70,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text("Payments"),
+                          const Text("Available"),
+                        ],
+                      ),
+                      onTap: () {
+                        Get.to(() => const PaymentsAvailable());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
                         Get.to(() => const CustomerRegistration());
                       },
                       child: Column(
@@ -1052,26 +1160,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/images/cash-on-delivery.png",
+                            "assets/images/law.png",
                             width: 70,
                             height: 70,
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text("Cash Request"),
+                          const Text("Balance"),
                         ],
                       ),
                       onTap: () {
-                        hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
-                            colorText: defaultTextColor,
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.red
-                        ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
-                            colorText: defaultTextColor,
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.red
-                        ): Get.to(() => const AllCashRequests());
+                        checkMtnBalance();
                       },
                     ),
                   ),
@@ -1107,24 +1207,52 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ),
               Row(
                 children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          // Image.asset(
+                          //   "assets/images/cash-on-delivery.png",
+                          //   width: 70,
+                          //   height: 70,
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // const Text("Cash Request"),
+                        ],
+                      ),
+                      onTap: () {
+                        // hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
+                        //     colorText: defaultTextColor,
+                        //     snackPosition: SnackPosition.BOTTOM,
+                        //     backgroundColor: Colors.red
+                        // ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
+                        //     colorText: defaultTextColor,
+                        //     snackPosition: SnackPosition.BOTTOM,
+                        //     backgroundColor: Colors.red
+                        // ): Get.to(() => const AllCashRequests());
+                      },
+                    ),
+                  ),
 
                   Expanded(
                     child: GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset(
-                            "assets/images/law.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Balance"),
+                          // Image.asset(
+                          //   "assets/images/commission.png",
+                          //   width: 70,
+                          //   height: 70,
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // const Text("Commission"),
                         ],
                       ),
                       onTap: () {
-                        checkMtnBalance();
+                        // Get.to(() => const AgentCommission());
                       },
                     ),
                   ),
@@ -1152,82 +1280,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                         //         colorText: defaultTextColor,
                         //         snackPosition: SnackPosition.BOTTOM,
                         //         backgroundColor: Colors.red);
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          // Image.asset(
-                          //   "assets/images/commission.png",
-                          //   width: 70,
-                          //   height: 70,
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // const Text("Commission"),
-                        ],
-                      ),
-                      onTap: () {
-                        // Get.to(() => const AgentCommission());
-                      },
-                    ),
-                  ),
-
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          // Image.asset(
-                          //   "assets/images/commission1.png",
-                          //   width: 70,
-                          //   height: 70,
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // const Text("Commission"),
-                        ],
-                      ),
-                      onTap: () {
-                        // checkMtnCommission();
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-
-                        ],
-                      ),
-                      onTap: () {
-                        // Get.to(() => const AllMyCashPayments());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-
-                        ],
-                      ),
-                      onTap: () {
-                        // Get.to(() => const AllMyCashPayments());
                       },
                     ),
                   ),

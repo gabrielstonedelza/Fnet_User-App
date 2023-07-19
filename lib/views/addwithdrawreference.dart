@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
-import 'bottomnavigation.dart';
 import 'homepage.dart';
 
 class AddWithdrawReference extends StatefulWidget {
@@ -52,7 +51,7 @@ class _AddWithdrawReferenceState extends State<AddWithdrawReference> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     }
     else{
 

@@ -7,7 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../sendsms.dart';
-import 'bottomnavigation.dart';
+
 import 'homepage.dart';
 
 class DepositDetail extends StatefulWidget {
@@ -92,7 +92,7 @@ class _DepositDetailState extends State<DepositDetail> {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor
       );
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
     }
     else{
       Get.snackbar("Approve Error", response.body.toString(),
@@ -109,7 +109,7 @@ class _DepositDetailState extends State<DepositDetail> {
     final response = await http.get(myLink);
 
     if(response.statusCode == 204){
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
     }
     else{
 

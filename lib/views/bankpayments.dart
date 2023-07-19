@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
-import 'bottomnavigation.dart';
 import 'homepage.dart';
 
 class BankPayments extends StatefulWidget {
@@ -82,7 +81,7 @@ class _BankPaymentsState extends State<BankPayments> {
           "Hello $agent,reference for your payment GHC$amount_delivered made at $bank is ${_referenceIdController.text}.Thank you");
       sendSms.sendMySms(telnum2, "FNET",
           "Hello ${_leftWithController.text.capitalize},this (${_referenceIdController.text}) reference shows that $agent delivered an amount of GHC$amount_delivered to you at $bank successfully,.Thank you");
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     }
     else{
       Get.snackbar("Request Error", res.body.toString(),

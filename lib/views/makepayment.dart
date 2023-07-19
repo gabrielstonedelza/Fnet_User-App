@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
-import 'bottomnavigation.dart';
+import 'homepage.dart';
+
 
 class MakePayment extends StatefulWidget {
   final id;
@@ -142,7 +143,7 @@ class _MakePaymentState extends State<MakePayment> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       // print(response.body);
       // Get.snackbar("Approve Error", response.body.toString(),
@@ -167,7 +168,7 @@ class _MakePaymentState extends State<MakePayment> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Approve Error", response.body.toString(),
           colorText: defaultTextColor,
@@ -213,7 +214,7 @@ class _MakePaymentState extends State<MakePayment> {
         }));
       }
 
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,

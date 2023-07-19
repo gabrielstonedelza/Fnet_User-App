@@ -8,7 +8,7 @@ import '../controllers/logincontroller.dart';
 import '../controllers/usercontroller.dart';
 import '../loadingui.dart';
 import '../static/app_colors.dart';
-import '../views/bottomnavigation.dart';
+import '../views/homepage.dart';
 
 class CashDepositRequests extends StatefulWidget {
   const CashDepositRequests({Key? key}) : super(key: key);
@@ -90,8 +90,8 @@ class _CashDepositRequestsState extends State<CashDepositRequests> {
         _currentSelectedAgent = "boss";
         _amountController.text = "";
       });
-      Get.offAll(()=> const MyBottomNavigationBar());
-      // Get.offAll(() => const HomePage());
+      // Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,

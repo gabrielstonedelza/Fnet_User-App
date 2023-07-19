@@ -9,7 +9,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
-import 'bottomnavigation.dart';
+import 'homepage.dart';
+
 
 class MakeCashPayment extends StatefulWidget {
   final id;
@@ -145,7 +146,7 @@ class _MakeCashPaymentState extends State<MakeCashPayment> {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor
       );
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
     }
     else{
       // print(response.body);
@@ -197,7 +198,7 @@ class _MakeCashPaymentState extends State<MakeCashPayment> {
         }));
       }
 
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
 
     } else {
       Get.snackbar("Request Error", res.body.toString(),

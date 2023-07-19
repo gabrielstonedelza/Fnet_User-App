@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
+import '../views/homepage.dart';
 
 class LoginController extends GetxController{
   late TextEditingController usernameController,passwordController;
@@ -70,7 +71,7 @@ class LoginController extends GetxController{
       storage.write("username", uname);
       storage.write("usertoken", userToken);
       if(!isLoggingIn && isUser){
-        Get.offAll(()=> const MyBottomNavigationBar());
+        Get.offAll(()=> const HomePage(message: null,));
       }
     }
     else{

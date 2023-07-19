@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../sendsms.dart';
+import '../views/homepage.dart';
 
 class MomoWithdraw extends StatefulWidget {
   const MomoWithdraw({Key? key}) : super(key: key);
@@ -187,7 +188,7 @@ class _MomoWithdrawState extends State<MomoWithdraw> {
         storage.write("ecashnow", enow);
       }
 
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
       if(_currentSelectedNetwork == "Mtn"){
         dialCashOutMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
       }

@@ -2,18 +2,15 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../sendsms.dart';
-import '../views/customerregistration.dart';
+import '../views/homepage.dart';
 
 class MomoDeposit extends StatefulWidget {
   const MomoDeposit({Key? key}) : super(key: key);
@@ -168,7 +165,7 @@ class _MomoDepositState extends State<MomoDeposit> {
       //   storage.write("physicalnow", phynow.round());
       //   storage.write("ecashnow", enow.round());
       // }
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
       if(_currentSelectedNetwork == "Mtn"){
         // if(_currentSelectedType == "Customer" && _currentSelectedNetwork == "Mtn"){
         //   dialCashInMtn(_agentPhoneController.text.trim(),_amountController.text.trim());

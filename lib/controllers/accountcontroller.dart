@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:fnet_new/views/homepage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -103,7 +102,7 @@ class AccountController extends GetxController {
       storage.write("vodafoneecashnow", vodafoneEcash);
 
       storage.write("accountcreatedtoday", accountsToday.value);
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
 
       Get.snackbar("Account", response.body.toString(),
@@ -137,7 +136,7 @@ class AccountController extends GetxController {
       storage.remove("tigoairtelphysicalcashnow");
       storage.remove("tigoairtelecashnow");
       storage.remove("accountcreatedtoday");
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Account", response.body.toString(),
           colorText: defaultTextColor,

@@ -6,13 +6,13 @@ import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
 import 'package:fnet_new/views/customerregistration.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import '../loadingui.dart';
 import '../sendsms.dart';
+import '../views/homepage.dart';
 
 class BankDeposit extends StatefulWidget {
   const BankDeposit({Key? key}) : super(key: key);
@@ -324,7 +324,7 @@ class _BankDepositState extends State<BankDeposit> {
         isCustomer = false;
         isAccountNumberAndName = false;
       });
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
       Get.bottomSheet(
           Wrap(
             children: [

@@ -3,7 +3,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../static/app_colors.dart';
-import 'bottomnavigation.dart';
+import 'homepage.dart';
+
 
 class AddNewReport extends StatefulWidget {
   const AddNewReport({Key? key}) : super(key: key);
@@ -45,7 +46,7 @@ class _AddNewReportState extends State<AddNewReport> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.TOP,
           backgroundColor: snackColor);
-      Get.offAll(()=>const MyBottomNavigationBar());
+      Get.offAll(()=>const HomePage(message: null,));
     }
     else{
       Get.snackbar("Error", "something went",

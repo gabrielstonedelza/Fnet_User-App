@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
-import 'package:fnet_new/views/homepage.dart';
+
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
+import '../views/homepage.dart';
 
 
 class UpdateMomoAccounts extends StatefulWidget {
@@ -95,7 +96,7 @@ class _UpdateMomoAccountsState extends State<UpdateMomoAccounts> {
       storage.write("vodafoneecashnow", double.parse(_vodafoneController.text) + double.parse(vodafoneNow));
       storage.write("ecashnow", double.parse(eCashBefore) +double.parse(_mtnController.text) + double.parse(_tigoairtelController.text) + double.parse(_vodafoneController.text));
 
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
       Get.snackbar("Update Error", response.body.toString(),
           colorText: defaultTextColor,

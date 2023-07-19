@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../sendsms.dart';
 import '../static/app_colors.dart';
-import '../views/bottomnavigation.dart';
+import '../views/homepage.dart';
 
 class MyBankPayments extends StatefulWidget {
   const MyBankPayments({Key? key}) : super(key: key);
@@ -110,7 +110,7 @@ class _MyBankPaymentsState extends State<MyBankPayments> {
 
       // sendSms.sendMySms(telNum, "FNET","Hello ${_tellerNameController.text},\n ${username.capitalize} just made a bank deposit of GHC${_amountController.text} to you.Transaction details include \n 200 Notes => ${_d200Controller.text}($d200),\n 100 Notes =>${_d100Controller.text}($d100), \n50 Notes =>${_d50Controller.text}($d50), \n20 Notes =>${_d20Controller.text}($d20), \n10 Notes =>${_d10Controller.text}($d10), \n5 Notes =>${_d5Controller.text}($d5), \n2 Notes =>${_d2Controller.text}($d2), \n1 Notes =>${_d1Controller.text}($d1),");
 
-      Get.offAll(()=> const MyBottomNavigationBar());
+      Get.offAll(()=> const HomePage(message: null,));
       // Get.offAll(() => const HomePage());
     } else {
       Get.snackbar("Request Error", res.body.toString(),

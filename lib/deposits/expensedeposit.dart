@@ -3,14 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/bottomnavigation.dart';
-import 'package:fnet_new/views/customerregistration.dart';
-import 'package:fnet_new/views/homepage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../sendsms.dart';
+import '../views/homepage.dart';
 
 class UserExpenseRequest extends StatefulWidget {
   const UserExpenseRequest({Key? key}) : super(key: key);
@@ -74,7 +72,7 @@ class _UserExpenseRequestState extends State<UserExpenseRequest> {
       telnum1 = telnum1.replaceFirst("0", '+233');
       sendSms.sendMySms(telnum1, "FNET",
           "Hello Admin,${username.capitalize} just made an expense request of GHC${_amount.text},kindly login into Fnet and approve.Thank you");
-      Get.offAll(() => const MyBottomNavigationBar());
+      Get.offAll(() => const HomePage(message: null,));
     } else {
 
       Get.snackbar("Request Error", res.body.toString(),
