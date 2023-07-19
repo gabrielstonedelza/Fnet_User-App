@@ -6,6 +6,7 @@ import 'package:fnet_new/views/makepayment.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import 'makecashpayment.dart';
 
 class UnpaidCashRequests extends StatefulWidget {
@@ -68,12 +69,7 @@ class _UnpaidCashRequestsState extends State<UnpaidCashRequests> {
         title: const Text("Unpaid Cash Requests"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :
+      body: isLoading ? const LoadingUi() :
       ListView.builder(
           itemCount: cashRequestsNotPaid != null ? cashRequestsNotPaid.length : 0,
           itemBuilder: (context,i){

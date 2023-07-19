@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import '../controllers/logincontroller.dart';
 import '../controllers/usercontroller.dart';
+import '../loadingui.dart';
 import '../static/app_colors.dart';
 import '../views/bottomnavigation.dart';
 
@@ -125,12 +126,7 @@ class _CashDepositRequestsState extends State<CashDepositRequests> {
           title: const Text("Request Cash"),
           backgroundColor: primaryColor,
         ),
-      body:isLoading ? const Center(
-          child: CircularProgressIndicator(
-              strokeWidth: 8,
-              color: primaryColor
-          )
-      ) : ListView(
+      body:isLoading ? const LoadingUi() : ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(18.0),

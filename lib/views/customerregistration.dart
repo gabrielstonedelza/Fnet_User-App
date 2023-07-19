@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import '../sendsms.dart';
 import 'bottomnavigation.dart';
 
@@ -18,6 +19,15 @@ class CustomerRegistration extends StatefulWidget {
 
 class _UserRegistration extends State<CustomerRegistration> {
   final _formKey = GlobalKey<FormState>();
+  void _startPosting()async{
+    setState(() {
+      isPosting = true;
+    });
+    await Future.delayed(const Duration(seconds: 4));
+    setState(() {
+      isPosting = false;
+    });
+  }
 
   bool isPosting = false;
   late List allCustomers = [];
@@ -359,8 +369,9 @@ class _UserRegistration extends State<CustomerRegistration> {
                     ),
                   ),
 
-                  !isInSystem ?RawMaterialButton(
+                  !isInSystem ? isPosting ? const LoadingUi() : RawMaterialButton(
                     onPressed: () {
+                      _startPosting();
                       if (!_formKey.currentState!.validate()) {
                         return;
                       } else {
@@ -371,6 +382,8 @@ class _UserRegistration extends State<CustomerRegistration> {
                       borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Save",
                       style: TextStyle(
@@ -378,8 +391,6 @@ class _UserRegistration extends State<CustomerRegistration> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ):Container(),
                 ],
               ),

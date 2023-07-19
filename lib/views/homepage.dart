@@ -26,15 +26,16 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:telephony/telephony.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
+import '../points.dart';
 import '../sendsms.dart';
 import 'allcashrequests.dart';
 import 'allmycashpayments.dart';
 import 'birthdays.dart';
-import 'commission.dart';
 import 'groupchat.dart';
 import 'loginview.dart';
 
@@ -280,6 +281,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   late Timer _timer;
   UserController userController = Get.find();
   final Telephony telephony = Telephony.instance;
+
+  final Uri _url = Uri.parse('http://aop.ecobank.com/');
+
+  Future<void> _launchInBrowser() async {
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
+    }
+  }
 
   Future<void> checkMtnCommission() async {
     await UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
@@ -578,6 +587,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           backgroundColor: defaultColor,
           title: Text("😃 ${username.capitalize}"),
           actions: [
+            IconButton(
+              onPressed: () {
+                Get.to(() => const MyPointsSummary());
+              },
+              icon: Image.asset("assets/images/customer-loyalty.png",width:30,height:30),
+            ),
             IconButton(
               onPressed: () {
                 showMaterialModalBottomSheet(
@@ -886,21 +901,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/images/commission.png",
+                            "assets/images/notebook.png",
                             width: 70,
                             height: 70,
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text("Commission"),
+                          const Text("Reports"),
                         ],
                       ),
                       onTap: () {
-                        Get.to(() => const AgentCommission());
+                        Get.to(() => const Reports());
                       },
                     ),
                   ),
+
                 ],
               ),
               const SizedBox(
@@ -924,21 +940,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text("Momo"),
-                          const Text("Dashboard"),
+                          const Text("Account"),
+                          const Text("Total"),
                         ],
                       ),
                       onTap: () {
-                        hasAccountsToday
-                            ? Get.to(() => const AccountDashBoard())
-                            : Get.snackbar("Sorry",
-                                "You have already closed accounts for today",
-                                colorText: defaultTextColor,
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.red);
+                        Get.to(() => const UserAccountTotal());
                       },
                     ),
                   ),
+
                   Expanded(
                     child: GestureDetector(
                       child: Column(
@@ -992,27 +1003,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/business-report.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Account"),
-                          const Text("Total"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const UserAccountTotal());
-                      },
-                    ),
-                  ),
+
                   Expanded(
                     child: GestureDetector(
                       child: Column(
@@ -1061,37 +1052,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       child: Column(
                         children: [
                           Image.asset(
-                            "assets/images/notebook.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Reports"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const Reports());
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
                             "assets/images/cash-on-delivery.png",
                             width: 70,
                             height: 70,
@@ -1135,26 +1095,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       },
                     ),
                   ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/commission1.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Commission"),
-                        ],
-                      ),
-                      onTap: () {
-                        checkMtnCommission();
-                      },
-                    ),
-                  ),
+
                 ],
               ),
               const SizedBox(
@@ -1166,6 +1107,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ),
               Row(
                 children: [
+
                   Expanded(
                     child: GestureDetector(
                       child: Column(
@@ -1183,6 +1125,85 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       ),
                       onTap: () {
                         checkMtnBalance();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          // Image.asset(
+                          //   "assets/images/business-report.png",
+                          //   width: 70,
+                          //   height: 70,
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // const Text("Momo"),
+                          // const Text("Dashboard"),
+                        ],
+                      ),
+                      onTap: () {
+                        // hasAccountsToday
+                        //     ? Get.to(() => const AccountDashBoard())
+                        //     : Get.snackbar("Sorry",
+                        //         "You have already closed accounts for today",
+                        //         colorText: defaultTextColor,
+                        //         snackPosition: SnackPosition.BOTTOM,
+                        //         backgroundColor: Colors.red);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          // Image.asset(
+                          //   "assets/images/commission.png",
+                          //   width: 70,
+                          //   height: 70,
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // const Text("Commission"),
+                        ],
+                      ),
+                      onTap: () {
+                        // Get.to(() => const AgentCommission());
+                      },
+                    ),
+                  ),
+
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Column(
+                        children: [
+                          // Image.asset(
+                          //   "assets/images/commission1.png",
+                          //   width: 70,
+                          //   height: 70,
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // const Text("Commission"),
+                        ],
+                      ),
+                      onTap: () {
+                        // checkMtnCommission();
                       },
                     ),
                   ),

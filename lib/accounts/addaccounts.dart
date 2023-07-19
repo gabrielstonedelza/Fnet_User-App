@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
+
 class AccountView extends StatefulWidget {
   const AccountView({Key? key}) : super(key: key);
 
@@ -43,6 +45,9 @@ class _AccountViewState extends State<AccountView> {
   late String uToken = "";
   final storage = GetStorage();
   late String username = "";
+  double tigoairtel = 0.0;
+  double vodafone = 0.0;
+  double physical = 0.0;
 
   addAccountsToday() async {
     const accountUrl = "https://www.fnetghana.xyz/post_momo_accounts_started/";
@@ -51,10 +56,10 @@ class _AccountViewState extends State<AccountView> {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Token $uToken"
     }, body: {
-      "physical": physicalController.text,
+      "physical": physical.toString(),
       "mtn_ecash": _mtnEcashController.text,
-      "tigoairtel_ecash": _tigoAirtelEcashController.text,
-      "vodafone_ecash": _vodafoneEcashController.text,
+      "tigoairtel_ecash": tigoairtel.toString(),
+      "vodafone_ecash": vodafone.toString(),
     });
     if (response.statusCode == 201) {
       Get.snackbar("Success", "You have added accounts for today",
@@ -63,13 +68,13 @@ class _AccountViewState extends State<AccountView> {
           backgroundColor: snackColor);
 
       var accountCreatedToday = "Account Created";
-      int pnow = int.parse(physicalController.text);
-      int enow = int.parse(_mtnEcashController.text) + int.parse(_tigoAirtelEcashController.text) + int.parse(_vodafoneEcashController.text);
+      // int pnow = int.parse(physicalController.text);
+      int enow = int.parse(_mtnEcashController.text);
 
       storage.write("mtnecashnow", _mtnEcashController.text);
-      storage.write("tigoairtelecashnow", _tigoAirtelEcashController.text);
-      storage.write("vodafoneecashnow", _vodafoneEcashController.text);
-      storage.write("physicalnow", pnow);
+      // storage.write("tigoairtelecashnow", _tigoAirtelEcashController.text);
+      // storage.write("vodafoneecashnow", _vodafoneEcashController.text);
+      // storage.write("physicalnow", pnow);
       storage.write("ecashnow", enow);
 
       storage.write("accountcreatedtoday", accountsToday);
@@ -118,32 +123,32 @@ class _AccountViewState extends State<AccountView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0,left: 10),
-                    child: TextFormField(
-                      controller: physicalController,
-                      cursorColor: primaryColor,
-                      cursorRadius: const Radius.elliptical(10, 10),
-                      cursorWidth: 10,
-                      decoration: InputDecoration(
-                          labelText: "Physical Cash",
-                          labelStyle: const TextStyle(color: secondaryColor),
-                          focusColor: primaryColor,
-                          fillColor: primaryColor,
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: primaryColor, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if(value!.isEmpty){
-                          return "Please enter your physical cash";
-                        }
-                      },
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(bottom: 10.0,left: 10),
+                  //   child: TextFormField(
+                  //     controller: physicalController,
+                  //     cursorColor: primaryColor,
+                  //     cursorRadius: const Radius.elliptical(10, 10),
+                  //     cursorWidth: 10,
+                  //     decoration: InputDecoration(
+                  //         labelText: "Physical Cash",
+                  //         labelStyle: const TextStyle(color: secondaryColor),
+                  //         focusColor: primaryColor,
+                  //         fillColor: primaryColor,
+                  //         focusedBorder: OutlineInputBorder(
+                  //             borderSide: const BorderSide(
+                  //                 color: primaryColor, width: 2),
+                  //             borderRadius: BorderRadius.circular(12)),
+                  //         border: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(12))),
+                  //     keyboardType: TextInputType.number,
+                  //     validator: (value) {
+                  //       if(value!.isEmpty){
+                  //         return "Please enter your physical cash";
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: TextFormField(
@@ -170,82 +175,77 @@ class _AccountViewState extends State<AccountView> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    children: [
-
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: TextFormField(
-                            controller: _tigoAirtelEcashController,
-                            cursorColor: primaryColor,
-                            cursorRadius: const Radius.elliptical(10, 10),
-                            cursorWidth: 10,
-                            decoration: InputDecoration(
-                                labelText: "TigoAirtel ECash",
-                                labelStyle: const TextStyle(color: secondaryColor),
-                                focusColor: primaryColor,
-                                fillColor: primaryColor,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: primaryColor, width: 2),
-                                    borderRadius: BorderRadius.circular(12)),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12))),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if(value!.isEmpty){
-                                return "Please enter your tigoairtel ecash";
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    children: [
-
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: TextFormField(
-                            controller: _vodafoneEcashController,
-                            cursorColor: primaryColor,
-                            cursorRadius: const Radius.elliptical(10, 10),
-                            cursorWidth: 10,
-                            decoration: InputDecoration(
-                                labelText: "Vodafone ECash",
-                                labelStyle: const TextStyle(color: secondaryColor),
-                                focusColor: primaryColor,
-                                fillColor: primaryColor,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: primaryColor, width: 2),
-                                    borderRadius: BorderRadius.circular(12)),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12))),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if(value!.isEmpty){
-                                return "Please enter your ecash";
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 10,),
+                  // Row(
+                  //   children: [
+                  //
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 10.0),
+                  //         child: TextFormField(
+                  //           controller: _tigoAirtelEcashController,
+                  //           cursorColor: primaryColor,
+                  //           cursorRadius: const Radius.elliptical(10, 10),
+                  //           cursorWidth: 10,
+                  //           decoration: InputDecoration(
+                  //               labelText: "TigoAirtel ECash",
+                  //               labelStyle: const TextStyle(color: secondaryColor),
+                  //               focusColor: primaryColor,
+                  //               fillColor: primaryColor,
+                  //               focusedBorder: OutlineInputBorder(
+                  //                   borderSide: const BorderSide(
+                  //                       color: primaryColor, width: 2),
+                  //                   borderRadius: BorderRadius.circular(12)),
+                  //               border: OutlineInputBorder(
+                  //                   borderRadius: BorderRadius.circular(12))),
+                  //           keyboardType: TextInputType.number,
+                  //           validator: (value) {
+                  //             if(value!.isEmpty){
+                  //               return "Please enter your tigoairtel ecash";
+                  //             }
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 10,),
+                  // Row(
+                  //   children: [
+                  //
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 10.0),
+                  //         child: TextFormField(
+                  //           controller: _vodafoneEcashController,
+                  //           cursorColor: primaryColor,
+                  //           cursorRadius: const Radius.elliptical(10, 10),
+                  //           cursorWidth: 10,
+                  //           decoration: InputDecoration(
+                  //               labelText: "Vodafone ECash",
+                  //               labelStyle: const TextStyle(color: secondaryColor),
+                  //               focusColor: primaryColor,
+                  //               fillColor: primaryColor,
+                  //               focusedBorder: OutlineInputBorder(
+                  //                   borderSide: const BorderSide(
+                  //                       color: primaryColor, width: 2),
+                  //                   borderRadius: BorderRadius.circular(12)),
+                  //               border: OutlineInputBorder(
+                  //                   borderRadius: BorderRadius.circular(12))),
+                  //           keyboardType: TextInputType.number,
+                  //           validator: (value) {
+                  //             if(value!.isEmpty){
+                  //               return "Please enter your ecash";
+                  //             }
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   const SizedBox(height: 30,),
-                  isPosting ? const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: primaryColor,
-                    ),
-                  ) :
+                  isPosting ? const LoadingUi() :
                   RawMaterialButton(
                     onPressed: () {
                       _startPosting();
@@ -259,6 +259,8 @@ class _AccountViewState extends State<AccountView> {
                         borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Save",
                       style: TextStyle(
@@ -266,8 +268,6 @@ class _AccountViewState extends State<AccountView> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ),
                 ],
               ),

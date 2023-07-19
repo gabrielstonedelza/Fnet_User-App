@@ -5,6 +5,8 @@ import 'package:fnet_new/static/app_colors.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
+
 class UserAccountTotal extends StatefulWidget {
   const UserAccountTotal({Key? key}) : super(key: key);
 
@@ -126,12 +128,7 @@ class _UserAccountTotalState extends State<UserAccountTotal> {
       ),
       body: SafeArea(
           child:
-          isLoading ? const Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-                strokeWidth: 5,
-              )
-          ) : Center(
+          isLoading ? const LoadingUi() : Center(
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [

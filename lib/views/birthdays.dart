@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
 import '../sendsms.dart';
 
 class Birthdays extends StatefulWidget {
@@ -108,16 +109,7 @@ class _BirthdaysState extends State<Birthdays> {
       ),
       body: SafeArea(
           child: isLoading
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Center(
-                        child: CircularProgressIndicator(
-                      color: primaryColor,
-                      strokeWidth: 5,
-                    )),
-                  ],
-                )
+              ? const LoadingUi()
               : hasbdinfive
                   ? ListView.builder(
                       itemCount: hasBirthDayInFive != null

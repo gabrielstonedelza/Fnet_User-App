@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fnet_new/controllers/logincontroller.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../loadingui.dart';
 import '../widgets.dart';
 
 class LoginView extends StatefulWidget {
@@ -20,7 +19,6 @@ class _LoginViewState extends State<LoginView> {
   bool isObscured = true;
 
   final Uri _url = Uri.parse('https://fnetghana.xyz/password-reset/');
-
 
   Future<void> _launchInBrowser() async {
     if (!await launchUrl(_url)) {
@@ -161,9 +159,7 @@ class _LoginViewState extends State<LoginView> {
                           child: const Text("Forgot Password",style: TextStyle(fontWeight: FontWeight.bold,color: defaultTextColor1),),
                         )),
                     const SizedBox(height: 25,),
-                    loginController.isLoggingIn ? const Center(
-                        child: CircularProgressIndicator.adaptive()
-                    ) :  Container(
+                    loginController.isLoggingIn ? const LoadingUi() :  Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           color: primaryColor
@@ -194,6 +190,8 @@ class _LoginViewState extends State<LoginView> {
                             borderRadius: BorderRadius.circular(8)
                         ),
                         elevation: 8,
+                        fillColor: primaryColor,
+                        splashColor: defaultColor,
                         child: const Text(
                           "Login",
                           style: TextStyle(
@@ -201,8 +199,6 @@ class _LoginViewState extends State<LoginView> {
                               fontSize: 20,
                               color: defaultTextColor1),
                         ),
-                        fillColor: primaryColor,
-                        splashColor: defaultColor,
                       ),
                     ),
                     const SizedBox(height: 25,),

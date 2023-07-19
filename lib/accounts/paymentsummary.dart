@@ -7,6 +7,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class PaymentRequestSummary extends StatefulWidget {
   const PaymentRequestSummary({Key? key}) : super(key: key);
 
@@ -79,19 +81,14 @@ class _PaymentRequestSummaryState extends State<PaymentRequestSummary> {
         title: const Text("Payment Summary"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      )
+      body: isLoading ? const LoadingUi()
           : ListView.builder(
           itemCount: paymentDates != null ? paymentDates.length : 0,
           itemBuilder: (context,i){
             items = paymentDates[i];
             return Column(
               children: [
-                const SizedBox(height: 20,),
+                const SizedBox(height: 5,),
                 GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context){
@@ -108,10 +105,10 @@ class _PaymentRequestSummaryState extends State<PaymentRequestSummary> {
                       ),
                       // shadowColor: Colors.pink,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 18.0,bottom: 18),
+                        padding: const EdgeInsets.only(top: 5.0,bottom: 5),
                         child: ListTile(
                           title: Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
+                            padding: const EdgeInsets.only(bottom: 5.0),
                             child: Row(
                               children: [
                                 const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white)),

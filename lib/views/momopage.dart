@@ -72,29 +72,11 @@ class _MomoPageState extends State<MomoPage> {
                     children: [
                       Image.asset("assets/images/momo.png",width: 70,height: 70,),
                       const SizedBox(height: 10,),
-                      const Text("Cash In"),
+                      const Text("Pay To"),
                     ],
                   ),
                   onTap: (){
                     hasAccountsToday ? Get.to(()=> const MomoDeposit()): Get.snackbar("Error", "Please add momo accounts for today first",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/momo.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Cash Out"),
-                    ],
-                  ),
-                  onTap: (){
-                    hasAccountsToday ? Get.to(()=> const MomoWithdraw()): Get.snackbar("Error", "Please add momo accounts for today first",
                         colorText: defaultTextColor,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red
@@ -145,7 +127,7 @@ class _MomoPageState extends State<MomoPage> {
                                     Image.asset("assets/images/deposit1.png",width:50,height: 50,),
                                     const Padding(
                                       padding: EdgeInsets.only(top:10.0),
-                                      child: Text("Cash In",style:TextStyle(fontWeight: FontWeight.bold)),
+                                      child: Text("Pay To",style:TextStyle(fontWeight: FontWeight.bold)),
                                     )
                                   ],
                                 ),
@@ -158,6 +140,25 @@ class _MomoPageState extends State<MomoPage> {
                   },
                 ),
               ),
+              Expanded(
+                child: GestureDetector(
+                  child: Column(
+                    children: [
+                      // Image.asset("assets/images/momo.png",width: 70,height: 70,),
+                      // const SizedBox(height: 10,),
+                      // const Text("Cash Out"),
+                    ],
+                  ),
+                  onTap: (){
+                    // hasAccountsToday ? Get.to(()=> const MomoWithdraw()): Get.snackbar("Error", "Please add momo accounts for today first",
+                    //     colorText: defaultTextColor,
+                    //     snackPosition: SnackPosition.BOTTOM,
+                    //     backgroundColor: Colors.red
+                    // );
+                  },
+                ),
+              ),
+
             ],
           ),
         ],

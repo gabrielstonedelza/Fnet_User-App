@@ -48,8 +48,8 @@ dependencies:
   flutter_local_notifications: ^11.0.1
   rxdart:
   curved_navigation_bar: ^1.0.3
-  new_version: ^0.3.0
   lottie: ^1.2.2
+  pinput:
 
   modal_bottom_sheet:
     git:

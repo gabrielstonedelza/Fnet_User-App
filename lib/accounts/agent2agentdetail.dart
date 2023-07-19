@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class A2ADepositSummaryDetail extends StatefulWidget {
   final deposit_date;
   const A2ADepositSummaryDetail({Key? key,this.deposit_date}) : super(key: key);
@@ -83,17 +85,7 @@ class _A2ADepositSummaryDetailState extends State<A2ADepositSummaryDetail> {
       ),
       body: SafeArea(
           child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) : ListView.builder(
+          isLoading ? const LoadingUi() : ListView.builder(
               itemCount: depositsDates != null ? depositsDates.length : 0,
               itemBuilder: (context,i){
                 items = depositsDates[i];
@@ -140,14 +132,14 @@ class _A2ADepositSummaryDetailState extends State<A2ADepositSummaryDetail> {
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Date Deposited: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['date_deposited'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Time Deposited: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Time: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['time_deposited'].toString().split(".").first,style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],

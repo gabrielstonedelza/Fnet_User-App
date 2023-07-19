@@ -15,3 +15,6 @@ const greenBack = Color(0xFF84ED20);
 const orangeBack = Color(0xFFED6720);
 const purpleBack = Color(0xFFE214EB);
 const addBack = Color(0xFF01F7FA);
+const Color snackBackground = Color(0xFFED6720);
+const warning = Colors.red;
+const Color shadow = Color(0xFF4A5367);

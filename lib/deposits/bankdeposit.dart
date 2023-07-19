@@ -11,6 +11,7 @@ import 'package:fnet_new/views/customerregistration.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import '../loadingui.dart';
 import '../sendsms.dart';
 
 class BankDeposit extends StatefulWidget {
@@ -85,12 +86,12 @@ class _BankDepositState extends State<BankDeposit> {
 
 
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _amountController = TextEditingController();
-  late final TextEditingController _customerController = TextEditingController();
-  late final TextEditingController _depositorController = TextEditingController();
-  late final TextEditingController _idTypeController = TextEditingController();
-  late final TextEditingController _idNumberController = TextEditingController();
-  late final TextEditingController _customerAccountNameController = TextEditingController();
+  late final TextEditingController _amountController;
+  late final TextEditingController _customerController;
+  late final TextEditingController _depositorController;
+  late final TextEditingController _idTypeController;
+  late final TextEditingController _idNumberController;
+  late final TextEditingController _customerAccountNameController;
   bool isAboveFiveThousand = false;
   late List allUserRequests = [];
   late List amounts = [];
@@ -102,8 +103,35 @@ class _BankDepositState extends State<BankDeposit> {
   late String idNumber = "";
   late List customer = [];
   bool accountNumberSelected = false;
+  late List allAccountsWithPoints = [];
+  late List accountsWithPoints = [];
+  late List accountNumbers = [];
 
-  fetchUserBankRequestsToday()async{
+  Future<void>fetchAccountsWithPoints() async {
+    const url = "https://fnetghana.xyz/get_account_number_points_today/";
+    var myLink = Uri.parse(url);
+    final response = await http.get(myLink, headers: {
+      "Authorization": "Token $uToken"
+    });
+
+    if (response.statusCode == 200) {
+      final codeUnits = response.body.codeUnits;
+      var jsonData = const Utf8Decoder().convert(codeUnits);
+      allAccountsWithPoints = json.decode(jsonData);
+      for (var i in allAccountsWithPoints) {
+        accountNumbers.add(i['account_number']);
+      }
+      if (kDebugMode) {
+        print(accountNumbers);
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+  }
+
+  Future<void>fetchUserBankRequestsToday()async{
     const url = "https://fnetghana.xyz/get_bank_total_today/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink, headers: {
@@ -129,7 +157,7 @@ class _BankDepositState extends State<BankDeposit> {
       }
     });
   }
-  fetchCustomerAccounts() async {
+  Future<void>fetchCustomerAccounts() async {
     final agentUrl = "https://fnetghana.xyz/get_customer_account/${_customerController.text}/";
     final agentLink = Uri.parse(agentUrl);
     http.Response res = await http.get(agentLink);
@@ -148,7 +176,7 @@ class _BankDepositState extends State<BankDeposit> {
       });
     }
   }
-  fetchCustomerBankAndNames(String deBank)async{
+  Future<void>fetchCustomerBankAndNames(String deBank)async{
     try{
       final customerAccountUrl = "https://fnetghana.xyz/get_customer_accounts_by_bank/${_customerController.text}/$deBank";
       final customerAccountLink = Uri.parse(customerAccountUrl);
@@ -173,7 +201,7 @@ class _BankDepositState extends State<BankDeposit> {
       });
     }
   }
-  fetchCustomers() async {
+  Future<void>fetchCustomers() async {
     const url = "https://fnetghana.xyz/all_customers/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink);
@@ -191,7 +219,7 @@ class _BankDepositState extends State<BankDeposit> {
       allCustomers = allCustomers;
     });
   }
-  fetchCustomer(String customerPhone)async{
+  Future<void>fetchCustomer(String customerPhone)async{
     final url = "https://fnetghana.xyz/get_customer_by_phone/$customerPhone/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink);
@@ -265,6 +293,14 @@ class _BankDepositState extends State<BankDeposit> {
       "app_version": "1",
     });
     if (res.statusCode == 201) {
+
+      if(accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Ecobank"){
+        processAddPoints(0);
+      }
+      if(!accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Ecobank"){
+        processAddPoints(2);
+      }
+
       Get.snackbar("Congratulations", "Transaction sent for approval",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
@@ -452,7 +488,30 @@ class _BankDepositState extends State<BankDeposit> {
     }
   }
 
-  fetchAdmin() async {
+  processAddPoints(int points) async {
+    const depositUrl = "https://fnetghana.xyz/add_account_points/";
+    final myLink = Uri.parse(depositUrl);
+    final res = await http.post(myLink, headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": "Token $uToken"
+    }, body: {
+      "bank": _currentSelectedBank,
+      "customer": _customerController.text,
+      "points": points.toString(),
+      "account_number": _currentAccountNumberSelected,
+      "account_name": _customerAccountNameController.text,
+    });
+    if (res.statusCode == 201) {
+
+    } else {
+      Get.snackbar("Request Error", res.body.toString(),
+          colorText: defaultTextColor,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: snackColor);
+    }
+  }
+
+  Future<void>fetchAdmin() async {
     const agentUrl = "https://fnetghana.xyz/admin_user";
     final agentLink = Uri.parse(agentUrl);
     http.Response res = await http.get(agentLink);
@@ -465,8 +524,8 @@ class _BankDepositState extends State<BankDeposit> {
       });
     }
   }
-  
-  fetchAllInstalled() async {
+
+  Future<void>fetchAllInstalled() async {
     List<Application> apps = await DeviceApps.getInstalledApplications(
         onlyAppsWithLaunchIntent: true, includeSystemApps: true);
     if (kDebugMode) {
@@ -488,7 +547,14 @@ class _BankDepositState extends State<BankDeposit> {
         username = storage.read("username");
       });
     }
+    _amountController = TextEditingController();
+    _customerController = TextEditingController();
+    _depositorController = TextEditingController();
+    _idNumberController = TextEditingController();
+    _customerAccountNameController = TextEditingController();
+    _idTypeController = TextEditingController();
     generate5digit();
+    fetchAccountsWithPoints();
     fetchCustomers();
     fetchAdmin();
     fetchAllInstalled();
@@ -498,12 +564,12 @@ class _BankDepositState extends State<BankDeposit> {
   @override
   void dispose(){
     super.dispose();
-    _amountController.dispose();
     _customerController.dispose();
     _amountController.dispose();
     _depositorController.dispose();
     _idNumberController.dispose();
     _customerAccountNameController.dispose();
+    _idTypeController.dispose();
   }
   
   @override
@@ -513,12 +579,7 @@ class _BankDepositState extends State<BankDeposit> {
         title: const Text("Bank Deposit"),
         backgroundColor: primaryColor,
       ),
-      body:isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 8,
-          color: primaryColor
-        )
-      ) : ListView(
+      body:isLoading ? const LoadingUi() : ListView(
         children: [
           const SizedBox(height: 30),
           Padding(
@@ -746,7 +807,6 @@ class _BankDepositState extends State<BankDeposit> {
                           cursorRadius: const Radius.elliptical(10, 10),
                           cursorWidth: 10,
                           decoration: InputDecoration(
-
                               labelText: "Account Number",
                               labelStyle: const TextStyle(color: secondaryColor),
                               focusColor: primaryColor,
@@ -896,18 +956,13 @@ class _BankDepositState extends State<BankDeposit> {
                   const SizedBox(
                     height: 20,
                   ),
-                  isPosting ? const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: primaryColor,
-                    ),
-                  ) : isCustomer && !fetchingCustomerAccounts ? RawMaterialButton(
+                  isPosting ? const LoadingUi() : isCustomer && !fetchingCustomerAccounts ?
+                  RawMaterialButton(
                     onPressed: () {
                       _startPosting();
                       if (!_formKey.currentState!.validate()) {
                         return;
                       } else {
-
                         if(_currentSelectedBank == "Select bank"){
                           Get.snackbar("Bank Error", "Please select customers bank from the list",colorText: Colors.white,backgroundColor: Colors.red,snackPosition: SnackPosition.BOTTOM);
                           setState(() {
@@ -915,7 +970,6 @@ class _BankDepositState extends State<BankDeposit> {
                           });
                           return;
                         }
-
                         else{
                           Get.snackbar("Please wait", "sending your request",
                               colorText: defaultTextColor,

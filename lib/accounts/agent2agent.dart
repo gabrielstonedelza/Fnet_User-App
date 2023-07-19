@@ -6,9 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
-import '../userbankrequestdetail.dart';
+import '../loadingui.dart';
 import 'agent2agentdetail.dart';
-import 'mtndepositdetail.dart';
 
 class AgentToAgentDepositSummary extends StatefulWidget {
   const AgentToAgentDepositSummary({Key? key}) : super(key: key);
@@ -83,12 +82,7 @@ class _AgentToAgentDepositSummaryState extends State<AgentToAgentDepositSummary>
         title: const Text("Agent 2 Agent Summary"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :
+      body: isLoading ? const LoadingUi() :
       ListView.builder(
           itemCount: agent2AgentDepositDates != null ? agent2AgentDepositDates.length : 0,
           itemBuilder: (context,i){

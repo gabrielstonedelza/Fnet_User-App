@@ -64,22 +64,6 @@ class LoginController extends GetxController{
 
       isLoggingIn = false;
       isUser = true;
-      // Get.defaultDialog(
-      //     title: "",
-      //     radius: 20,
-      //     backgroundColor: Colors.black54,
-      //     barrierDismissible: false,
-      //     content: Row(
-      //       children: const [
-      //         Expanded(child: Center(child: CircularProgressIndicator.adaptive(
-      //           strokeWidth: 5,
-      //           backgroundColor: primaryColor,
-      //           valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-      //         ))),
-      //         Expanded(child: Text("Processing",style: TextStyle(color: Colors.white),))
-      //       ],
-      //     )
-      // );
       final resBody = response.body;
       var jsonData = jsonDecode(resBody);
       var userToken = jsonData['auth_token'];

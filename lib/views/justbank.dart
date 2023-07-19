@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../deposits/bankdeposit.dart';
 import '../deposits/cashdepositrequests.dart';
 import '../deposits/expensedeposit.dart';
+import '../loadingui.dart';
 import '../static/app_colors.dart';
 
 class BankDeposits extends StatefulWidget {
@@ -252,12 +253,7 @@ class _BankDepositsState extends State<BankDeposits> {
         title: const Text("Deposit"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :  ListView(
+      body: isLoading ? const LoadingUi() :  ListView(
         children: [
           const SizedBox(height: 40,),
           Row(

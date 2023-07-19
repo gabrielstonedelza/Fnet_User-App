@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
 import 'mycashpaymentdetail.dart';
 
 class AllMyCashPayments extends StatefulWidget {
@@ -77,9 +78,7 @@ class _AllMyCashPaymentsState extends State<AllMyCashPayments> {
         title:const Text("My Cash Payments"),
         backgroundColor:primaryColor
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator()
-      ): ListView.builder(
+      body: isLoading ? const LoadingUi(): ListView.builder(
         itemCount: allCashPaymentsDates != null ? allCashPaymentsDates.length : 0,
         itemBuilder: (context,index){
           items = allCashPaymentsDates[index];

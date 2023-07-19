@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import '../loadingui.dart';
 import '../static/app_colors.dart';
-import 'cashrequestfromdetails.dart';
-import 'cashrequesttodetails.dart';
 import 'momocashinagentsdetails.dart';
 import 'momocashincustomerdetail.dart';
 import 'momocashinmerchantdetails.dart';
@@ -106,30 +105,25 @@ class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading ? const Center(
-          child: CircularProgressIndicator(
-              strokeWidth: 8,
-              color: primaryColor
-          )
-      ) : DefaultTabController(
-        length: 3,
+      body: isLoading ? const LoadingUi() : DefaultTabController(
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: primaryColor,
             bottom: TabBar(
               tabs: [
-                Tab(child: Column(
-                  children: [
-                    const Text("Customers",style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.white)),
-                    Text("(${allCashInForCustomers.length})",style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.white))
-                  ],
-                ),),
+                // Tab(child: Column(
+                //   children: [
+                //     const Text("Customers",style: TextStyle(
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 15,
+                //         color: Colors.white)),
+                //     Text("(${allCashInForCustomers.length})",style: const TextStyle(
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 15,
+                //         color: Colors.white))
+                //   ],
+                // ),),
                 Tab(child: Column(
                   children: [
                     const Text("Agents",style: TextStyle(
@@ -156,7 +150,7 @@ class _MomoDepositsTransactionsState extends State<MomoDepositsTransactions> {
                 ),),
               ],
             ),
-            title: const Text('Momo Cash In Transactions'),
+            title: const Text('Momo Pay To Transactions'),
           ),
           body: TabBarView(
             children: [

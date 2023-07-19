@@ -38,7 +38,7 @@ class _MomoDepositState extends State<MomoDeposit> {
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController = TextEditingController();
-  late final TextEditingController _customerPhoneController = TextEditingController();
+  late final TextEditingController _agentPhoneController = TextEditingController();
   late final TextEditingController _depositorNameController = TextEditingController();
   late final TextEditingController _depositorPhoneController = TextEditingController();
   late final TextEditingController _referenceController = TextEditingController();
@@ -46,13 +46,10 @@ class _MomoDepositState extends State<MomoDeposit> {
   final List mobileMoneyNetworks = [
     "Select Network",
     "Mtn",
-    "AirtelTigo",
-    "Vodafone"
   ];
 
   final List depositTypes = [
     "Select Deposit Type",
-    "Customer",
     "Merchant",
     "Agent",
   ];
@@ -110,14 +107,14 @@ class _MomoDepositState extends State<MomoDeposit> {
   }
 
 
-  Future<void> dialTigo() async {
-    final dialer = await DirectDialer.instance;
-    await dialer.dial('*110\%23#');
-  }
-  Future<void> dialVodafone() async {
-    final dialer = await DirectDialer.instance;
-    await dialer.dial('*110\%23#');
-  }
+  // Future<void> dialTigo() async {
+  //   final dialer = await DirectDialer.instance;
+  //   await dialer.dial('*110\%23#');
+  // }
+  // Future<void> dialVodafone() async {
+  //   final dialer = await DirectDialer.instance;
+  //   await dialer.dial('*110\%23#');
+  // }
 
 
   processMomoDeposit() async {
@@ -127,7 +124,7 @@ class _MomoDepositState extends State<MomoDeposit> {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Token $uToken"
     }, body: {
-      "customer_phone": _customerPhoneController.text.trim(),
+      "customer_phone": _agentPhoneController.text.trim(),
       "reference": _referenceController.text.trim(),
       "depositor_name": _depositorNameController.text.trim(),
       "depositor_number": _depositorPhoneController.text.trim(),
@@ -144,56 +141,56 @@ class _MomoDepositState extends State<MomoDeposit> {
       String telnum = _depositorPhoneController.text;
       telnum = telnum.replaceFirst("0", '+233');
       sendSms.sendMySms(telnum, "FNET",
-          "Dear ${_depositorNameController.text}, your MTN deposit of ${_amountController.text}  ${_customerPhoneController.text} at F-NET is successful. For more information call 0244950505 Thanks");
+          "Dear ${_depositorNameController.text}, your MTN deposit of ${_amountController.text}  ${_agentPhoneController.text} at F-NET is successful. For more information call 0244950505 Thanks");
       if(_currentSelectedNetwork == "Mtn"){
         var mtnenow = double.parse(mtnEcashNow) - double.parse(_amountController.text);
-        var enow = double.parse(ecashNow) - double.parse(_amountController.text);
-        var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
+        // var enow = double.parse(ecashNow) - double.parse(_amountController.text);
+        // var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
 
         storage.write("mtnecashnow", mtnenow.round());
-        storage.write("physicalnow", phynow.round());
-        storage.write("ecashnow", enow.round());
+        // storage.write("physicalnow", phynow.round());
+        // storage.write("ecashnow", enow.round());
       }
 
-      if(_currentSelectedNetwork == "AirtelTigo"){
-        var tigoenow = double.parse(tigoAirtelEcashNow) - double.parse(_amountController.text);
-        var enow = double.parse(ecashNow) - double.parse(_amountController.text);
-        var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
-        storage.write("tigoairtelecashnow", tigoenow.round());
-        storage.write("physicalnow", phynow.round());
-        storage.write("ecashnow", enow.round());
-      }
-      if(_currentSelectedNetwork == "Vodafone"){
-        var vodaenow = double.parse(vodafoneEcashNow) - double.parse(_amountController.text);
-        var enow = double.parse(ecashNow) - double.parse(_amountController.text);
-        var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
-        storage.write("vodafoneecashnow", vodaenow.round());
-        storage.write("physicalnow", phynow.round());
-        storage.write("ecashnow", enow.round());
-      }
+      // if(_currentSelectedNetwork == "AirtelTigo"){
+      //   var tigoenow = double.parse(tigoAirtelEcashNow) - double.parse(_amountController.text);
+      //   var enow = double.parse(ecashNow) - double.parse(_amountController.text);
+      //   var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
+      //   storage.write("tigoairtelecashnow", tigoenow.round());
+      //   storage.write("physicalnow", phynow.round());
+      //   storage.write("ecashnow", enow.round());
+      // }
+      // if(_currentSelectedNetwork == "Vodafone"){
+      //   var vodaenow = double.parse(vodafoneEcashNow) - double.parse(_amountController.text);
+      //   var enow = double.parse(ecashNow) - double.parse(_amountController.text);
+      //   var phynow = double.parse(physicalNow) + double.parse(_amountController.text);
+      //   storage.write("vodafoneecashnow", vodaenow.round());
+      //   storage.write("physicalnow", phynow.round());
+      //   storage.write("ecashnow", enow.round());
+      // }
       Get.offAll(() => const MyBottomNavigationBar());
       if(_currentSelectedNetwork == "Mtn"){
-        if(_currentSelectedType == "Customer" && _currentSelectedNetwork == "Mtn"){
-          dialCashInMtn(_customerPhoneController.text.trim(),_amountController.text.trim());
-          Get.back();
-        }
+        // if(_currentSelectedType == "Customer" && _currentSelectedNetwork == "Mtn"){
+        //   dialCashInMtn(_agentPhoneController.text.trim(),_amountController.text.trim());
+        //   Get.back();
+        // }
         if(_currentSelectedType == "Merchant" && _currentSelectedNetwork == "Mtn"){
-          dialPayToMerchant(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
+          dialPayToMerchant(_agentPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
           Get.back();
         }
         if(_currentSelectedType == "Agent" && _currentSelectedNetwork == "Mtn"){
-          dialPayToAgent(_customerPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
+          dialPayToAgent(_agentPhoneController.text.trim(),_amountController.text.trim(),_referenceController.text.trim());
           Get.back();
         }
       }
-      if(_currentSelectedNetwork == "Vodafone"){
-        dialVodafone();
-        Get.back();
-      }
-      if(_currentSelectedNetwork == "AirtelTigo"){
-        dialTigo();
-        Get.back();
-      }
+      // if(_currentSelectedNetwork == "Vodafone"){
+      //   dialVodafone();
+      //   Get.back();
+      // }
+      // if(_currentSelectedNetwork == "AirtelTigo"){
+      //   dialTigo();
+      //   Get.back();
+      // }
 
     } else {
       Get.snackbar("Request Error", res.body.toString(),
@@ -234,17 +231,17 @@ class _MomoDepositState extends State<MomoDeposit> {
         mtnEcashNow = storage.read("mtnecashnow").toString();
       });
     }
-    if(storage.read("tigoairtelecashnow") != null){
-      setState(() {
-        tigoAirtelEcashNow = storage.read("tigoairtelecashnow").toString();
-      });
-    }
-
-    if(storage.read("vodafoneecashnow") != null){
-      setState(() {
-        vodafoneEcashNow = storage.read("vodafoneecashnow").toString();
-      });
-    }
+    // if(storage.read("tigoairtelecashnow") != null){
+    //   setState(() {
+    //     tigoAirtelEcashNow = storage.read("tigoairtelecashnow").toString();
+    //   });
+    // }
+    //
+    // if(storage.read("vodafoneecashnow") != null){
+    //   setState(() {
+    //     vodafoneEcashNow = storage.read("vodafoneecashnow").toString();
+    //   });
+    // }
     fetchCustomers();
   }
 
@@ -252,7 +249,7 @@ class _MomoDepositState extends State<MomoDeposit> {
   void dispose(){
     super.dispose();
     _amountController.dispose();
-    _customerPhoneController.dispose();
+    _agentPhoneController.dispose();
     _depositorNameController.dispose();
     _depositorPhoneController.dispose();
     _referenceController.dispose();
@@ -262,7 +259,7 @@ class _MomoDepositState extends State<MomoDeposit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Momo Deposit"),
+        title: const Text("Mtn Pay To"),
         backgroundColor: primaryColor,
       ),
       body:  ListView(
@@ -303,14 +300,14 @@ class _MomoDepositState extends State<MomoDeposit> {
                       //             () => Get.to(() => const CustomerRegistration()));
                       //   }
                       // },
-                      controller: _customerPhoneController,
+                      controller: _agentPhoneController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
                       decoration: InputDecoration(
                           prefixIcon:
                           const Icon(Icons.person, color: secondaryColor),
-                          labelText: "Enter customer number",
+                          labelText: "Enter agent's number",
                           labelStyle: const TextStyle(color: secondaryColor),
                           focusColor: primaryColor,
                           fillColor: primaryColor,

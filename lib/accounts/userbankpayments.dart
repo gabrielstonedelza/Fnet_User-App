@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import 'bankpayments.dart';
 
 class UserBankPayments extends StatefulWidget {
@@ -77,12 +78,7 @@ class _UserBankPaymentsState extends State<UserBankPayments> {
         backgroundColor: primaryColor,
         title: const Text("Your bank payments"),
       ),
-      body: isLoading ? const Center(
-          child: CircularProgressIndicator(
-            color: primaryColor,
-            strokeWidth: 5,
-          )
-      ) : ListView.builder(
+      body: isLoading ? const LoadingUi() : ListView.builder(
           itemCount: allUserPayments != null ? allUserPayments.length : 0,
           itemBuilder: (context,i){
             items = allUserPayments[i];

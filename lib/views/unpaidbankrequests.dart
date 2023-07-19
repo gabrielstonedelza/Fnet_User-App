@@ -6,6 +6,8 @@ import 'package:fnet_new/views/makepayment.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
+
 class UnpaidBankRequests extends StatefulWidget {
   const UnpaidBankRequests({Key? key}) : super(key: key);
 
@@ -66,12 +68,7 @@ class _UnpaidBankRequestsState extends State<UnpaidBankRequests> {
         title: const Text("Unpaid Bank Request"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) : Column(
+      body: isLoading ? const LoadingUi() : Column(
         children: [
           const SizedBox(height: 30,),
           const SizedBox(height:10,),

@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class MtnDepositSummaryDetail extends StatefulWidget {
   final deposit_date;
   const MtnDepositSummaryDetail({Key? key,this.deposit_date}) : super(key: key);
@@ -79,21 +81,11 @@ class _MtnDepositSummaryDetailState extends State<MtnDepositSummaryDetail> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: const Text("Mtn deposits"),
+        title: const Text("Pay To"),
       ),
       body: SafeArea(
           child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) : ListView.builder(
+          isLoading ? const LoadingUi() : ListView.builder(
               itemCount: depositsDates != null ? depositsDates.length : 0,
               itemBuilder: (context,i){
                 items = depositsDates[i];
@@ -116,7 +108,7 @@ class _MtnDepositSummaryDetailState extends State<MtnDepositSummaryDetail> {
                               padding: const EdgeInsets.only(bottom: 15.0),
                               child: Row(
                                 children: [
-                                  const Text("Customer: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                  const Text("Agent No: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                   Text(items['customer_phone'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                 ],
                               ),
@@ -127,21 +119,25 @@ class _MtnDepositSummaryDetailState extends State<MtnDepositSummaryDetail> {
                                 Row(
                                   children: [
                                     const Text("Amount: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-
                                     Text(items['amount'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
-
                                 Row(
                                   children: [
-                                    const Text("Date Deposited: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Type: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    Text(items['type'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['date_deposited'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Time Deposited: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Time: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['time_deposited'].toString().split(".").first,style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],

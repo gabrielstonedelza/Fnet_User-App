@@ -134,7 +134,7 @@ class TransactionSummary extends StatelessWidget {
           const Divider(),
           const SizedBox(height:10),
           const Center(
-            child: Text("Momo Deposits",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold))
+            child: Text("Momo Pay To",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold))
           ),
           const SizedBox(height:20),
 
@@ -161,28 +161,12 @@ class TransactionSummary extends StatelessWidget {
                     children: [
                       Image.asset("assets/images/business-report.png",width: 70,height: 70,),
                       const SizedBox(height: 10,),
-                      const Text("Tigo "),
+                      const Text("Agent 2 Agent"),
                       const Text("Summary"),
                     ],
                   ),
                   onTap: (){
-                    Get.to(()=> const TigoDepositSummary());
-
-                  },
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Vodafone "),
-                      const Text("Summary"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const VodafoneDepositSummary());
+                    Get.to(()=> const AgentToAgentDepositSummary());
                   },
                 ),
               ),
@@ -193,21 +177,7 @@ class TransactionSummary extends StatelessWidget {
           const SizedBox(height:10),
           Row(
             children: [
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Agent 2 Agent"),
-                      const Text("Summary"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const AgentToAgentDepositSummary());
-                  },
-                ),
-              ),
+
               Expanded(
                 child: GestureDetector(
                   child: Column(
@@ -244,60 +214,60 @@ class TransactionSummary extends StatelessWidget {
           const SizedBox(height:10),
           const Divider(),
           const SizedBox(height:10),
-          const Center(
-              child: Text("Momo Withdraws",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold))
-          ),
+          // const Center(
+          //     child: Text("Momo Withdraws",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold))
+          // ),
           const SizedBox(height:20),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("MTN"),
-                      const Text("Summary"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const MtnWithDrawSummary());
-                  },
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Tigo "),
-                      const Text("Summary"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const TigoWithDrawSummary());
-
-                  },
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/business-report.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Vodafone "),
-                      const Text("Summary"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const VodafoneWithDrawSummary());
-                  },
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: GestureDetector(
+          //         child: Column(
+          //           children: [
+          //             Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+          //             const SizedBox(height: 10,),
+          //             const Text("MTN"),
+          //             const Text("Summary"),
+          //           ],
+          //         ),
+          //         onTap: (){
+          //           Get.to(()=> const MtnWithDrawSummary());
+          //         },
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: GestureDetector(
+          //         child: Column(
+          //           children: [
+          //             Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+          //             const SizedBox(height: 10,),
+          //             const Text("Tigo "),
+          //             const Text("Summary"),
+          //           ],
+          //         ),
+          //         onTap: (){
+          //           Get.to(()=> const TigoWithDrawSummary());
+          //
+          //         },
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: GestureDetector(
+          //         child: Column(
+          //           children: [
+          //             Image.asset("assets/images/business-report.png",width: 70,height: 70,),
+          //             const SizedBox(height: 10,),
+          //             const Text("Vodafone "),
+          //             const Text("Summary"),
+          //           ],
+          //         ),
+          //         onTap: (){
+          //           Get.to(()=> const VodafoneWithDrawSummary());
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // ),
 
         ],
       ),

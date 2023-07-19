@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
 import '../userbankrequestdetail.dart';
 import 'mtndepositdetail.dart';
 
@@ -43,9 +44,9 @@ class _MtnDepositSummaryState extends State<MtnDepositSummary> {
       allMomoDeposits = json.decode(jsonData);
       amounts = allMomoDeposits;
       for(var i in amounts){
-        sum = sum + double.parse(i['amount']);
         if(!mtnDepositDates.contains(i['date_deposited'])){
           mtnDepositDates.add(i['date_deposited']);
+          sum = sum + double.parse(i['amount']);
         }
       }
     }
@@ -82,19 +83,14 @@ class _MtnDepositSummaryState extends State<MtnDepositSummary> {
         title: const Text("Mtn Deposit Summary"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :
+      body: isLoading ? const LoadingUi() :
       ListView.builder(
           itemCount: mtnDepositDates != null ? mtnDepositDates.length : 0,
           itemBuilder: (context,i){
             items = mtnDepositDates[i];
             return Column(
               children: [
-                const SizedBox(height: 20,),
+                const SizedBox(height: 5,),
                 GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context){
@@ -111,10 +107,10 @@ class _MtnDepositSummaryState extends State<MtnDepositSummary> {
                       ),
                       // shadowColor: Colors.pink,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 18.0,bottom: 18),
+                        padding: const EdgeInsets.only(top: 5.0,bottom:5),
                         child: ListTile(
                           title: Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
+                            padding: const EdgeInsets.only(bottom: 5.0),
                             child: Row(
                               children: [
                                 const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),

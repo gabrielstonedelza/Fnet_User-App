@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class UserCashRequestsDetail extends StatefulWidget {
   final req_date;
   const UserCashRequestsDetail({Key? key,this.req_date}) : super(key: key);
@@ -83,17 +85,7 @@ class _UserCashRequestsDetailState extends State<UserCashRequestsDetail> {
       ),
       body: SafeArea(
           child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) : ListView.builder(
+          isLoading ? const LoadingUi() : ListView.builder(
               itemCount: requestDates != null ? requestDates.length : 0,
               itemBuilder: (context,i){
                 items = requestDates[i];
@@ -140,14 +132,14 @@ class _UserCashRequestsDetailState extends State<UserCashRequestsDetail> {
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Date Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['date_requested'],style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Time Requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Time: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
 
                                     Text(items['time_requested'].toString().split(".").first,style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],

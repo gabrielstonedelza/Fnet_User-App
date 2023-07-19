@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import '../static/app_colors.dart';
 import 'addreport.dart';
 
@@ -67,12 +68,7 @@ class _ReportsState extends State<Reports> {
         title: const Text("Reports"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :
+      body: isLoading ? const LoadingUi() :
       ListView.builder(
           itemCount: allReports != null ? allReports.length : 0,
           itemBuilder: (context,i){

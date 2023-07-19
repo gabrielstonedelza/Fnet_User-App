@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class UserPaymentDetail extends StatefulWidget {
   final paydate;
   const UserPaymentDetail({Key? key,this.paydate}) : super(key: key);
@@ -82,17 +84,7 @@ class _UserPaymentDetailState extends State<UserPaymentDetail> {
       ),
       body: SafeArea(
           child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) : ListView.builder(
+          isLoading ? const LoadingUi() : ListView.builder(
               itemCount: paymentDates != null ? paymentDates.length : 0,
               itemBuilder: (context,i){
                 items = paymentDates[i];
@@ -164,13 +156,13 @@ class _UserPaymentDetailState extends State<UserPaymentDetail> {
 
                                 Row(
                                   children: [
-                                    const Text("Date requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Date: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                     Text(items['date_created'],style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    const Text("Time requested: ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
+                                    const Text("Time : ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                     Text(items['time_created'].toString().split(".").first,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
                                   ],
                                 ),

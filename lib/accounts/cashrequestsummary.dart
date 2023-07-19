@@ -7,6 +7,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
+
 class CashRequestSummary extends StatefulWidget {
   const CashRequestSummary({Key? key}) : super(key: key);
 
@@ -79,12 +81,7 @@ class _CashRequestSummaryState extends State<CashRequestSummary> {
         title: const Text("Cash Summary"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      )
+      body: isLoading ? const LoadingUi()
           : ListView.builder(
           itemCount: requestDates != null ? requestDates.length : 0,
           itemBuilder: (context,i){

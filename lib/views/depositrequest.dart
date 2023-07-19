@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import 'justbank.dart';
 import 'justbankwithdrawals.dart';
 import 'justmomo.dart';
@@ -172,7 +173,6 @@ class _DepositsState extends State<Deposits> {
 
     setState(() {
       isLoading = false;
-      allUserCashRequests = allUserCashRequests;
       if(cashNotPaid.contains("Not Paid")){
         hasUnpaidCashRequests = true;
       }
@@ -264,12 +264,7 @@ class _DepositsState extends State<Deposits> {
         title: const Text("Bank Transactions"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :  Column(
+      body: isLoading ? const LoadingUi() :  Column(
         children: [
           const SizedBox(height: 40,),
           Row(

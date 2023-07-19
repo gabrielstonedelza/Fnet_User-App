@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../../static/app_colors.dart';
+import '../loadingui.dart';
 import 'groupchat.dart';
 
 class AllYourNotifications extends StatefulWidget {
@@ -85,12 +86,7 @@ class _AllYourNotificationsState extends State<AllYourNotifications> {
         title: const Text("Your Notifications"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 5,
-          color: secondaryColor,
-        ),
-      ) :
+      body: isLoading ? const LoadingUi() :
       ListView.builder(
           itemCount: yourNotifications != null ? yourNotifications.length : 0,
           itemBuilder: (context,i){

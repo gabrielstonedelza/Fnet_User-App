@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../loadingui.dart';
 import '../sendsms.dart';
 import 'bottomnavigation.dart';
 import 'homepage.dart';
@@ -382,12 +383,7 @@ class _UserRegistration extends State<AddCustomerAccount> {
                     ),
                   ) : Container(),
 
-                  isPosting ? const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: primaryColor,
-                    ),
-                  ) : RawMaterialButton(
+                  isPosting ? const LoadingUi() : RawMaterialButton(
                     onPressed: () {
                       _startPosting();
                       if (!_formKey.currentState!.validate()) {
@@ -400,6 +396,8 @@ class _UserRegistration extends State<AddCustomerAccount> {
                       borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Save",
                       style: TextStyle(
@@ -407,8 +405,6 @@ class _UserRegistration extends State<AddCustomerAccount> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ),
                 ],
               ),

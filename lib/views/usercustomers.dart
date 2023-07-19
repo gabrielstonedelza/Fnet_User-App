@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../loadingui.dart';
 import 'editcustomer.dart';
 
 class UserCustomers extends StatefulWidget {
@@ -75,8 +76,8 @@ class _UserCustomersState extends State<UserCustomers> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Column(
-          children: const [
+        title: const Column(
+          children: [
             Text("All Your Customers"),
           ],
         ),
@@ -94,17 +95,7 @@ class _UserCustomersState extends State<UserCustomers> {
       ),
       body: SafeArea(
           child:
-          isLoading ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 5,
-                  )
-              ),
-            ],
-          ) : ListView.builder(
+          isLoading ? const LoadingUi() : ListView.builder(
               itemCount: allCustomers != null ? allCustomers.length : 0,
               itemBuilder: (context,i){
                 items = allCustomers[i];

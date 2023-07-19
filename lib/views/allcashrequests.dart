@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import '../deposits/cashdepositrequests.dart';
+import '../loadingui.dart';
 import '../static/app_colors.dart';
 import 'cashrequestfromdetails.dart';
 import 'cashrequesttodetails.dart';
@@ -102,12 +103,7 @@ class _AllCashRequestsState extends State<AllCashRequests> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading ? const Center(
-          child: CircularProgressIndicator(
-              strokeWidth: 8,
-              color: primaryColor
-          )
-      ) : DefaultTabController(
+      body: isLoading ? const LoadingUi() : DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(

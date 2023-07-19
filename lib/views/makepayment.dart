@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -15,17 +14,20 @@ class MakePayment extends StatefulWidget {
   final id;
   final depositType;
   final amount;
-  const MakePayment({Key? key,this.id,this.depositType,this.amount}) : super(key: key);
+  const MakePayment({Key? key, this.id, this.depositType, this.amount})
+      : super(key: key);
 
   @override
-  _MakePaymentState createState() => _MakePaymentState(id:this.id,depositType:this.depositType,amount:this.amount);
+  _MakePaymentState createState() => _MakePaymentState(
+      id: this.id, depositType: this.depositType, amount: this.amount);
 }
 
 class _MakePaymentState extends State<MakePayment> {
   final id;
   final depositType;
   final amount;
-  _MakePaymentState({ required this.id, required this.depositType, required this.amount});
+  _MakePaymentState(
+      {required this.id, required this.depositType, required this.amount});
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
@@ -49,7 +51,7 @@ class _MakePaymentState extends State<MakePayment> {
     "Kwumawuman Bank",
     "Omini bank",
   ];
-  
+
   var _currentSelectedBank1 = "Select bank";
   var _currentSelectedBank2 = "Select bank";
 
@@ -65,7 +67,7 @@ class _MakePaymentState extends State<MakePayment> {
     "Own Accounts",
     "Company Accounts"
   ];
-  
+
   var _currentSelectedModeOfPayment1 = "Select mode of payment";
   var _currentSelectedModeOfPayment2 = "Select mode of payment";
 
@@ -102,8 +104,10 @@ class _MakePaymentState extends State<MakePayment> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController1 = TextEditingController();
   late final TextEditingController _amountController2 = TextEditingController();
-  late final TextEditingController _referenceController1 = TextEditingController();
-  late final TextEditingController _referenceController2 = TextEditingController();
+  late final TextEditingController _referenceController1 =
+      TextEditingController();
+  late final TextEditingController _referenceController2 =
+      TextEditingController();
   DateTime now = DateTime.now();
   bool isPosting = false;
   var amountTotal;
@@ -123,25 +127,23 @@ class _MakePaymentState extends State<MakePayment> {
     });
   }
 
-  payCashRequestDeposit()async{
+  payCashRequestDeposit() async {
     final requestUrl = "https://fnetghana.xyz/approve_cash_deposit_paid/$id/";
     final myLink = Uri.parse(requestUrl);
     final response = await http.put(myLink, headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       'Accept': 'application/json',
-    },body: {
+    }, body: {
       "deposit_paid": "Paid",
-      "app_name" : "FNET"
+      "app_name": "FNET"
     });
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       Get.snackbar("Congrats", "Request was paid",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: snackColor
-      );
-      Get.offAll(()=> const MyBottomNavigationBar());
-    }
-    else{
+          backgroundColor: snackColor);
+      Get.offAll(() => const MyBottomNavigationBar());
+    } else {
       // print(response.body);
       // Get.snackbar("Approve Error", response.body.toString(),
       //     colorText: defaultTextColor,
@@ -151,29 +153,26 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  payBankRequestDeposit()async{
+  payBankRequestDeposit() async {
     final requestUrl = "https://fnetghana.xyz/approve_bank_deposit_paid/$id/";
     final myLink = Uri.parse(requestUrl);
     final response = await http.put(myLink, headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       'Accept': 'application/json',
-    },body: {
+    }, body: {
       "deposit_paid": "Paid",
     });
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       Get.snackbar("Congrats", "Request was paid",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: snackColor
-      );
-      Get.offAll(()=> const MyBottomNavigationBar());
-    }
-    else{
+          backgroundColor: snackColor);
+      Get.offAll(() => const MyBottomNavigationBar());
+    } else {
       Get.snackbar("Approve Error", response.body.toString(),
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: snackColor
-      );
+          backgroundColor: snackColor);
     }
   }
 
@@ -193,8 +192,7 @@ class _MakePaymentState extends State<MakePayment> {
       "amount1": _amountController1.text,
       "amount2": _amountController2.text,
       "transaction_id1": _referenceController1.text,
-      "transaction_id2":  _referenceController2.text,
-
+      "transaction_id2": _referenceController2.text,
     });
     if (res.statusCode == 201) {
       Get.snackbar("Congratulations", "Payment is sent for approval",
@@ -205,9 +203,7 @@ class _MakePaymentState extends State<MakePayment> {
       telnum1 = telnum1.replaceFirst("0", '+233');
       sendSms.sendMySms(telnum1, "FNET",
           "Hello Admin,${username.capitalize} just made a $_currentSelectedModeOfPayment1 of GHC${_amountController1.text} ,kindly login into Fnet and approve.Thank you");
-      if (_currentSelectedModeOfPayment1 == "Cash left @") {
-
-      }
+      if (_currentSelectedModeOfPayment1 == "Cash left @") {}
       if (_currentSelectedModeOfPayment1 == "Bank Payment") {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return BankPayments(
@@ -217,8 +213,7 @@ class _MakePaymentState extends State<MakePayment> {
         }));
       }
 
-      Get.offAll(()=> const MyBottomNavigationBar());
-
+      Get.offAll(() => const MyBottomNavigationBar());
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,
@@ -288,8 +283,13 @@ class _MakePaymentState extends State<MakePayment> {
                 children: [
                   Column(
                     children: [
-                      Text("Total to pay $amount",style: const TextStyle(fontWeight: FontWeight.bold),),
-                      const SizedBox(height: 20,),
+                      Text(
+                        "Total to pay $amount",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: Container(
@@ -297,7 +297,8 @@ class _MakePaymentState extends State<MakePayment> {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: Colors.grey, width: 1)),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10),
+                            padding:
+                                const EdgeInsets.only(left: 10.0, right: 10),
                             child: DropdownButton(
                               hint: const Text("Select mode of payment1"),
                               isExpanded: true,
@@ -311,12 +312,12 @@ class _MakePaymentState extends State<MakePayment> {
                                 );
                               }).toList(),
                               onChanged: (newValueSelected) {
-                                if(newValueSelected != "Select mode of payment"){
+                                if (newValueSelected !=
+                                    "Select mode of payment") {
                                   setState(() {
                                     hasSelectedModeOfPayment = true;
                                   });
-                                }
-                                else{
+                                } else {
                                   setState(() {
                                     hasSelectedModeOfPayment = false;
                                   });
@@ -329,128 +330,151 @@ class _MakePaymentState extends State<MakePayment> {
                           ),
                         ),
                       ),
-                      hasSelectedModeOfPayment ? Column(
-                        children: [
-                          _currentSelectedModeOfPayment1 == "Bank Payment"
-                              ? Padding(
+                      hasSelectedModeOfPayment
+                          ? Column(
+                              children: [
+                                _currentSelectedModeOfPayment1 == "Bank Payment"
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 1)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0, right: 10),
+                                            child: DropdownButton(
+                                              hint: const Text("Select bank1"),
+                                              isExpanded: true,
+                                              underline: const SizedBox(),
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 20),
+                                              items: banks
+                                                  .map((dropDownStringItem) {
+                                                return DropdownMenuItem(
+                                                  value: dropDownStringItem,
+                                                  child:
+                                                      Text(dropDownStringItem),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValueSelected) {
+                                                _onDropDownItemSelectedBank(
+                                                    newValueSelected);
+                                              },
+                                              value: _currentSelectedBank1,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                                _currentSelectedModeOfPayment1 == "Cash left @"
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 1)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0, right: 10),
+                                            child: DropdownButton(
+                                              hint: const Text(
+                                                  "Please select cash at location1"),
+                                              isExpanded: true,
+                                              underline: const SizedBox(),
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 20),
+                                              items: cashLocation
+                                                  .map((dropDownStringItem) {
+                                                return DropdownMenuItem(
+                                                  value: dropDownStringItem,
+                                                  child:
+                                                      Text(dropDownStringItem),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValueSelected) {
+                                                _onDropDownItemSelectedLocation(
+                                                    newValueSelected);
+                                              },
+                                              value: _currentCashAtLocation1,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                                Padding(
                                   padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border:
-                                            Border.all(color: Colors.grey, width: 1)),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 10.0, right: 10),
-                                      child: DropdownButton(
-                                        hint: const Text("Select bank1"),
-                                        isExpanded: true,
-                                        underline: const SizedBox(),
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                        items: banks.map((dropDownStringItem) {
-                                          return DropdownMenuItem(
-                                            value: dropDownStringItem,
-                                            child: Text(dropDownStringItem),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValueSelected) {
-                                          _onDropDownItemSelectedBank(newValueSelected);
-                                        },
-                                        value: _currentSelectedBank1,
-                                      ),
-                                    ),
+                                  child: TextFormField(
+                                    controller: _referenceController1,
+                                    cursorColor: primaryColor,
+                                    cursorRadius:
+                                        const Radius.elliptical(10, 10),
+                                    cursorWidth: 10,
+                                    decoration: InputDecoration(
+                                        labelText: "Enter reference",
+                                        labelStyle: const TextStyle(
+                                            color: secondaryColor),
+                                        focusColor: primaryColor,
+                                        fillColor: primaryColor,
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: primaryColor, width: 2),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12))),
+                                    keyboardType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter reference";
+                                      }
+                                    },
                                   ),
-                                )
-                              : Container(),
-                          _currentSelectedModeOfPayment1 == "Cash left @"
-                              ? Padding(
+                                ),
+                                Padding(
                                   padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border:
-                                            Border.all(color: Colors.grey, width: 1)),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 10.0, right: 10),
-                                      child: DropdownButton(
-                                        hint: const Text("Please select cash at location1"),
-                                        isExpanded: true,
-                                        underline: const SizedBox(),
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                        items: cashLocation.map((dropDownStringItem) {
-                                          return DropdownMenuItem(
-                                            value: dropDownStringItem,
-                                            child: Text(dropDownStringItem),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValueSelected) {
-                                          _onDropDownItemSelectedLocation(
-                                              newValueSelected);
-                                        },
-                                        value: _currentCashAtLocation1,
-                                      ),
-                                    ),
+                                  child: TextFormField(
+                                    controller: _amountController1,
+                                    cursorColor: primaryColor,
+                                    cursorRadius:
+                                        const Radius.elliptical(10, 10),
+                                    cursorWidth: 10,
+                                    decoration: InputDecoration(
+                                        labelText: "Enter amount",
+                                        labelStyle: const TextStyle(
+                                            color: secondaryColor),
+                                        focusColor: primaryColor,
+                                        fillColor: primaryColor,
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: primaryColor, width: 2),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12))),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter amount";
+                                      }
+                                    },
                                   ),
-                                )
-                              : Container(),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              controller: _referenceController1,
-                              cursorColor: primaryColor,
-                              cursorRadius: const Radius.elliptical(10, 10),
-                              cursorWidth: 10,
-                              decoration: InputDecoration(
-                                  labelText: "Enter reference",
-                                  labelStyle: const TextStyle(color: secondaryColor),
-                                  focusColor: primaryColor,
-                                  fillColor: primaryColor,
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: primaryColor, width: 2),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12))),
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter reference";
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              controller: _amountController1,
-                              cursorColor: primaryColor,
-                              cursorRadius: const Radius.elliptical(10, 10),
-                              cursorWidth: 10,
-                              decoration: InputDecoration(
-                                  labelText: "Enter amount",
-                                  labelStyle: const TextStyle(color: secondaryColor),
-                                  focusColor: primaryColor,
-                                  fillColor: primaryColor,
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: primaryColor, width: 2),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12))),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter amount";
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ) : Container(),
-
+                                ),
+                              ],
+                            )
+                          : Container(),
                       const SizedBox(
                         height: 20,
                       ),
@@ -461,305 +485,335 @@ class _MakePaymentState extends State<MakePayment> {
                   const SizedBox(height: 20),
 
                   //option for another payment
-                  showPayment2 ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey, width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10),
-                            child: DropdownButton(
-                              hint: const Text("Select mode of payment2"),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 20),
-                              items: modeOfPayment.map((dropDownStringItem) {
-                                return DropdownMenuItem(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedModeOfPayment2(
-                                    newValueSelected);
-                              },
-                              value: _currentSelectedModeOfPayment2,
+                  showPayment2
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.grey, width: 1)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10),
+                                  child: DropdownButton(
+                                    hint: const Text("Select mode of payment2"),
+                                    isExpanded: true,
+                                    underline: const SizedBox(),
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 20),
+                                    items:
+                                        modeOfPayment.map((dropDownStringItem) {
+                                      return DropdownMenuItem(
+                                        value: dropDownStringItem,
+                                        child: Text(dropDownStringItem),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValueSelected) {
+                                      _onDropDownItemSelectedModeOfPayment2(
+                                          newValueSelected);
+                                    },
+                                    value: _currentSelectedModeOfPayment2,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      _currentSelectedModeOfPayment2 == "Bank Payment"
-                          ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                              Border.all(color: Colors.grey, width: 1)),
+                            _currentSelectedModeOfPayment2 == "Bank Payment"
+                                ? Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: Colors.grey, width: 1)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0, right: 10),
+                                        child: DropdownButton(
+                                          hint: const Text("Select bank"),
+                                          isExpanded: true,
+                                          underline: const SizedBox(),
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                          items:
+                                              banks.map((dropDownStringItem) {
+                                            return DropdownMenuItem(
+                                              value: dropDownStringItem,
+                                              child: Text(dropDownStringItem),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newValueSelected) {
+                                            _onDropDownItemSelectedBank2(
+                                                newValueSelected);
+                                          },
+                                          value: _currentSelectedBank2,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            _currentSelectedModeOfPayment2 == "Cash left @"
+                                ? Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: Colors.grey, width: 1)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0, right: 10),
+                                        child: DropdownButton(
+                                          hint: const Text(
+                                              "Please select cash at location2"),
+                                          isExpanded: true,
+                                          underline: const SizedBox(),
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                          items: cashLocation
+                                              .map((dropDownStringItem) {
+                                            return DropdownMenuItem(
+                                              value: dropDownStringItem,
+                                              child: Text(dropDownStringItem),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newValueSelected) {
+                                            _onDropDownItemSelectedLocation2(
+                                                newValueSelected);
+                                          },
+                                          value: _currentCashAtLocation2,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: TextFormField(
+                                controller: _referenceController2,
+                                cursorColor: primaryColor,
+                                cursorRadius: const Radius.elliptical(10, 10),
+                                cursorWidth: 10,
+                                decoration: InputDecoration(
+                                    labelText: "Enter reference",
+                                    labelStyle:
+                                        const TextStyle(color: secondaryColor),
+                                    focusColor: primaryColor,
+                                    fillColor: primaryColor,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: primaryColor, width: 2),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12))),
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please enter reference";
+                                  }
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: TextFormField(
+                                controller: _amountController2,
+                                cursorColor: primaryColor,
+                                cursorRadius: const Radius.elliptical(10, 10),
+                                cursorWidth: 10,
+                                decoration: InputDecoration(
+                                    labelText: "Enter amount",
+                                    labelStyle:
+                                        const TextStyle(color: secondaryColor),
+                                    focusColor: primaryColor,
+                                    fillColor: primaryColor,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: primaryColor, width: 2),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12))),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please enter amount";
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  hasSelectedModeOfPayment
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showPayment2 = !showPayment2;
+                              if (!showPayment2) {
+                                buttonText = "Add another payment";
+                                hasAnotherPayment = false;
+                              } else {
+                                buttonText = "Remove field";
+                                hasAnotherPayment = true;
+                              }
+                            });
+                          },
                           child: Padding(
                             padding:
-                            const EdgeInsets.only(left: 10.0, right: 10),
-                            child: DropdownButton(
-                              hint: const Text("Select bank"),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 20),
-                              items: banks.map((dropDownStringItem) {
-                                return DropdownMenuItem(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedBank2(newValueSelected);
-                              },
-                              value: _currentSelectedBank2,
+                                const EdgeInsets.only(top: 12.0, bottom: 12),
+                            child: Text(
+                              buttonText,
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
+                          ))
+                      : Container(),
+                  isPosting && !hasErrors
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 5,
+                            color: primaryColor,
                           ),
-                        ),
-                      )
-                          : Container(),
-                      _currentSelectedModeOfPayment2 == "Cash left @"
-                          ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                              Border.all(color: Colors.grey, width: 1)),
-                          child: Padding(
-                            padding:
-                            const EdgeInsets.only(left: 10.0, right: 10),
-                            child: DropdownButton(
-                              hint: const Text("Please select cash at location2"),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 20),
-                              items: cashLocation.map((dropDownStringItem) {
-                                return DropdownMenuItem(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (newValueSelected) {
-                                _onDropDownItemSelectedLocation2(
-                                    newValueSelected);
+                        )
+                      : hasSelectedModeOfPayment
+                          ? RawMaterialButton(
+                              onPressed: () {
+                                _startPosting();
+                                if (!_formKey.currentState!.validate()) {
+                                  return;
+                                } else {
+                                  if (_currentSelectedModeOfPayment1 ==
+                                      "Select mode of payment") {
+                                    setState(() {
+                                      hasErrors = true;
+                                    });
+                                    Get.snackbar("Mode Error",
+                                        "Please select at least one mode of payment",
+                                        colorText: defaultTextColor,
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: Colors.red);
+                                    return;
+                                  }
+                                  if (_amountController1.text.isNotEmpty &&
+                                      _amountController2.text.isEmpty) {
+                                    amountTotal = double.tryParse(
+                                        _amountController1.text);
+                                    if (amountTotal != double.parse(amount)) {
+                                      setState(() {
+                                        hasErrors = true;
+                                      });
+                                      Get.snackbar("Amount Error",
+                                          "Your amount total is wrong,please check",
+                                          colorText: defaultTextColor,
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: Colors.red);
+                                      return;
+                                    }
+                                  }
+                                  if (_amountController1.text.isNotEmpty &&
+                                      _amountController2.text.isNotEmpty) {
+                                    amountTotal = double.parse(
+                                            _amountController1.text) +
+                                        double.parse(_amountController2.text);
+                                    if (amountTotal != double.parse(amount)) {
+                                      setState(() {
+                                        hasErrors = true;
+                                      });
+                                      Get.snackbar("Amount Error",
+                                          "Your amount total is wrong,please check",
+                                          colorText: defaultTextColor,
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: Colors.red);
+                                      return;
+                                    }
+                                  }
+                                  if (_amountController1.text.isEmpty &&
+                                      _amountController2.text.isEmpty) {
+                                    setState(() {
+                                      hasErrors = true;
+                                    });
+                                    Get.snackbar("Payment Error",
+                                        "Please make sure at least one amount is paid.",
+                                        colorText: defaultTextColor,
+                                        snackPosition: SnackPosition.TOP,
+                                        backgroundColor: Colors.red);
+                                    return;
+                                  } else {
+                                    // setState(() {
+                                    //   hasErrors = false;
+                                    // });
+                                    processPayment(context);
+                                    if (depositType == "Bank") {
+                                      payBankRequestDeposit();
+                                    }
+                                    if (depositType == "Cash") {
+                                      payCashRequestDeposit();
+                                    }
+                                  }
+                                  //  check before save
+                                  //   Get.defaultDialog(
+                                  //     title: "Confirm Payment",
+                                  //     middleText: "Are you sure you want to make payment?",
+                                  //     content: Container(),
+                                  //     cancel: RawMaterialButton(
+                                  //         shape: const StadiumBorder(),
+                                  //         fillColor: primaryColor,
+                                  //         onPressed: () {
+                                  //           Get.back();
+                                  //         },
+                                  //         child: const Text(
+                                  //           "Cancel",
+                                  //           style: TextStyle(color: Colors.white),
+                                  //         )),
+                                  //
+                                  //     confirm: RawMaterialButton(onPressed: (){
+                                  //       processPayment(context);
+                                  //       if(depositType == "Bank"){
+                                  //         payBankRequestDeposit();
+                                  //       }
+                                  //       if(depositType == "Cash"){
+                                  //         payCashRequestDeposit();
+                                  //       }
+                                  //     },
+                                  //       shape: const StadiumBorder(),
+                                  //       fillColor: primaryColor,
+                                  //       child: const Text("Yes",style: TextStyle(color: Colors.white)),
+                                  //     ),
+                                  //   );
+                                }
                               },
-                              value: _currentCashAtLocation2,
-                            ),
-                          ),
-                        ),
-                      )
+                              shape: const StadiumBorder(),
+                              elevation: 8,
+                              fillColor: primaryColor,
+                              splashColor: defaultColor,
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white),
+                              ),
+                            )
                           : Container(),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _referenceController2,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          decoration: InputDecoration(
-                              labelText: "Enter reference",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter reference";
-                            }
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: _amountController2,
-                          cursorColor: primaryColor,
-                          cursorRadius: const Radius.elliptical(10, 10),
-                          cursorWidth: 10,
-                          decoration: InputDecoration(
-                              labelText: "Enter amount",
-                              labelStyle: const TextStyle(color: secondaryColor),
-                              focusColor: primaryColor,
-                              fillColor: primaryColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: primaryColor, width: 2),
-                                  borderRadius: BorderRadius.circular(12)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter amount";
-                            }
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ) : Container(),
-                  hasSelectedModeOfPayment ? GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          showPayment2 = !showPayment2;
-                          if(!showPayment2){
-                            buttonText = "Add another payment";
-                            hasAnotherPayment = false;
-                          }
-                          else{
-                            buttonText = "Remove field";
-                            hasAnotherPayment = true;
-                          }
-                        });
-                      },
-                      child:  Padding(
-                        padding: const EdgeInsets.only(top:12.0,bottom: 12),
-                        child: Text(buttonText,style: TextStyle(fontWeight: FontWeight.bold),),
-                      )
-                  ) : Container(),
-                  isPosting && !hasErrors ? const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: primaryColor,
-                    ),
-                  ) :
-                  hasSelectedModeOfPayment ? RawMaterialButton(
-                          onPressed: () {
-                            _startPosting();
-                            if (!_formKey.currentState!.validate()) {
-                              return;
-                            } else {
-
-                              if(_currentSelectedModeOfPayment1 == "Select mode of payment"){
-                                setState(() {
-                                  hasErrors = true;
-                                });
-                                Get.snackbar(
-                                    "Mode Error", "Please select at least one mode of payment",
-                                    colorText: defaultTextColor,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.red);
-                                return;
-                              }
-                              if(_amountController1.text.isNotEmpty && _amountController2.text.isEmpty){
-                                amountTotal = double.tryParse(_amountController1.text);
-                                if(amountTotal != double.parse(amount)){
-                                  setState(() {
-                                    hasErrors = true;
-                                  });
-                                  Get.snackbar(
-                                      "Amount Error", "Your amount total is wrong,please check",
-                                      colorText: defaultTextColor,
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: Colors.red);
-                                  return;
-                                }
-                              }
-                              if(_amountController1.text.isNotEmpty && _amountController2.text.isNotEmpty){
-                                amountTotal = double.parse(_amountController1.text) + double.parse(_amountController2.text);
-                                if(amountTotal != double.parse(amount)){
-                                  setState(() {
-                                    hasErrors = true;
-                                  });
-                                  Get.snackbar(
-                                      "Amount Error", "Your amount total is wrong,please check",
-                                      colorText: defaultTextColor,
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: Colors.red);
-                                  return;
-                                }
-                              }
-                              if(_amountController1.text.isEmpty && _amountController2.text.isEmpty){
-                                setState(() {
-                                  hasErrors = true;
-                                });
-                                Get.snackbar(
-                                    "Payment Error", "Please make sure at least one amount is paid.",
-                                    colorText: defaultTextColor,
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.red);
-                                return;
-                              }
-                             else{
-                                // setState(() {
-                                //   hasErrors = false;
-                                // });
-                                processPayment(context);
-                                if(depositType == "Bank"){
-                                  payBankRequestDeposit();
-                                }
-                                if(depositType == "Cash"){
-                                  payCashRequestDeposit();
-                                }
-                              }
-                            //  check before save
-                            //   Get.defaultDialog(
-                            //     title: "Confirm Payment",
-                            //     middleText: "Are you sure you want to make payment?",
-                            //     content: Container(),
-                            //     cancel: RawMaterialButton(
-                            //         shape: const StadiumBorder(),
-                            //         fillColor: primaryColor,
-                            //         onPressed: () {
-                            //           Get.back();
-                            //         },
-                            //         child: const Text(
-                            //           "Cancel",
-                            //           style: TextStyle(color: Colors.white),
-                            //         )),
-                            //
-                            //     confirm: RawMaterialButton(onPressed: (){
-                            //       processPayment(context);
-                            //       if(depositType == "Bank"){
-                            //         payBankRequestDeposit();
-                            //       }
-                            //       if(depositType == "Cash"){
-                            //         payCashRequestDeposit();
-                            //       }
-                            //     },
-                            //       shape: const StadiumBorder(),
-                            //       fillColor: primaryColor,
-                            //       child: const Text("Yes",style: TextStyle(color: Colors.white)),
-                            //     ),
-                            //   );
-                            }
-                          },
-                          shape: const StadiumBorder(),
-                          elevation: 8,
-                          fillColor: primaryColor,
-                          splashColor: defaultColor,
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ):Container(),
-                  const SizedBox(height:20)
+                  const SizedBox(height: 20)
                 ],
               ),
-
             ),
           ),
-
         ],
       ),
     );
@@ -770,26 +824,31 @@ class _MakePaymentState extends State<MakePayment> {
       _currentSelectedModeOfPayment1 = newValueSelected;
     });
   }
+
   void _onDropDownItemSelectedModeOfPayment2(newValueSelected) {
     setState(() {
       _currentSelectedModeOfPayment2 = newValueSelected;
     });
   }
+
   void _onDropDownItemSelectedBank(newValueSelected) {
     setState(() {
       _currentSelectedBank1 = newValueSelected;
     });
   }
+
   void _onDropDownItemSelectedBank2(newValueSelected) {
     setState(() {
       _currentSelectedBank2 = newValueSelected;
     });
   }
+
   void _onDropDownItemSelectedLocation(newValueSelected) {
     setState(() {
       _currentCashAtLocation1 = newValueSelected;
     });
   }
+
   void _onDropDownItemSelectedLocation2(newValueSelected) {
     setState(() {
       _currentCashAtLocation2 = newValueSelected;
