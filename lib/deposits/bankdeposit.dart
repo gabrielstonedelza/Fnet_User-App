@@ -330,10 +330,23 @@ class _BankDepositState extends State<BankDeposit> {
     });
     if (res.statusCode == 201) {
 
-      if(accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Ecobank"){
+      if(accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "GT Bank"){
         processAddPoints(0);
       }
-      if(!accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Ecobank"){
+      if(!accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "GT Bank"){
+        processAddPoints(2);
+      }
+
+      if(accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Cal Bank"){
+        processAddPoints(0);
+      }
+      if(!accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Cal Bank"){
+        processAddPoints(2);
+      }
+      if(accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Fidelity Bank"){
+        processAddPoints(0);
+      }
+      if(!accountNumbers.contains(_currentAccountNumberSelected) && _currentSelectedBank == "Fidelity Bank"){
         processAddPoints(2);
       }
       if(!accountNumbers.contains(_currentAccountNumberSelected) && interBanks.contains(_currentSelectedBank)){
