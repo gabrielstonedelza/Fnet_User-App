@@ -5,10 +5,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 import '../deposits/momodeposit.dart';
 import '../static/app_colors.dart';
-import '../withdrawals/momowithdrawals.dart';
-import 'justmomo.dart';
 import 'momodeposittransactions.dart';
-import 'momowithdrawtransactions.dart';
 
 class MomoPage extends StatefulWidget {
   const MomoPage({Key? key}) : super(key: key);

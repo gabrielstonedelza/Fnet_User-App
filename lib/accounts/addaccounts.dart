@@ -30,8 +30,6 @@ class _AccountViewState extends State<AccountView> {
   final accountController = AccountController.to;
   late final TextEditingController physicalController = TextEditingController();
   late final TextEditingController _mtnEcashController = TextEditingController();
-  late final TextEditingController _tigoAirtelEcashController = TextEditingController();
-  late final TextEditingController _vodafoneEcashController = TextEditingController();
   var mtnECash = "";
   var mtnECashNow = "";
 
@@ -66,7 +64,6 @@ class _AccountViewState extends State<AccountView> {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
 
-      var accountCreatedToday = "Account Created";
       // int pnow = int.parse(physicalController.text);
       int enow = int.parse(_mtnEcashController.text);
 

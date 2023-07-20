@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fnet_new/accounts/paymentsummary.dart';
-import 'package:fnet_new/accounts/tigodepositsummary.dart';
-import 'package:fnet_new/accounts/tigowithdrawalsummary.dart';
-import 'package:fnet_new/accounts/vodafonedepositsummary.dart';
-import 'package:fnet_new/accounts/vodafonewithdrawalsummary.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +8,6 @@ import 'bankrequestsummary.dart';
 import 'bankwithdrawalsummary.dart';
 import 'cashrequestsummary.dart';
 import 'mtndepositsummary.dart';
-import 'mtnwithdrawsummary.dart';
 
 class TransactionSummary extends StatelessWidget {
   const TransactionSummary({Key? key}) : super(key: key);
@@ -99,7 +94,7 @@ class TransactionSummary extends StatelessWidget {
               ),
               Expanded(
                 child: GestureDetector(
-                  child: Column(
+                  child: const Column(
                     children: [
                       // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
                       // const SizedBox(height: 10,),
@@ -115,7 +110,7 @@ class TransactionSummary extends StatelessWidget {
               ),
               Expanded(
                 child: GestureDetector(
-                  child: Column(
+                  child: const Column(
                     children: [
                       // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
                       // const SizedBox(height: 10,),
@@ -180,7 +175,7 @@ class TransactionSummary extends StatelessWidget {
 
               Expanded(
                 child: GestureDetector(
-                  child: Column(
+                  child: const Column(
                     children: [
                       // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
                       // const SizedBox(height: 10,),
@@ -196,7 +191,7 @@ class TransactionSummary extends StatelessWidget {
               ),
               Expanded(
                 child: GestureDetector(
-                  child: Column(
+                  child: const Column(
                     children: [
                       // Image.asset("assets/images/business-report.png",width: 70,height: 70,),
                       // const SizedBox(height: 10,),

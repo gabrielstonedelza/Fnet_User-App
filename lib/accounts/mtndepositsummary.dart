@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 import '../loadingui.dart';
-import '../userbankrequestdetail.dart';
 import 'mtndepositdetail.dart';
 
 class MtnDepositSummary extends StatefulWidget {

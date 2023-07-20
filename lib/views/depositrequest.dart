@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/material.dart';
-import 'package:fnet_new/deposits/bankdeposit.dart';
-import 'package:fnet_new/deposits/expensedeposit.dart';
-import 'package:fnet_new/deposits/momodeposit.dart';
 import 'package:fnet_new/static/app_colors.dart';
-import 'package:fnet_new/views/searchmomotransactions.dart';
 import 'package:fnet_new/views/withdrawal.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,8 +8,6 @@ import 'package:http/http.dart' as http;
 
 import '../loadingui.dart';
 import 'justbank.dart';
-import 'justbankwithdrawals.dart';
-import 'justmomo.dart';
 
 class Deposits extends StatefulWidget {
   const Deposits({Key? key}) : super(key: key);

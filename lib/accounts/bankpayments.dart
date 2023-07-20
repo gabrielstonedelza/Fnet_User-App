@@ -89,8 +89,8 @@ class _MyBankPaymentsState extends State<MyBankPayments> {
           radius: 20,
           backgroundColor: Colors.black54,
           barrierDismissible: false,
-          content: Row(
-            children: const [
+          content: const Row(
+            children: [
               Expanded(child: Center(child: CircularProgressIndicator.adaptive(
                 strokeWidth: 5,
                 backgroundColor: primaryColor,
@@ -661,6 +661,8 @@ class _MyBankPaymentsState extends State<MyBankPayments> {
                         borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Save",
                       style: TextStyle(
@@ -668,8 +670,6 @@ class _MyBankPaymentsState extends State<MyBankPayments> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ),
                 
                 ],

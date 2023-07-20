@@ -127,7 +127,9 @@ class _BankDepositState extends State<BankDeposit> {
       setState(() {
         isLoading = false;
       });
-      print(accountNumbers);
+      if (kDebugMode) {
+        print(accountNumbers);
+      }
     }
 
   }

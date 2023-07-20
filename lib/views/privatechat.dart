@@ -7,7 +7,6 @@ import "package:flutter/material.dart";
 import "package:get/get.dart";
 import 'package:grouped_list/grouped_list.dart';
 import '../static/app_colors.dart';
-import 'allusers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 

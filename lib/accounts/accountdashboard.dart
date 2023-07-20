@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../loadingui.dart';
 import '../views/homepage.dart';
 import 'editmomoaccounts.dart';
 
@@ -168,17 +169,7 @@ class _AccountDashBoardState extends State<AccountDashBoard> {
       ),
       body: SafeArea(
         child:
-        isLoading ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Center(
-                child: CircularProgressIndicator(
-                  color: primaryColor,
-                  strokeWidth: 5,
-                )
-            ),
-          ],
-        ) : ListView(
+        isLoading ? const LoadingUi() : ListView(
           children: [
             Card(
               child: Padding(
