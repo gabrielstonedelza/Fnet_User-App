@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-
 class UserController extends GetxController {
   final storage = GetStorage();
   var username = "";
@@ -25,10 +24,7 @@ class UserController extends GetxController {
 
   late List profileDetails = [];
 
-
   bool isLoading = true;
-
-
 
   @override
   void onInit() {
@@ -41,7 +37,6 @@ class UserController extends GetxController {
       username = storage.read("username");
     }
   }
-
 
   Future<void> getUserProfile(String token) async {
     try {
@@ -65,8 +60,7 @@ class UserController extends GetxController {
         storage.write("profile_id", userProfileId);
         storage.write("profile_name", fullName);
         storage.write("profile_pic", profileImage);
-      }
-      else{
+      } else {
         if (kDebugMode) {
           print("This is coming from the usercontroller file ${response.body}");
         }
@@ -80,6 +74,4 @@ class UserController extends GetxController {
       update();
     }
   }
-
-
 }

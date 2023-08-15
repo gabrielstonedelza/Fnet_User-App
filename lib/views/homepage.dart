@@ -4,9 +4,8 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:badges/badges.dart';
 import 'package:direct_dialer/direct_dialer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart' as mySms;
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:fnet_new/accounts/accountsummary.dart';
@@ -41,13 +40,13 @@ import 'momopage.dart';
 
 class HomePage extends StatefulWidget {
   final message;
-  const HomePage({Key? key,required this.message}) : super(key: key);
+  const HomePage({Key? key, required this.message}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState(message:this.message);
+  _HomePageState createState() => _HomePageState(message: this.message);
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final message;
   _HomePageState({required this.message});
   final storage = GetStorage();
@@ -83,89 +82,88 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   double sumBankPayment = 0.0;
   double sumCashPayment = 0.0;
 
-  fetchBankPaymentTotal()async{
+  fetchBankPaymentTotal() async {
     const url = "https://fnetghana.xyz/payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allPaymentTotal = json.decode(jsonData);
-      for(var i in allPaymentTotal){
+      for (var i in allPaymentTotal) {
         allBankPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allBankPending.contains("Pending")){
+    if (allBankPending.contains("Pending")) {
       setState(() {
         hasBankPaymentNotApproved = true;
       });
     }
-    for(var pp in allBankPending){
-      if(pp == "Pending"){
+    for (var pp in allBankPending) {
+      if (pp == "Pending") {
         pendingBankLists.add(pp);
       }
     }
-    if(pendingBankLists.length == 3){
+    if (pendingBankLists.length == 3) {
       setState(() {
         notPaidBankCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchCashPaymentTotal()async{
+
+  fetchCashPaymentTotal() async {
     const url = "https://fnetghana.xyz/cash_payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allCashPaymentTotal = json.decode(jsonData);
-      for(var i in allCashPaymentTotal){
+      for (var i in allCashPaymentTotal) {
         allCashPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allCashPending.contains("Pending")){
+    if (allCashPending.contains("Pending")) {
       setState(() {
         hasCashPaymentNotApproved = true;
       });
     }
-    for(var pp in allCashPending){
-      if(pp == "Pending"){
+    for (var pp in allCashPending) {
+      if (pp == "Pending") {
         pendingCashLists.add(pp);
       }
     }
-    if(pendingCashLists.length == 3){
+    if (pendingCashLists.length == 3) {
       setState(() {
         notPaidCashCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchUserBankRequestsToday()async{
+
+  fetchUserBankRequestsToday() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankRequests = json.decode(jsonData);
       bankAmounts.assignAll(allUserBankRequests);
-      for(var i in bankAmounts){
+      for (var i in bankAmounts) {
         bankSum = bankSum + double.parse(i['amount']);
         bankNotPaid.add(i['deposit_paid']);
       }
@@ -174,24 +172,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     setState(() {
       isLoading = false;
       allUserBankRequests = allUserBankRequests;
-      if(bankNotPaid.contains("Not Paid")){
+      if (bankNotPaid.contains("Not Paid")) {
         hasUnpaidBankRequests = true;
       }
     });
   }
-  fetchUserCashRequestsToday()async{
+
+  fetchUserCashRequestsToday() async {
     const url = "https://fnetghana.xyz/get_cash_requests_for_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashRequests = json.decode(jsonData);
       cashAmounts.assignAll(allUserCashRequests);
-      for(var i in cashAmounts){
+      for (var i in cashAmounts) {
         cashSum = cashSum + double.parse(i['amount']);
         cashNotPaid.add(i['deposit_paid']);
       }
@@ -200,25 +198,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     setState(() {
       isLoading = false;
       allUserCashRequests = allUserCashRequests;
-      if(cashNotPaid.contains("Not Paid")){
+      if (cashNotPaid.contains("Not Paid")) {
         hasUnpaidCashRequests = true;
       }
     });
   }
 
-  fetchUserPayments()async{
+  fetchUserPayments() async {
     const url = "https://fnetghana.xyz/get_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankPayments = json.decode(jsonData);
       amountsBankPayments.assignAll(allUserBankPayments);
-      for(var i in amountsBankPayments){
+      for (var i in amountsBankPayments) {
         sumBankPayment = sumBankPayment + double.parse(i['amount']);
       }
     }
@@ -228,19 +225,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       allUserBankPayments = allUserBankPayments;
     });
   }
-  fetchUserCashPayments()async{
+
+  fetchUserCashPayments() async {
     const url = "https://fnetghana.xyz/get_cash_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashPayments = json.decode(jsonData);
       amountsCashPayments.assignAll(allUserCashPayments);
-      for(var i in amountsCashPayments){
+      for (var i in amountsCashPayments) {
         sumCashPayment = sumCashPayment + double.parse(i['amount']);
       }
     }
@@ -250,6 +247,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       allUserCashPayments = allUserCashPayments;
     });
   }
+
   late List hasBirthDayInFive = [];
   late List hasBirthDayToday = [];
   late List todaysBirthdayPhones = [];
@@ -281,6 +279,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   late Timer _timer;
   UserController userController = Get.find();
   final Telephony telephony = Telephony.instance;
+  final _advancedDrawerController = AdvancedDrawerController();
 
   final Uri _url = Uri.parse('https://aop.ecobank.com/register');
 
@@ -291,26 +290,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   Future<void> checkMtnCommission() async {
-    await UssdAdvanced.multisessionUssd(code: "*171*7*2*1#",subscriptionId: 1);
-  }
-  Future checkMtnBalance() async {
-    fetchInbox();
-   Get.defaultDialog(
-     content: Column(
-       children: [
-         Text(mySmss.first)
-       ],
-     ),
-     confirm: TextButton(
-       onPressed: (){
-         Get.back();
-       },
-       child: const Text("OK",style:TextStyle(fontWeight:FontWeight.bold)),
-     )
-   );
+    await UssdAdvanced.multisessionUssd(code: "*171*7*2*1#", subscriptionId: 1);
   }
 
-  fetchAllUserBankRequests() async {
+  Future checkMtnBalance() async {
+    fetchInbox();
+    Get.defaultDialog(
+        content: Column(
+          children: [Text(mySmss.first)],
+        ),
+        confirm: TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child:
+              const Text("OK", style: TextStyle(fontWeight: FontWeight.bold)),
+        ));
+  }
+
+  Future<void> fetchAllUserBankRequests() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
     var myLink = Uri.parse(url);
     final response =
@@ -334,7 +332,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     });
   }
 
-  fetchCustomers() async {
+  Future<void> fetchCustomers() async {
     const url = "https://fnetghana.xyz/user_customers/";
     var myLink = Uri.parse(url);
     final response = await http.get(myLink, headers: {
@@ -396,7 +394,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     });
   }
 
-  getAllTriggeredNotifications() async {
+  Future<void> getAllTriggeredNotifications() async {
     const url = "https://fnetghana.xyz/get_triggered_notifications/";
     var myLink = Uri.parse(url);
     final response =
@@ -413,7 +411,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
-  getAllUnReadNotifications() async {
+  Future<void> getAllUnReadNotifications() async {
     const url = "https://fnetghana.xyz/get_user_notifications/";
     var myLink = Uri.parse(url);
     final response =
@@ -430,7 +428,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
-  getAllNotifications() async {
+  Future<void> getAllNotifications() async {
     const url = "https://fnetghana.xyz/get_all_user_notifications/";
     var myLink = Uri.parse(url);
     final response =
@@ -460,15 +458,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     });
     if (response.statusCode == 200) {}
   }
+
   bool isActive = true;
   SmsQuery query = SmsQuery();
   late List mySmss = [];
 
-  fetchInbox()async {
+  fetchInbox() async {
     List<mySms.SmsMessage> messages = await query.getAllSms;
     for (var message in messages) {
-      if(message.address == "MobileMoney") {
-        if(!mySmss.contains(message.body)){
+      if (message.address == "MobileMoney") {
+        if (!mySmss.contains(message.body)) {
           mySmss.add(message.body);
         }
       }
@@ -527,7 +526,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _timer.cancel();
@@ -547,7 +546,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     final dialer = await DirectDialer.instance;
     await dialer.dial('*110\%23#');
   }
-
 
   onBankDepositNotificationClick(String payload) {
     Get.to(() => const AllYourNotifications());
@@ -578,140 +576,190 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
+  Future<void> openDialer() async {
+    await UssdAdvanced.multisessionUssd(code: "*171#", subscriptionId: 1);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: defaultColor,
-          title: Text("😃 ${username.capitalize}"),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Get.to(() => const MyPointsSummary());
-              },
-              icon: Image.asset("assets/images/customer-loyalty.png",width:30,height:30),
-            ),
-            IconButton(
-              onPressed: () {
-                showMaterialModalBottomSheet(
-                  context: context,
-                  // expand: true,
-                  isDismissible: true,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(25.0))),
-                  bounce: true,
-                  builder: (context) => Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: SizedBox(
-                        height: 300,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(height: 30),
-                            const Center(
-                                child: Text("Select network",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                            const SizedBox(height: 30),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10.0, right: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            dialMtn();
-                                            Get.back();
-                                          },
-                                          child: Card(
-                                            elevation: 12,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: Image.asset(
-                                                "assets/images/1860906.png",
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
+    return AdvancedDrawer(
+      backdrop: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blueGrey, Colors.blueGrey.withOpacity(0.2)],
+          ),
+        ),
+      ),
+      controller: _advancedDrawerController,
+      animationCurve: Curves.easeInOut,
+      animationDuration: const Duration(milliseconds: 300),
+      animateChildDecoration: true,
+      rtlOpening: false,
+      // openScale: 1.0,
+      disabledGestures: false,
+      childDecoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      drawer: SafeArea(
+        child: ListTileTheme(
+          textColor: Colors.white,
+          iconColor: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                width: 100.0,
+                height: 100.0,
+                margin: const EdgeInsets.only(
+                  top: 10.0,
+                  bottom: 10.0,
+                ),
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  color: Colors.black26,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Get.to(() => const MyPointsSummary());
+                },
+                leading: Image.asset(
+                  "assets/images/customer-loyalty.png",
+                  width: 30,
+                  height: 30,
+                ),
+                title: const Text('points'),
+              ),
+              ListTile(
+                onTap: () {
+                  showMaterialModalBottomSheet(
+                    context: context,
+// expand: true,
+                    isDismissible: true,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(25.0))),
+                    bounce: true,
+                    builder: (context) => Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: SizedBox(
+                          height: 300,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 30),
+                              const Center(
+                                  child: Text("Select network",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                              const SizedBox(height: 30),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: GestureDetector(
+                                            onTap: () {
+                                              dialMtn();
+                                              Get.back();
+                                            },
+                                            child: Card(
+                                              elevation: 12,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Image.asset(
+                                                  "assets/images/1860906.png",
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
-                                            ),
-                                          ))),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            dialVodafone();
-                                            Get.back();
-                                          },
-                                          child: Card(
-                                              elevation: 12,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Image.asset(
-                                                  "assets/images/vodafone.png",
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )))),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            dialTigo();
-                                            Get.back();
-                                          },
-                                          child: Card(
-                                              elevation: 12,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Image.asset(
-                                                  "assets/images/airtel-tigo-logos.jpg",
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )))),
-                                ],
-                              ),
-                            )
-                          ],
-                        )),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.local_phone),
-            ),
-            IconButton(
-              onPressed: () {
-                Get.to(() => const AccountView());
-              },
-              icon: const Icon(Icons.upload),
-            ),
-            IconButton(
-                onPressed: () {
+                                            ))),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: GestureDetector(
+                                            onTap: () {
+                                              dialVodafone();
+                                              Get.back();
+                                            },
+                                            child: Card(
+                                                elevation: 12,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Image.asset(
+                                                    "assets/images/vodafone.png",
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )))),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: GestureDetector(
+                                            onTap: () {
+                                              dialTigo();
+                                              Get.back();
+                                            },
+                                            child: Card(
+                                                elevation: 12,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Image.asset(
+                                                    "assets/images/airtel-tigo-logos.jpg",
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )))),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.phone),
+                title: const Text('Dialer'),
+              ),
+              ListTile(
+                onTap: () {
+                  Get.to(() => const AccountView());
+                },
+                leading: const Icon(Icons.add_circle_outlined),
+                title: const Text('Add Accounts'),
+              ),
+              ListTile(
+                onTap: () {
                   Get.defaultDialog(
                       buttonColor: primaryColor,
                       title: "Confirm Logout",
@@ -738,476 +786,710 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                             style: TextStyle(color: Colors.white),
                           )));
                 },
-                icon: const FaIcon(FontAwesomeIcons.signOutAlt)),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 20,
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(() => const MomoPage());
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/momo.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Pay To"),
-                        ],
-                      ),
+              const Spacer(),
+              Container(
+                width: 100.0,
+                height: 100.0,
+                margin: const EdgeInsets.only(
+                  top: 10.0,
+                  bottom: 14.0,
+                ),
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  color: Colors.black26,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'assets/images/png.png',
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+              const DefaultTextStyle(
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white54,
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('App created by Havens Software Development'),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/deposit.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Bank"),
-                          const Text("Deposit"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const Deposits());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0),
-                            child: badge.Badge(
-                              position: BadgePosition.bottomStart(),
-                              toAnimate: false,
-                              shape: BadgeShape.square,
-                              badgeColor: Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                              badgeContent: isFetching
-                                  ? const Center(
-                                child: Text("loading..",
-                                    style:
-                                    TextStyle(color: Colors.white)),
-                              )
-                                  : Column(
-                                children: [
-                                  hasbdinfive
-                                      ? Text(
-                                      "${hasBirthDayInFive.length}",
-                                      style: const TextStyle(
-                                          color: Colors.white))
-                                      : hasbdintoday
-                                      ? Text(
-                                      "${hasBirthDayToday.length}",
-                                      style: const TextStyle(
-                                          color: Colors.white))
-                                      : const Text("0",
-                                      style: TextStyle(
-                                          color: Colors.white)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Image.asset(
-                            "assets/images/cashless-payment.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Payments"),
-                          const Text("Available"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const PaymentsAvailable());
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(() => const CustomerRegistration());
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/mobile-payment.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Register Customer"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/mobile-payment.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Accounts"),
-                          const Text("Registration"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const AddCustomerAccount());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0),
-                            child: badge.Badge(
-                              position: BadgePosition.bottomStart(),
-                              toAnimate: false,
-                              shape: BadgeShape.square,
-                              badgeColor: Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                              badgeContent: isFetching
-                                  ? const Center(
-                                      child: Text("loading..",
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    )
-                                  : Column(
-                                      children: [
-                                        hasbdinfive
-                                            ? Text(
-                                                "${hasBirthDayInFive.length}",
-                                                style: const TextStyle(
-                                                    color: Colors.white))
-                                            : hasbdintoday
-                                                ? Text(
-                                                    "${hasBirthDayToday.length}",
-                                                    style: const TextStyle(
-                                                        color: Colors.white))
-                                                : const Text("0",
-                                                    style: TextStyle(
-                                                        color: Colors.white)),
-                                      ],
-                                    ),
-                            ),
-                          ),
-                          Image.asset(
-                            "assets/images/cake.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Birthdays"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const Birthdays());
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/group.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Your Customers"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const UserCustomers());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(() => const GroupChat());
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/team1.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Group"),
-                          const Text("Chats"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/notebook.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Reports"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const Reports());
-                      },
-                    ),
-                  ),
-
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/business-report.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Account"),
-                          const Text("Total"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const UserAccountTotal());
-                      },
-                    ),
-                  ),
-
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/business-report.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Transaction "),
-                          const Text("Summary"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const TransactionSummary());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/bank.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Bank "),
-                          const Text("Payments"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const UserBankPayments());
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0),
-                            child: badge.Badge(
-                              position: BadgePosition.bottomStart(),
-                              toAnimate: false,
-                              shape: BadgeShape.square,
-                              badgeColor: Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                              badgeContent: isFetching
-                                  ? const Center(
-                                      child: Text("loading..",
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    )
-                                  : Column(
-                                      children: [
-                                        Text("${notRead.length}",
-                                            style: const TextStyle(
-                                                color: Colors.white)),
-                                      ],
-                                    ),
-                            ),
-                          ),
-                          Image.asset(
-                            "assets/images/notification.png",
-                            width: 60,
-                            height: 60,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Notifications"),
-                        ],
-                      ),
-                      onTap: () {
-                        Get.to(() => const AllYourNotifications());
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/law.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Balance"),
-                        ],
-                      ),
-                      onTap: () {
-                        checkMtnBalance();
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/ecomobile.png",
-                            width: 70,
-                            height: 70,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Open Account"),
-                        ],
-                      ),
-                      onTap: () async{
-                        await _launchInBrowser();
-                      },
-                    ),
-                  ),
-
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 20,
-              ),
-
             ],
           ),
         ),
       ),
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: defaultColor,
+            title: Text("😃 ${username.capitalize}"),
+            leading: IconButton(
+              onPressed: _handleMenuButtonPressed,
+              icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                valueListenable: _advancedDrawerController,
+                builder: (_, value, __) {
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    child: Icon(
+                      value.visible ? Icons.clear : Icons.menu,
+                      key: ValueKey<bool>(value.visible),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          body: SafeArea(
+            child: Scaffold(
+//               appBar: AppBar(
+//                 backgroundColor: defaultColor,
+//                 title: Text("😃 ${username.capitalize}"),
+//                 actions: [
+//                   IconButton(
+//                     onPressed: () {
+//                       Get.to(() => const MyPointsSummary());
+//                     },
+//                     icon: Image.asset("assets/images/customer-loyalty.png",
+//                         width: 30, height: 30),
+//                   ),
+//                   IconButton(
+//                     onPressed: () {
+//                       showMaterialModalBottomSheet(
+//                         context: context,
+// // expand: true,
+//                         isDismissible: true,
+//                         shape: const RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.vertical(
+//                                 top: Radius.circular(25.0))),
+//                         bounce: true,
+//                         builder: (context) => Padding(
+//                           padding: EdgeInsets.only(
+//                               bottom: MediaQuery.of(context).viewInsets.bottom),
+//                           child: SizedBox(
+//                               height: 300,
+//                               child: Column(
+//                                 mainAxisSize: MainAxisSize.min,
+//                                 children: [
+//                                   const SizedBox(height: 30),
+//                                   const Center(
+//                                       child: Text("Select network",
+//                                           style: TextStyle(
+//                                               fontWeight: FontWeight.bold))),
+//                                   const SizedBox(height: 30),
+//                                   Padding(
+//                                     padding: const EdgeInsets.only(
+//                                         left: 10.0, right: 10),
+//                                     child: Row(
+//                                       children: [
+//                                         Expanded(
+//                                             child: GestureDetector(
+//                                                 onTap: () {
+//                                                   dialMtn();
+//                                                   Get.back();
+//                                                 },
+//                                                 child: Card(
+//                                                   elevation: 12,
+//                                                   shape: RoundedRectangleBorder(
+//                                                       borderRadius:
+//                                                           BorderRadius.circular(
+//                                                               10)),
+//                                                   child: Padding(
+//                                                     padding:
+//                                                         const EdgeInsets.all(
+//                                                             5.0),
+//                                                     child: Image.asset(
+//                                                       "assets/images/1860906.png",
+//                                                       width: 100,
+//                                                       height: 100,
+//                                                       fit: BoxFit.cover,
+//                                                     ),
+//                                                   ),
+//                                                 ))),
+//                                         const SizedBox(
+//                                           width: 10,
+//                                         ),
+//                                         Expanded(
+//                                             child: GestureDetector(
+//                                                 onTap: () {
+//                                                   dialVodafone();
+//                                                   Get.back();
+//                                                 },
+//                                                 child: Card(
+//                                                     elevation: 12,
+//                                                     shape:
+//                                                         RoundedRectangleBorder(
+//                                                             borderRadius:
+//                                                                 BorderRadius
+//                                                                     .circular(
+//                                                                         10)),
+//                                                     child: Padding(
+//                                                       padding:
+//                                                           const EdgeInsets.all(
+//                                                               5.0),
+//                                                       child: Image.asset(
+//                                                         "assets/images/vodafone.png",
+//                                                         width: 100,
+//                                                         height: 100,
+//                                                         fit: BoxFit.cover,
+//                                                       ),
+//                                                     )))),
+//                                         const SizedBox(
+//                                           width: 10,
+//                                         ),
+//                                         Expanded(
+//                                             child: GestureDetector(
+//                                                 onTap: () {
+//                                                   dialTigo();
+//                                                   Get.back();
+//                                                 },
+//                                                 child: Card(
+//                                                     elevation: 12,
+//                                                     shape:
+//                                                         RoundedRectangleBorder(
+//                                                             borderRadius:
+//                                                                 BorderRadius
+//                                                                     .circular(
+//                                                                         10)),
+//                                                     child: Padding(
+//                                                       padding:
+//                                                           const EdgeInsets.all(
+//                                                               5.0),
+//                                                       child: Image.asset(
+//                                                         "assets/images/airtel-tigo-logos.jpg",
+//                                                         width: 100,
+//                                                         height: 100,
+//                                                         fit: BoxFit.cover,
+//                                                       ),
+//                                                     )))),
+//                                       ],
+//                                     ),
+//                                   )
+//                                 ],
+//                               )),
+//                         ),
+//                       );
+//                     },
+//                     icon: const Icon(Icons.local_phone),
+//                   ),
+//                   IconButton(
+//                     onPressed: () {
+//                       Get.to(() => const AccountView());
+//                     },
+//                     icon: const Icon(Icons.upload),
+//                   ),
+//                   IconButton(
+//                       onPressed: () {
+//                         Get.defaultDialog(
+//                             buttonColor: primaryColor,
+//                             title: "Confirm Logout",
+//                             middleText: "Are you sure you want to logout?",
+//                             confirm: RawMaterialButton(
+//                                 shape: const StadiumBorder(),
+//                                 fillColor: primaryColor,
+//                                 onPressed: () {
+//                                   logoutUser();
+//                                   Get.back();
+//                                 },
+//                                 child: const Text(
+//                                   "Yes",
+//                                   style: TextStyle(color: Colors.white),
+//                                 )),
+//                             cancel: RawMaterialButton(
+//                                 shape: const StadiumBorder(),
+//                                 fillColor: primaryColor,
+//                                 onPressed: () {
+//                                   Get.back();
+//                                 },
+//                                 child: const Text(
+//                                   "Cancel",
+//                                   style: TextStyle(color: Colors.white),
+//                                 )));
+//                       },
+//                       icon: const FaIcon(FontAwesomeIcons.signOutAlt)),
+//                 ],
+//               ),
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const MomoPage());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/momo.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Pay To"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/deposit.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Bank"),
+                                const Text("Deposit"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Deposits());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: isFetching
+                                        ? const Center(
+                                            child: Text("loading..",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          )
+                                        : Column(
+                                            children: [
+                                              hasbdinfive
+                                                  ? Text(
+                                                      "${hasBirthDayInFive.length}",
+                                                      style: const TextStyle(
+                                                          color: Colors.white))
+                                                  : hasbdintoday
+                                                      ? Text(
+                                                          "${hasBirthDayToday.length}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white))
+                                                      : const Text("0",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                                Image.asset(
+                                  "assets/images/cashless-payment.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Payments"),
+                                const Text("Available"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const PaymentsAvailable());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const CustomerRegistration());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/mobile-payment.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Register Customer"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/mobile-payment.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Accounts"),
+                                const Text("Registration"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const AddCustomerAccount());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: isFetching
+                                        ? const Center(
+                                            child: Text("loading..",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          )
+                                        : Column(
+                                            children: [
+                                              hasbdinfive
+                                                  ? Text(
+                                                      "${hasBirthDayInFive.length}",
+                                                      style: const TextStyle(
+                                                          color: Colors.white))
+                                                  : hasbdintoday
+                                                      ? Text(
+                                                          "${hasBirthDayToday.length}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white))
+                                                      : const Text("0",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                                Image.asset(
+                                  "assets/images/cake.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Birthdays"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Birthdays());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/group.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Your Customers"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserCustomers());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const GroupChat());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/team1.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Group"),
+                                const Text("Chats"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/notebook.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Reports"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Reports());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/business-report.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Account"),
+                                const Text("Total"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserAccountTotal());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/business-report.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Transaction "),
+                                const Text("Summary"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const TransactionSummary());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/bank.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Bank "),
+                                const Text("Payments"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserBankPayments());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: isFetching
+                                        ? const Center(
+                                            child: Text("loading..",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          )
+                                        : Column(
+                                            children: [
+                                              Text("${notRead.length}",
+                                                  style: const TextStyle(
+                                                      color: Colors.white)),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                                Image.asset(
+                                  "assets/images/notification.png",
+                                  width: 60,
+                                  height: 60,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Notifications"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const AllYourNotifications());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/law.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Balance"),
+                              ],
+                            ),
+                            onTap: () {
+                              checkMtnBalance();
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/ecomobile.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Open Account"),
+                              ],
+                            ),
+                            onTap: () async {
+                              await _launchInBrowser();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )),
     );
+  }
+
+  void _handleMenuButtonPressed() {
+    // NOTICE: Manage Advanced Drawer state through the Controller.
+    // _advancedDrawerController.value = AdvancedDrawerValue.visible();
+    _advancedDrawerController.showDrawer();
   }
 }
