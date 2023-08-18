@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fnet_new/static/app_colors.dart';
@@ -216,6 +217,7 @@ class _DepositsState extends State<Deposits> {
       allUserCashPayments = allUserCashPayments;
     });
   }
+  late Timer _timer;
 
   @override
   void initState() {
@@ -243,11 +245,6 @@ class _DepositsState extends State<Deposits> {
     fetchUserPayments();
     fetchUserCashPayments();
   }
-
-
-  // Future<void> dialCashInMtn(String customerNumber,String amount) async {
-  //   UssdAdvanced.multisessionUssd(code: "*171*3*1*$customerNumber*$customerNumber*$amount#",subscriptionId: 1);
-  // }
 
 
   @override

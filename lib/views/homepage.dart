@@ -4,6 +4,7 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:badges/badges.dart';
 import 'package:direct_dialer/direct_dialer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart' as mySms;
@@ -18,7 +19,6 @@ import 'package:fnet_new/views/usercustomers.dart';
 import 'package:fnet_new/views/usernotifications.dart';
 import 'package:fnet_new/views/userreports.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
@@ -474,6 +474,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void checkTheTime() {
+    var hour = DateTime.now().hour;
+    if (kDebugMode) {
+      print(hour);
+    }
+    switch (hour) {
+      case 08:
+        logoutUser();
+        break;
+      case 20:
+        logoutUser();
+        break;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -497,7 +512,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         hasAccountsToday = true;
       });
     }
-    // _checkVersion();
     userController.getUserProfile(uToken);
 
     fetchCustomers();
@@ -511,10 +525,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     fetchUserCashRequestsToday();
     fetchUserPayments();
     fetchUserCashPayments();
+    checkTheTime();
 
     _timer = Timer.periodic(const Duration(seconds: 12), (timer) {
       getAllTriggeredNotifications();
       getAllUnReadNotifications();
+      checkTheTime();
     });
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       for (var e in triggered) {
