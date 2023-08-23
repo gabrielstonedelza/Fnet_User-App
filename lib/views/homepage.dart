@@ -480,9 +480,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print(hour);
     }
     switch (hour) {
-      case 08:
-        logoutUser();
-        break;
+      // case 08:
+      //   logoutUser();
+      //   break;
       case 20:
         logoutUser();
         break;
