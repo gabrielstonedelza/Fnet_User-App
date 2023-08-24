@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 
 import 'homepage.dart';
 
-
 class MakePayment extends StatefulWidget {
   final id;
   final depositType;
@@ -143,7 +142,9 @@ class _MakePaymentState extends State<MakePayment> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const HomePage(message: null,));
+      Get.offAll(() => const HomePage(
+            message: null,
+          ));
     } else {
       // print(response.body);
       // Get.snackbar("Approve Error", response.body.toString(),
@@ -168,7 +169,9 @@ class _MakePaymentState extends State<MakePayment> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const HomePage(message: null,));
+      Get.offAll(() => const HomePage(
+            message: null,
+          ));
     } else {
       Get.snackbar("Approve Error", response.body.toString(),
           colorText: defaultTextColor,
@@ -214,7 +217,9 @@ class _MakePaymentState extends State<MakePayment> {
         }));
       }
 
-      Get.offAll(() => const HomePage(message: null,));
+      Get.offAll(() => const HomePage(
+            message: null,
+          ));
     } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,
@@ -435,7 +440,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(12))),
-                                    keyboardType: TextInputType.text,
+                                    keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return "Please enter reference";
