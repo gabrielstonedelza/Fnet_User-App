@@ -644,56 +644,420 @@ class _BankDepositState extends State<BankDeposit> {
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.all(18.0),
-                  child: hasUnpaidBankRequests
-                      ? const Center(
-                          child: Text("Sorry you have an unpaid deposit",
-                              style: TextStyle(fontWeight: FontWeight.bold)))
-                      : Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Padding(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: TextFormField(
+                            onChanged: (value) {
+                              if (value.length == 10 &&
+                                  customersPhone.contains(value)) {
+                                Get.snackbar("Success", "Customer is in system",
+                                    colorText: defaultTextColor,
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: snackColor);
+
+                                setState(() {
+                                  isCustomer = true;
+                                  fetchCustomerAccounts();
+                                  fetchCustomer(_customerController.text);
+                                });
+                              } else if (value.length == 10 &&
+                                  !customersPhone.contains(value)) {
+                                Get.snackbar("Customer Error",
+                                    "Customer is not in system",
+                                    colorText: defaultTextColor,
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.red);
+                                setState(() {
+                                  isCustomer = false;
+                                });
+                                Timer(
+                                    const Duration(seconds: 3),
+                                    () => Get.to(
+                                        () => const CustomerRegistration()));
+                              }
+                            },
+                            controller: _customerController,
+                            cursorColor: primaryColor,
+                            cursorRadius: const Radius.elliptical(10, 10),
+                            cursorWidth: 10,
+                            decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person,
+                                    color: secondaryColor),
+                                labelText: "Enter customer number",
+                                labelStyle:
+                                    const TextStyle(color: secondaryColor),
+                                focusColor: primaryColor,
+                                fillColor: primaryColor,
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: primaryColor, width: 2),
+                                    borderRadius: BorderRadius.circular(12)),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12))),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Please enter customer number";
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        isCustomer && !fetchingCustomerAccounts
+                            ? Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.grey, width: 1)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10),
+                                    child: DropdownButton(
+                                      hint: const Text("Select bank"),
+                                      isExpanded: true,
+                                      underline: const SizedBox(),
+                                      // style: const TextStyle(
+                                      //     color: Colors.black, fontSize: 20),
+                                      items: customerBanks
+                                          .map((dropDownStringItem) {
+                                        return DropdownMenuItem(
+                                          value: dropDownStringItem,
+                                          child: Text(dropDownStringItem),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newValueSelected) {
+                                        fetchCustomerBankAndNames(
+                                            newValueSelected.toString());
+                                        // if(newValueSelected=="Stanbic Bank"){
+                                        //   fetchCustomerBankAndNames("Stanbic Bank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="GT Bank"){
+                                        //   fetchCustomerBankAndNames("GT Bank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Access Bank"){
+                                        //   fetchCustomerBankAndNames("Access Bank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Cal Bank"){
+                                        //   fetchCustomerBankAndNames("Cal Bank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Fidelity Bank"){
+                                        //   fetchCustomerBankAndNames("Fidelity Bank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Ecobank"){
+                                        //   fetchCustomerBankAndNames("Ecobank");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Pan Africa"){
+                                        //   fetchCustomerBankAndNames("Pan Africa");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="First Bank of Nigeria"){
+                                        //   fetchCustomerBankAndNames("First Bank of Nigeria");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="SGSSB"){
+                                        //   fetchCustomerBankAndNames("SGSSB");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Mtn"){
+                                        //   fetchCustomerBankAndNames("Mtn");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Vodafone"){
+                                        //   fetchCustomerBankAndNames("Vodafone");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+                                        // if(newValueSelected=="Tigoairtel"){
+                                        //   fetchCustomerBankAndNames("Tigoairtel");
+                                        //   setState(() {
+                                        //     bankSelected = true;
+                                        //   });
+                                        // }
+
+                                        _onDropDownItemSelectedBank(
+                                            newValueSelected);
+                                      },
+                                      value: _currentSelectedBank,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : isCustomer
+                                ? const Text(
+                                    "Please wait fetching customer's banks")
+                                : Container(),
+                        isCustomer && isFetching
+                            ? Column(
+                                children: [
+                                  accountNumberSelected
+                                      ? Container()
+                                      : Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 10.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                    color: Colors.grey,
+                                                    width: 1)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0, right: 10),
+                                              child: DropdownButton(
+                                                hint: const Text(
+                                                    "Select account number"),
+                                                isExpanded: true,
+                                                underline: const SizedBox(),
+                                                // style: const TextStyle(
+                                                //     color: Colors.black, fontSize: 20),
+                                                items: customerAccounts
+                                                    .map((dropDownStringItem) {
+                                                  return DropdownMenuItem(
+                                                    value: dropDownStringItem,
+                                                    child: Text(
+                                                        dropDownStringItem),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValueSelected) {
+                                                  for (var cNum in myUser) {
+                                                    if (cNum[
+                                                            'account_number'] ==
+                                                        newValueSelected) {
+                                                      setState(() {
+                                                        isAccountNumberAndName =
+                                                            true;
+                                                        customerAccountName =
+                                                            cNum[
+                                                                'account_name'];
+                                                        accountNumberSelected =
+                                                            true;
+                                                      });
+                                                    }
+                                                  }
+                                                  _onDropDownItemSelectedAccountNumber(
+                                                      newValueSelected);
+                                                },
+                                                value:
+                                                    _currentAccountNumberSelected,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                ],
+                              )
+                            : bankSelected
+                                ? Text(
+                                    "Please wait fetching customer's $_currentSelectedBank account numbers")
+                                : Container(),
+                        isAccountNumberAndName
+                            ? Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      initialValue:
+                                          _currentAccountNumberSelected
+                                              .toString(),
+                                      cursorColor: primaryColor,
+                                      cursorRadius:
+                                          const Radius.elliptical(10, 10),
+                                      cursorWidth: 10,
+                                      decoration: InputDecoration(
+                                          labelText: "Account Number",
+                                          labelStyle: const TextStyle(
+                                              color: secondaryColor),
+                                          focusColor: primaryColor,
+                                          fillColor: primaryColor,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12))),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      controller: _customerAccountNameController
+                                        ..text = customerAccountName,
+                                      cursorColor: primaryColor,
+                                      cursorRadius:
+                                          const Radius.elliptical(10, 10),
+                                      cursorWidth: 10,
+                                      readOnly: true,
+                                      decoration: InputDecoration(
+                                          labelText: "Account's name",
+                                          labelStyle: const TextStyle(
+                                              color: secondaryColor),
+                                          focusColor: primaryColor,
+                                          fillColor: primaryColor,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12))),
+                                      keyboardType: TextInputType.text,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter a name";
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: _depositorController
+                                        ..text = customerName,
+                                      cursorColor: primaryColor,
+                                      cursorRadius:
+                                          const Radius.elliptical(10, 10),
+                                      cursorWidth: 10,
+                                      decoration: InputDecoration(
+                                          labelText: "Depositor name",
+                                          labelStyle: const TextStyle(
+                                              color: secondaryColor),
+                                          focusColor: primaryColor,
+                                          fillColor: primaryColor,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12))),
+                                      keyboardType: TextInputType.text,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter amount";
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: _idTypeController
+                                        ..text = idType,
+                                      cursorColor: primaryColor,
+                                      cursorRadius:
+                                          const Radius.elliptical(10, 10),
+                                      cursorWidth: 10,
+                                      decoration: InputDecoration(
+                                          labelText: "Id Type",
+                                          labelStyle: const TextStyle(
+                                              color: secondaryColor),
+                                          focusColor: primaryColor,
+                                          fillColor: primaryColor,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12))),
+                                      keyboardType: TextInputType.text,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: _idNumberController
+                                        ..text = idNumber,
+                                      cursorColor: primaryColor,
+                                      cursorRadius:
+                                          const Radius.elliptical(10, 10),
+                                      cursorWidth: 10,
+                                      decoration: InputDecoration(
+                                          labelText: "Id Number",
+                                          labelStyle: const TextStyle(
+                                              color: secondaryColor),
+                                          focusColor: primaryColor,
+                                          fillColor: primaryColor,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                  color: primaryColor,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12))),
+                                      keyboardType: TextInputType.text,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Container(),
+                        isAccountNumberAndName
+                            ? Padding(
                                 padding: const EdgeInsets.only(bottom: 10.0),
                                 child: TextFormField(
-                                  onChanged: (value) {
-                                    if (value.length == 10 &&
-                                        customersPhone.contains(value)) {
-                                      Get.snackbar(
-                                          "Success", "Customer is in system",
-                                          colorText: defaultTextColor,
-                                          snackPosition: SnackPosition.TOP,
-                                          backgroundColor: snackColor);
-
-                                      setState(() {
-                                        isCustomer = true;
-                                        fetchCustomerAccounts();
-                                        fetchCustomer(_customerController.text);
-                                      });
-                                    } else if (value.length == 10 &&
-                                        !customersPhone.contains(value)) {
-                                      Get.snackbar("Customer Error",
-                                          "Customer is not in system",
-                                          colorText: defaultTextColor,
-                                          snackPosition: SnackPosition.TOP,
-                                          backgroundColor: Colors.red);
-                                      setState(() {
-                                        isCustomer = false;
-                                      });
-                                      Timer(
-                                          const Duration(seconds: 3),
-                                          () => Get.to(() =>
-                                              const CustomerRegistration()));
-                                    }
-                                  },
-                                  controller: _customerController,
+                                  controller: _amountController,
                                   cursorColor: primaryColor,
                                   cursorRadius: const Radius.elliptical(10, 10),
                                   cursorWidth: 10,
                                   decoration: InputDecoration(
-                                      prefixIcon: const Icon(Icons.person,
-                                          color: secondaryColor),
-                                      labelText: "Enter customer number",
+                                      labelText: "Enter amount",
                                       labelStyle: const TextStyle(
                                           color: secondaryColor),
                                       focusColor: primaryColor,
@@ -709,481 +1073,70 @@ class _BankDepositState extends State<BankDeposit> {
                                   keyboardType: TextInputType.number,
                                   validator: (value) {
                                     if (value!.isEmpty) {
-                                      return "Please enter customer number";
+                                      return "Please enter amount";
                                     }
                                   },
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              isCustomer && !fetchingCustomerAccounts
-                                  ? Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                                color: Colors.grey, width: 1)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0, right: 10),
-                                          child: DropdownButton(
-                                            hint: const Text("Select bank"),
-                                            isExpanded: true,
-                                            underline: const SizedBox(),
-                                            // style: const TextStyle(
-                                            //     color: Colors.black, fontSize: 20),
-                                            items: customerBanks
-                                                .map((dropDownStringItem) {
-                                              return DropdownMenuItem(
-                                                value: dropDownStringItem,
-                                                child: Text(dropDownStringItem),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValueSelected) {
-                                              fetchCustomerBankAndNames(
-                                                  newValueSelected.toString());
-                                              // if(newValueSelected=="Stanbic Bank"){
-                                              //   fetchCustomerBankAndNames("Stanbic Bank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="GT Bank"){
-                                              //   fetchCustomerBankAndNames("GT Bank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Access Bank"){
-                                              //   fetchCustomerBankAndNames("Access Bank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Cal Bank"){
-                                              //   fetchCustomerBankAndNames("Cal Bank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Fidelity Bank"){
-                                              //   fetchCustomerBankAndNames("Fidelity Bank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Ecobank"){
-                                              //   fetchCustomerBankAndNames("Ecobank");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Pan Africa"){
-                                              //   fetchCustomerBankAndNames("Pan Africa");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="First Bank of Nigeria"){
-                                              //   fetchCustomerBankAndNames("First Bank of Nigeria");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="SGSSB"){
-                                              //   fetchCustomerBankAndNames("SGSSB");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Mtn"){
-                                              //   fetchCustomerBankAndNames("Mtn");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Vodafone"){
-                                              //   fetchCustomerBankAndNames("Vodafone");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-                                              // if(newValueSelected=="Tigoairtel"){
-                                              //   fetchCustomerBankAndNames("Tigoairtel");
-                                              //   setState(() {
-                                              //     bankSelected = true;
-                                              //   });
-                                              // }
-
-                                              _onDropDownItemSelectedBank(
-                                                  newValueSelected);
-                                            },
-                                            value: _currentSelectedBank,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : isCustomer
-                                      ? const Text(
-                                          "Please wait fetching customer's banks")
-                                      : Container(),
-                              isCustomer && isFetching
-                                  ? Column(
-                                      children: [
-                                        accountNumberSelected
-                                            ? Container()
-                                            : Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      border: Border.all(
-                                                          color: Colors.grey,
-                                                          width: 1)),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10.0,
-                                                            right: 10),
-                                                    child: DropdownButton(
-                                                      hint: const Text(
-                                                          "Select account number"),
-                                                      isExpanded: true,
-                                                      underline:
-                                                          const SizedBox(),
-                                                      // style: const TextStyle(
-                                                      //     color: Colors.black, fontSize: 20),
-                                                      items: customerAccounts.map(
-                                                          (dropDownStringItem) {
-                                                        return DropdownMenuItem(
-                                                          value:
-                                                              dropDownStringItem,
-                                                          child: Text(
-                                                              dropDownStringItem),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged:
-                                                          (newValueSelected) {
-                                                        for (var cNum
-                                                            in myUser) {
-                                                          if (cNum[
-                                                                  'account_number'] ==
-                                                              newValueSelected) {
-                                                            setState(() {
-                                                              isAccountNumberAndName =
-                                                                  true;
-                                                              customerAccountName =
-                                                                  cNum[
-                                                                      'account_name'];
-                                                              accountNumberSelected =
-                                                                  true;
-                                                            });
-                                                          }
-                                                        }
-                                                        _onDropDownItemSelectedAccountNumber(
-                                                            newValueSelected);
-                                                      },
-                                                      value:
-                                                          _currentAccountNumberSelected,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                      ],
-                                    )
-                                  : bankSelected
-                                      ? Text(
-                                          "Please wait fetching customer's $_currentSelectedBank account numbers")
-                                      : Container(),
-                              isAccountNumberAndName
-                                  ? Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10.0),
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            initialValue:
-                                                _currentAccountNumberSelected
-                                                    .toString(),
-                                            cursorColor: primaryColor,
-                                            cursorRadius:
-                                                const Radius.elliptical(10, 10),
-                                            cursorWidth: 10,
-                                            decoration: InputDecoration(
-                                                labelText: "Account Number",
-                                                labelStyle: const TextStyle(
-                                                    color: secondaryColor),
-                                                focusColor: primaryColor,
-                                                fillColor: primaryColor,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    primaryColor,
-                                                                width: 2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12))),
-                                            keyboardType: TextInputType.number,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10.0),
-                                          child: TextFormField(
-                                            controller:
-                                                _customerAccountNameController
-                                                  ..text = customerAccountName,
-                                            cursorColor: primaryColor,
-                                            cursorRadius:
-                                                const Radius.elliptical(10, 10),
-                                            cursorWidth: 10,
-                                            readOnly: true,
-                                            decoration: InputDecoration(
-                                                labelText: "Account's name",
-                                                labelStyle: const TextStyle(
-                                                    color: secondaryColor),
-                                                focusColor: primaryColor,
-                                                fillColor: primaryColor,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    primaryColor,
-                                                                width: 2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12))),
-                                            keyboardType: TextInputType.text,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return "Please enter a name";
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10.0),
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            controller: _depositorController
-                                              ..text = customerName,
-                                            cursorColor: primaryColor,
-                                            cursorRadius:
-                                                const Radius.elliptical(10, 10),
-                                            cursorWidth: 10,
-                                            decoration: InputDecoration(
-                                                labelText: "Depositor name",
-                                                labelStyle: const TextStyle(
-                                                    color: secondaryColor),
-                                                focusColor: primaryColor,
-                                                fillColor: primaryColor,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    primaryColor,
-                                                                width: 2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12))),
-                                            keyboardType: TextInputType.text,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return "Please enter amount";
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10.0),
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            controller: _idTypeController
-                                              ..text = idType,
-                                            cursorColor: primaryColor,
-                                            cursorRadius:
-                                                const Radius.elliptical(10, 10),
-                                            cursorWidth: 10,
-                                            decoration: InputDecoration(
-                                                labelText: "Id Type",
-                                                labelStyle: const TextStyle(
-                                                    color: secondaryColor),
-                                                focusColor: primaryColor,
-                                                fillColor: primaryColor,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    primaryColor,
-                                                                width: 2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12))),
-                                            keyboardType: TextInputType.text,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10.0),
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            controller: _idNumberController
-                                              ..text = idNumber,
-                                            cursorColor: primaryColor,
-                                            cursorRadius:
-                                                const Radius.elliptical(10, 10),
-                                            cursorWidth: 10,
-                                            decoration: InputDecoration(
-                                                labelText: "Id Number",
-                                                labelStyle: const TextStyle(
-                                                    color: secondaryColor),
-                                                focusColor: primaryColor,
-                                                fillColor: primaryColor,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    primaryColor,
-                                                                width: 2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12))),
-                                            keyboardType: TextInputType.text,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Container(),
-                              isAccountNumberAndName
-                                  ? Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10.0),
-                                      child: TextFormField(
-                                        controller: _amountController,
-                                        cursorColor: primaryColor,
-                                        cursorRadius:
-                                            const Radius.elliptical(10, 10),
-                                        cursorWidth: 10,
-                                        decoration: InputDecoration(
-                                            labelText: "Enter amount",
-                                            labelStyle: const TextStyle(
-                                                color: secondaryColor),
-                                            focusColor: primaryColor,
-                                            fillColor: primaryColor,
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: primaryColor,
-                                                    width: 2),
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12))),
-                                        keyboardType: TextInputType.number,
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Please enter amount";
-                                          }
-                                        },
-                                      ),
-                                    )
-                                  : Container(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              isPosting
-                                  ? const LoadingUi()
-                                  : isCustomer && !fetchingCustomerAccounts
-                                      ? RawMaterialButton(
-                                          onPressed: () {
-                                            _startPosting();
-                                            if (!_formKey.currentState!
-                                                .validate()) {
-                                              return;
-                                            } else {
-                                              if (_currentSelectedBank ==
-                                                  "Select bank") {
-                                                Get.snackbar("Bank Error",
-                                                    "Please select customers bank from the list",
-                                                    colorText: Colors.white,
-                                                    backgroundColor: Colors.red,
-                                                    snackPosition:
-                                                        SnackPosition.BOTTOM);
-                                                setState(() {
-                                                  bankSelected = false;
-                                                });
-                                                return;
-                                              } else {
-                                                Get.snackbar("Please wait",
-                                                    "sending your request",
-                                                    colorText: defaultTextColor,
-                                                    snackPosition:
-                                                        SnackPosition.BOTTOM,
-                                                    backgroundColor:
-                                                        snackColor);
-                                                processDeposit();
-                                              }
-                                            }
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          elevation: 8,
-                                          fillColor: primaryColor,
-                                          splashColor: defaultColor,
-                                          child: const Text(
-                                            "Save",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        )
-                                      : Container(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const Text(
-                                  "Note: Please restart bank deposit session again if you want to change customers bank.Thank you.")
-                            ],
-                          ),
+                              )
+                            : Container(),
+                        const SizedBox(
+                          height: 20,
                         ),
+                        isPosting
+                            ? const LoadingUi()
+                            : isCustomer && !fetchingCustomerAccounts
+                                ? RawMaterialButton(
+                                    onPressed: () {
+                                      _startPosting();
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      } else {
+                                        if (_currentSelectedBank ==
+                                            "Select bank") {
+                                          Get.snackbar("Bank Error",
+                                              "Please select customers bank from the list",
+                                              colorText: Colors.white,
+                                              backgroundColor: Colors.red,
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM);
+                                          setState(() {
+                                            bankSelected = false;
+                                          });
+                                          return;
+                                        } else {
+                                          Get.snackbar("Please wait",
+                                              "sending your request",
+                                              colorText: defaultTextColor,
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              backgroundColor: snackColor);
+                                          processDeposit();
+                                        }
+                                      }
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    elevation: 8,
+                                    fillColor: primaryColor,
+                                    splashColor: defaultColor,
+                                    child: const Text(
+                                      "Save",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: Colors.white),
+                                    ),
+                                  )
+                                : Container(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                            "Note: Please restart bank deposit session again if you want to change customers bank.Thank you.")
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),
