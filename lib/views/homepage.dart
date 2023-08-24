@@ -538,7 +538,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         }
         break;
       case 20:
-        logoutUser();
+        // logoutUser();
         break;
     }
   }

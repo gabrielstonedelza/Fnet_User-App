@@ -323,6 +323,7 @@ class _BankDepositState extends State<BankDeposit> {
       "account_number": _currentAccountNumberSelected,
       "account_name": _customerAccountNameController.text,
       "user_location": locController.locationName,
+      "user_local_district": locController.localDistrict,
     });
     if (res.statusCode == 201) {
       if (accountNumbers.contains(_currentAccountNumberSelected) &&
@@ -594,6 +595,7 @@ class _BankDepositState extends State<BankDeposit> {
     super.initState();
     if (kDebugMode) {
       print(locController.locationName);
+      print(locController.localDistrict);
     }
     if (storage.read("usertoken") != null) {
       setState(() {

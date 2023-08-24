@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class LocationController extends GetxController {
   String locationName = "";
+  String localDistrict = "";
 
   @override
   void onInit() {
@@ -27,8 +28,10 @@ class LocationController extends GetxController {
         position.latitude,
         position.longitude,
       );
+      print(localDistrict);
 
       locationName = placemarks[3].name!;
+      localDistrict = placemarks[0].subAdministrativeArea!;
       update();
     } else {
       locationName = "Permission denied";
