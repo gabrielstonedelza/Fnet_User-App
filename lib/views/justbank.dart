@@ -52,89 +52,88 @@ class _BankDepositsState extends State<BankDeposits> {
   double sumBankPayment = 0.0;
   double sumCashPayment = 0.0;
 
-  fetchBankPaymentTotal()async{
+  Future<void> fetchBankPaymentTotal() async {
     const url = "https://fnetghana.xyz/payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allPaymentTotal = json.decode(jsonData);
-      for(var i in allPaymentTotal){
+      for (var i in allPaymentTotal) {
         allBankPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allBankPending.contains("Pending")){
+    if (allBankPending.contains("Pending")) {
       setState(() {
         hasBankPaymentNotApproved = true;
       });
     }
-    for(var pp in allBankPending){
-      if(pp == "Pending"){
+    for (var pp in allBankPending) {
+      if (pp == "Pending") {
         pendingBankLists.add(pp);
       }
     }
-    if(pendingBankLists.length == 3){
+    if (pendingBankLists.length == 3) {
       setState(() {
         notPaidBankCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchCashPaymentTotal()async{
+
+  Future<void> fetchCashPaymentTotal() async {
     const url = "https://fnetghana.xyz/cash_payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allCashPaymentTotal = json.decode(jsonData);
-      for(var i in allCashPaymentTotal){
+      for (var i in allCashPaymentTotal) {
         allCashPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allCashPending.contains("Pending")){
+    if (allCashPending.contains("Pending")) {
       setState(() {
         hasCashPaymentNotApproved = true;
       });
     }
-    for(var pp in allCashPending){
-      if(pp == "Pending"){
+    for (var pp in allCashPending) {
+      if (pp == "Pending") {
         pendingCashLists.add(pp);
       }
     }
-    if(pendingCashLists.length == 3){
+    if (pendingCashLists.length == 3) {
       setState(() {
         notPaidCashCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchUserBankRequestsToday()async{
+
+  Future<void> fetchUserBankRequestsToday() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankRequests = json.decode(jsonData);
       bankAmounts.assignAll(allUserBankRequests);
-      for(var i in bankAmounts){
+      for (var i in bankAmounts) {
         bankSum = bankSum + double.parse(i['amount']);
         bankNotPaid.add(i['deposit_paid']);
       }
@@ -143,24 +142,24 @@ class _BankDepositsState extends State<BankDeposits> {
     setState(() {
       isLoading = false;
       allUserBankRequests = allUserBankRequests;
-      if(bankNotPaid.contains("Not Paid")){
+      if (bankNotPaid.contains("Not Paid")) {
         hasUnpaidBankRequests = true;
       }
     });
   }
-  fetchUserCashRequestsToday()async{
+
+  Future<void> fetchUserCashRequestsToday() async {
     const url = "https://fnetghana.xyz/get_cash_requests_for_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashRequests = json.decode(jsonData);
       cashAmounts.assignAll(allUserCashRequests);
-      for(var i in cashAmounts){
+      for (var i in cashAmounts) {
         cashSum = cashSum + double.parse(i['amount']);
         cashNotPaid.add(i['deposit_paid']);
       }
@@ -169,25 +168,24 @@ class _BankDepositsState extends State<BankDeposits> {
     setState(() {
       isLoading = false;
       allUserCashRequests = allUserCashRequests;
-      if(cashNotPaid.contains("Not Paid")){
+      if (cashNotPaid.contains("Not Paid")) {
         hasUnpaidCashRequests = true;
       }
     });
   }
 
-  fetchUserPayments()async{
+  Future<void> fetchUserPayments() async {
     const url = "https://fnetghana.xyz/get_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankPayments = json.decode(jsonData);
       amountsBankPayments.assignAll(allUserBankPayments);
-      for(var i in amountsBankPayments){
+      for (var i in amountsBankPayments) {
         sumBankPayment = sumBankPayment + double.parse(i['amount']);
       }
     }
@@ -197,19 +195,19 @@ class _BankDepositsState extends State<BankDeposits> {
       allUserBankPayments = allUserBankPayments;
     });
   }
-  fetchUserCashPayments()async{
+
+  Future<void> fetchUserCashPayments() async {
     const url = "https://fnetghana.xyz/get_cash_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashPayments = json.decode(jsonData);
       amountsCashPayments.assignAll(allUserCashPayments);
-      for(var i in amountsCashPayments){
+      for (var i in amountsCashPayments) {
         sumCashPayment = sumCashPayment + double.parse(i['amount']);
       }
     }
@@ -224,17 +222,17 @@ class _BankDepositsState extends State<BankDeposits> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(storage.read("accountcreatedtoday") != null){
+    if (storage.read("accountcreatedtoday") != null) {
       setState(() {
         hasAccountsToday = true;
       });
     }
-    if(storage.read("usertoken") != null){
+    if (storage.read("usertoken") != null) {
       setState(() {
         uToken = storage.read("usertoken");
       });
     }
-    if(storage.read("username") != null){
+    if (storage.read("username") != null) {
       setState(() {
         username = storage.read("username");
       });
@@ -246,6 +244,7 @@ class _BankDepositsState extends State<BankDeposits> {
     fetchUserPayments();
     fetchUserCashPayments();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -253,78 +252,110 @@ class _BankDepositsState extends State<BankDeposits> {
         title: const Text("Deposit"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const LoadingUi() :  ListView(
-        children: [
-          const SizedBox(height: 40,),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: (){
-                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    ):
-                    Get.to(()=> const BankDeposit());
-                  },
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/bank.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Bank Deposit"),
-                    ],
-                  ),
+      body: isLoading
+          ? const LoadingUi()
+          : ListView(
+              children: [
+                const SizedBox(
+                  height: 40,
                 ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/deposit.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Expense Request"),
-                    ],
-                  ),
-                  onTap: (){
-                    Get.to(()=> const UserExpenseRequest());
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          hasBankPaymentNotApproved || hasCashPaymentNotApproved
+                              ? Get.snackbar("Payment Error",
+                                  "You still have unapproved payments pending.Contact admin",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red)
+                              : hasUnpaidBankRequests || hasUnpaidCashRequests
+                                  ? Get.snackbar("Request Error",
+                                      "You have not paid your last request,please pay,thank you.",
+                                      colorText: defaultTextColor,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red)
+                                  : Get.to(() => const BankDeposit());
+                        },
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "assets/images/bank.png",
+                              width: 70,
+                              height: 70,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Bank Deposit"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "assets/images/deposit.png",
+                              width: 70,
+                              height: 70,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Expense Request"),
+                          ],
+                        ),
+                        onTap: () {
+                          Get.to(() => const UserExpenseRequest());
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "assets/images/cash-on-delivery.png",
+                              width: 70,
+                              height: 70,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Cash Request"),
+                          ],
+                        ),
+                        onTap: () {
+                          hasBankPaymentNotApproved || hasCashPaymentNotApproved
+                              ? Get.snackbar("Payment Error",
+                                  "You still have unapproved payments pending.Contact admin",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red)
+                              : hasUnpaidBankRequests || hasUnpaidCashRequests
+                                  ? Get.snackbar("Request Error",
+                                      "You have not paid your last request,please pay,thank you.",
+                                      colorText: defaultTextColor,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red)
+                                  : Get.to(() => const CashDepositRequests());
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/cash-on-delivery.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Cash Request"),
-                    ],
-                  ),
-                  onTap: (){
-                    hasBankPaymentNotApproved || hasCashPaymentNotApproved ? Get.snackbar("Payment Error", "You still have unapproved payments pending.Contact admin",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    ):hasUnpaidBankRequests || hasUnpaidCashRequests ? Get.snackbar("Request Error", "You have not paid your last request,please pay,thank you.",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    ): Get.to(()=> const CashDepositRequests());
-                  },
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20,),
-          const Divider(),
-          const SizedBox(height: 20,),
-
-        ],
-      ),
+                const Divider(),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
     );
   }
 }

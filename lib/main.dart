@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:telephony/telephony.dart';
 
 import 'controllers/accountcontroller.dart';
+import 'controllers/locationcontroller.dart';
 import 'controllers/logincontroller.dart';
 import 'controllers/usercontroller.dart';
 
@@ -17,7 +18,7 @@ onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
 }
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -25,6 +26,7 @@ void main() async{
   Get.put(LoginController());
   Get.put(AccountController());
   Get.put(UserController());
+  Get.put(LocationController());
   runApp(const MyApp());
 }
 
@@ -71,7 +73,6 @@ class _MyAppState extends State<MyApp> {
           onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     }
 
-
     if (!mounted) return;
   }
 
@@ -82,18 +83,17 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       // darkTheme: Themes.dark,
       theme: ThemeData(
-          // scaffoldBackgroundColor: backgroundColor,
-          dividerColor: addBack,
-          // textTheme: GoogleFonts.sansitaSwashedTextTheme(Theme.of(context).textTheme),
+        // scaffoldBackgroundColor: backgroundColor,
+        dividerColor: addBack,
+        // textTheme: GoogleFonts.sansitaSwashedTextTheme(Theme.of(context).textTheme),
       ),
       defaultTransition: Transition.leftToRight,
       initialRoute: "/",
       getPages: [
-        GetPage(name: "/", page:()=> const Splash()),
-        GetPage(name: "/login", page:()=> const LoginView()),
-        GetPage(name: "/homepage", page:()=> HomePage(message:_message)),
+        GetPage(name: "/", page: () => const Splash()),
+        GetPage(name: "/login", page: () => const LoginView()),
+        GetPage(name: "/homepage", page: () => HomePage(message: _message)),
       ],
     );
   }
 }
-

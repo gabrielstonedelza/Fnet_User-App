@@ -26,7 +26,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:telephony/telephony.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
-
 import '../accounts/userbankpayments.dart';
 import '../controllers/usercontroller.dart';
 import '../payments/paymentsavailable.dart';
@@ -918,6 +917,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 },
               ),
             ),
+            // actions: [
+            //   IconButton(
+            //       onPressed: () {
+            //         Get.to(() => const LocationScreen());
+            //       },
+            //       icon: const Icon(Icons.location_on_outlined))
+            // ],
           ),
           body: SafeArea(
             child: isOwningBankPayment

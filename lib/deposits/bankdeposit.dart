@@ -5,6 +5,7 @@ import 'package:device_apps/device_apps.dart';
 import 'package:direct_dialer/direct_dialer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fnet_new/controllers/locationcontroller.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:fnet_new/views/customerregistration.dart';
 import 'package:get_storage/get_storage.dart';
@@ -306,6 +307,7 @@ class _BankDepositState extends State<BankDeposit> {
     "universal Merchant Bank",
     "Zenith Bank",
   ];
+  final LocationController locController = Get.find();
 
   processDeposit() async {
     const depositUrl = "https://fnetghana.xyz/post_bank_deposit/";
@@ -320,6 +322,7 @@ class _BankDepositState extends State<BankDeposit> {
       "depositor_name": _depositorController.text,
       "account_number": _currentAccountNumberSelected,
       "account_name": _customerAccountNameController.text,
+      "user_location": locController.locationName,
     });
     if (res.statusCode == 201) {
       if (accountNumbers.contains(_currentAccountNumberSelected) &&
@@ -589,6 +592,9 @@ class _BankDepositState extends State<BankDeposit> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (kDebugMode) {
+      print(locController.locationName);
+    }
     if (storage.read("usertoken") != null) {
       setState(() {
         uToken = storage.read("usertoken");
@@ -640,7 +646,8 @@ class _BankDepositState extends State<BankDeposit> {
                   padding: const EdgeInsets.all(18.0),
                   child: hasUnpaidBankRequests
                       ? const Center(
-                          child: Text("Sorry you have an unpaid deposit"))
+                          child: Text("Sorry you have an unpaid deposit",
+                              style: TextStyle(fontWeight: FontWeight.bold)))
                       : Form(
                           key: _formKey,
                           child: Column(

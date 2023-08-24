@@ -51,89 +51,88 @@ class _DepositsState extends State<Deposits> {
   double sumBankPayment = 0.0;
   double sumCashPayment = 0.0;
 
-  fetchBankPaymentTotal()async{
+  fetchBankPaymentTotal() async {
     const url = "https://fnetghana.xyz/payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allPaymentTotal = json.decode(jsonData);
-      for(var i in allPaymentTotal){
+      for (var i in allPaymentTotal) {
         allBankPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allBankPending.contains("Pending")){
+    if (allBankPending.contains("Pending")) {
       setState(() {
         hasBankPaymentNotApproved = true;
       });
     }
-    for(var pp in allBankPending){
-      if(pp == "Pending"){
+    for (var pp in allBankPending) {
+      if (pp == "Pending") {
         pendingBankLists.add(pp);
       }
     }
-    if(pendingBankLists.length == 3){
+    if (pendingBankLists.length == 3) {
       setState(() {
         notPaidBankCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchCashPaymentTotal()async{
+
+  fetchCashPaymentTotal() async {
     const url = "https://fnetghana.xyz/cash_payment_summary/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allCashPaymentTotal = json.decode(jsonData);
-      for(var i in allCashPaymentTotal){
+      for (var i in allCashPaymentTotal) {
         allCashPending.add(i['payment_status']);
       }
     }
     setState(() {
       isLoading = false;
     });
-    if(allCashPending.contains("Pending")){
+    if (allCashPending.contains("Pending")) {
       setState(() {
         hasCashPaymentNotApproved = true;
       });
     }
-    for(var pp in allCashPending){
-      if(pp == "Pending"){
+    for (var pp in allCashPending) {
+      if (pp == "Pending") {
         pendingCashLists.add(pp);
       }
     }
-    if(pendingCashLists.length == 3){
+    if (pendingCashLists.length == 3) {
       setState(() {
         notPaidCashCount = 3;
         needApproval = true;
       });
     }
   }
-  fetchUserBankRequestsToday()async{
+
+  fetchUserBankRequestsToday() async {
     const url = "https://fnetghana.xyz/get_bank_total_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankRequests = json.decode(jsonData);
       bankAmounts.assignAll(allUserBankRequests);
-      for(var i in bankAmounts){
+      for (var i in bankAmounts) {
         bankSum = bankSum + double.parse(i['amount']);
         bankNotPaid.add(i['deposit_paid']);
       }
@@ -142,24 +141,24 @@ class _DepositsState extends State<Deposits> {
     setState(() {
       isLoading = false;
       allUserBankRequests = allUserBankRequests;
-      if(bankNotPaid.contains("Not Paid")){
+      if (bankNotPaid.contains("Not Paid")) {
         hasUnpaidBankRequests = true;
       }
     });
   }
-  fetchUserCashRequestsToday()async{
+
+  fetchUserCashRequestsToday() async {
     const url = "https://fnetghana.xyz/get_cash_requests_for_today/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashRequests = json.decode(jsonData);
       cashAmounts.assignAll(allUserCashRequests);
-      for(var i in cashAmounts){
+      for (var i in cashAmounts) {
         cashSum = cashSum + double.parse(i['amount']);
         cashNotPaid.add(i['deposit_paid']);
       }
@@ -167,25 +166,24 @@ class _DepositsState extends State<Deposits> {
 
     setState(() {
       isLoading = false;
-      if(cashNotPaid.contains("Not Paid")){
+      if (cashNotPaid.contains("Not Paid")) {
         hasUnpaidCashRequests = true;
       }
     });
   }
 
-  fetchUserPayments()async{
+  fetchUserPayments() async {
     const url = "https://fnetghana.xyz/get_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserBankPayments = json.decode(jsonData);
       amountsBankPayments.assignAll(allUserBankPayments);
-      for(var i in amountsBankPayments){
+      for (var i in amountsBankPayments) {
         sumBankPayment = sumBankPayment + double.parse(i['amount']);
       }
     }
@@ -195,19 +193,19 @@ class _DepositsState extends State<Deposits> {
       allUserBankPayments = allUserBankPayments;
     });
   }
-  fetchUserCashPayments()async{
+
+  fetchUserCashPayments() async {
     const url = "https://fnetghana.xyz/get_cash_payment_approved_total/";
     var myLink = Uri.parse(url);
-    final response = await http.get(myLink, headers: {
-      "Authorization": "Token $uToken"
-    });
+    final response =
+        await http.get(myLink, headers: {"Authorization": "Token $uToken"});
 
-    if(response.statusCode ==200){
+    if (response.statusCode == 200) {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allUserCashPayments = json.decode(jsonData);
       amountsCashPayments.assignAll(allUserCashPayments);
-      for(var i in amountsCashPayments){
+      for (var i in amountsCashPayments) {
         sumCashPayment = sumCashPayment + double.parse(i['amount']);
       }
     }
@@ -217,23 +215,24 @@ class _DepositsState extends State<Deposits> {
       allUserCashPayments = allUserCashPayments;
     });
   }
+
   late Timer _timer;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(storage.read("accountcreatedtoday") != null){
+    if (storage.read("accountcreatedtoday") != null) {
       setState(() {
         hasAccountsToday = true;
       });
     }
-    if(storage.read("usertoken") != null){
+    if (storage.read("usertoken") != null) {
       setState(() {
         uToken = storage.read("usertoken");
       });
     }
-    if(storage.read("username") != null){
+    if (storage.read("username") != null) {
       setState(() {
         username = storage.read("username");
       });
@@ -246,7 +245,6 @@ class _DepositsState extends State<Deposits> {
     fetchUserCashPayments();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -254,53 +252,72 @@ class _DepositsState extends State<Deposits> {
         title: const Text("Bank Transactions"),
         backgroundColor: primaryColor,
       ),
-      body: isLoading ? const LoadingUi() :  Column(
-        children: [
-          const SizedBox(height: 40,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/bank.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Deposit"),
-                    ],
-                  ),
-                  onTap: (){
-                    hasAccountsToday ? Get.to(()=> const BankDeposits()): Get.snackbar("Error", "Please add momo accounts for today first",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    );
-                  },
+      body: isLoading
+          ? const LoadingUi()
+          : Column(
+              children: [
+                const SizedBox(
+                  height: 40,
                 ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  child: Column(
-                    children: [
-                      Image.asset("assets/images/bank.png",width: 70,height: 70,),
-                      const SizedBox(height: 10,),
-                      const Text("Withdrawal"),
-                    ],
-                  ),
-                  onTap: (){
-                    hasAccountsToday ? Get.to(()=> const WithDrawal()): Get.snackbar("Error", "Please add momo accounts for today first",
-                        colorText: defaultTextColor,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red
-                    );
-
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "assets/images/bank.png",
+                              width: 70,
+                              height: 70,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Deposit"),
+                          ],
+                        ),
+                        onTap: () {
+                          hasAccountsToday
+                              ? Get.to(() => const BankDeposits())
+                              : Get.snackbar("Error",
+                                  "Please add momo accounts for today first",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "assets/images/bank.png",
+                              width: 70,
+                              height: 70,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Withdrawal"),
+                          ],
+                        ),
+                        onTap: () {
+                          hasAccountsToday
+                              ? Get.to(() => const WithDrawal())
+                              : Get.snackbar("Error",
+                                  "Please add momo accounts for today first",
+                                  colorText: defaultTextColor,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red);
+                        },
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
     );
   }
 }
