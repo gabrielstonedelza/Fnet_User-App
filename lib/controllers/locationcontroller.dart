@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -28,7 +29,9 @@ class LocationController extends GetxController {
         position.latitude,
         position.longitude,
       );
-      print(localDistrict);
+      if (kDebugMode) {
+        print(localDistrict);
+      }
 
       locationName = placemarks[3].name!;
       localDistrict = placemarks[0].subAdministrativeArea!;

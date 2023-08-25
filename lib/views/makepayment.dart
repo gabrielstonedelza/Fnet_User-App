@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../controllers/locationcontroller.dart';
 import 'homepage.dart';
 
 class MakePayment extends StatefulWidget {
@@ -155,6 +156,7 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
+  final LocationController locController = Get.find();
   payBankRequestDeposit() async {
     final requestUrl = "https://fnetghana.xyz/approve_bank_deposit_paid/$id/";
     final myLink = Uri.parse(requestUrl);
@@ -163,6 +165,8 @@ class _MakePaymentState extends State<MakePayment> {
       'Accept': 'application/json',
     }, body: {
       "deposit_paid": "Paid",
+      "user_location": locController.locationName,
+      "user_local_district": locController.localDistrict,
     });
     if (response.statusCode == 200) {
       Get.snackbar("Congrats", "Request was paid",
@@ -807,7 +811,7 @@ class _MakePaymentState extends State<MakePayment> {
                               fillColor: primaryColor,
                               splashColor: defaultColor,
                               child: const Text(
-                                "Save",
+                                "Pay",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
