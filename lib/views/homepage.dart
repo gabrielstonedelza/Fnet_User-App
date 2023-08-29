@@ -518,27 +518,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void checkTheTime() {
     var hour = DateTime.now().hour;
-    var date = DateTime.now();
-    if (kDebugMode) {
-      // print(hour);
-      // print(date);
-    }
+    // var date = DateTime.now();
+    // if (kDebugMode) {
+    //   // print(hour);
+    //   // print(date);
+    // }
     switch (hour) {
-      case 18:
-        if (bankDepositsNotPaid.isNotEmpty) {
-          setState(() {
-            isOwningBankPayment = true;
-          });
-          addToBlockedList();
-        }
-        if (bankDepositsNotPaid.isEmpty) {
-          setState(() {
-            isOwningBankPayment = false;
-          });
-        }
-        break;
+      // case 18:
+      //   if (bankDepositsNotPaid.isNotEmpty) {
+      //     setState(() {
+      //       isOwningBankPayment = true;
+      //     });
+      //     addToBlockedList();
+      //   }
+      //   if (bankDepositsNotPaid.isEmpty) {
+      //     setState(() {
+      //       isOwningBankPayment = false;
+      //     });
+      //   }
+      //   break;
       case 20:
-        // logoutUser();
+        logoutUser();
         break;
     }
   }
@@ -926,484 +926,456 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             // ],
           ),
           body: SafeArea(
-            child: isOwningBankPayment
-                ? const Scaffold(
-                    body: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+            child: Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
                       children: [
-                        Center(
-                          child: Text("Sorry,your account is block,",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20)),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const MomoPage());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/momo.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Pay To"),
+                              ],
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 20),
-                        Center(
-                          child: Text("Please contact the admin",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20)),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/deposit.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Bank"),
+                                const Text("Deposit"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Deposits());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: Column(
+                                      children: [
+                                        Text("${bankDepositsNotPaid.length}",
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Image.asset(
+                                  "assets/images/cashless-payment.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Payments"),
+                                const Text("Available"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const PaymentsAvailable());
+                            },
+                          ),
                         ),
                       ],
                     ),
-                  )
-                : Scaffold(
-                    body: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView(
-                        children: [
-                          const SizedBox(
-                            height: 20,
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const CustomerRegistration());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/mobile-payment.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Register Customer"),
+                              ],
+                            ),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.to(() => const MomoPage());
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/momo.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Pay To"),
-                                    ],
-                                  ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/mobile-payment.png",
+                                  width: 70,
+                                  height: 70,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/deposit.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Bank"),
-                                      const Text("Deposit"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const Deposits());
-                                  },
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 18.0),
-                                        child: badge.Badge(
-                                          position: BadgePosition.bottomStart(),
-                                          toAnimate: false,
-                                          shape: BadgeShape.square,
-                                          badgeColor: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          badgeContent: Column(
+                                const Text("Accounts"),
+                                const Text("Registration"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const AddCustomerAccount());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: isFetching
+                                        ? const Center(
+                                            child: Text("loading..",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          )
+                                        : Column(
                                             children: [
-                                              Text(
-                                                  "${bankDepositsNotPaid.length}",
+                                              hasbdinfive
+                                                  ? Text(
+                                                      "${hasBirthDayInFive.length}",
+                                                      style: const TextStyle(
+                                                          color: Colors.white))
+                                                  : hasbdintoday
+                                                      ? Text(
+                                                          "${hasBirthDayToday.length}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white))
+                                                      : const Text("0",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                                Image.asset(
+                                  "assets/images/cake.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Birthdays"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Birthdays());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/group.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Your Customers"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserCustomers());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const GroupChat());
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/team1.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Group"),
+                                const Text("Chats"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/notebook.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Reports"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const Reports());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/business-report.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Account"),
+                                const Text("Total"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserAccountTotal());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/business-report.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Transaction "),
+                                const Text("Summary"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const TransactionSummary());
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/bank.png",
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Bank "),
+                                const Text("Payments"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const UserBankPayments());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: badge.Badge(
+                                    position: BadgePosition.bottomStart(),
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: isFetching
+                                        ? const Center(
+                                            child: Text("loading..",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          )
+                                        : Column(
+                                            children: [
+                                              Text("${notRead.length}",
                                                   style: const TextStyle(
                                                       color: Colors.white)),
                                             ],
                                           ),
-                                        ),
-                                      ),
-                                      Image.asset(
-                                        "assets/images/cashless-payment.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Payments"),
-                                      const Text("Available"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const PaymentsAvailable());
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.to(() => const CustomerRegistration());
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/mobile-payment.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Register Customer"),
-                                    ],
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/mobile-payment.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Accounts"),
-                                      const Text("Registration"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const AddCustomerAccount());
-                                  },
+                                Image.asset(
+                                  "assets/images/notification.png",
+                                  width: 60,
+                                  height: 60,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 18.0),
-                                        child: badge.Badge(
-                                          position: BadgePosition.bottomStart(),
-                                          toAnimate: false,
-                                          shape: BadgeShape.square,
-                                          badgeColor: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          badgeContent: isFetching
-                                              ? const Center(
-                                                  child: Text("loading..",
-                                                      style: TextStyle(
-                                                          color: Colors.white)),
-                                                )
-                                              : Column(
-                                                  children: [
-                                                    hasbdinfive
-                                                        ? Text(
-                                                            "${hasBirthDayInFive.length}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .white))
-                                                        : hasbdintoday
-                                                            ? Text(
-                                                                "${hasBirthDayToday.length}",
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white))
-                                                            : const Text("0",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                  ],
-                                                ),
-                                        ),
-                                      ),
-                                      Image.asset(
-                                        "assets/images/cake.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Birthdays"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const Birthdays());
-                                  },
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                              ),
-                            ],
+                                const Text("Notifications"),
+                              ],
+                            ),
+                            onTap: () {
+                              Get.to(() => const AllYourNotifications());
+                            },
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/group.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Your Customers"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const UserCustomers());
-                                  },
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/law.png",
+                                  width: 70,
+                                  height: 70,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.to(() => const GroupChat());
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/team1.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Group"),
-                                      const Text("Chats"),
-                                    ],
-                                  ),
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/notebook.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Reports"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const Reports());
-                                  },
+                                const Text("Balance"),
+                              ],
+                            ),
+                            onTap: () {
+                              checkMtnBalance();
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  "assets/images/ecomobile.png",
+                                  width: 70,
+                                  height: 70,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/business-report.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Account"),
-                                      const Text("Total"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const UserAccountTotal());
-                                  },
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/business-report.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Transaction "),
-                                      const Text("Summary"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const TransactionSummary());
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/bank.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Bank "),
-                                      const Text("Payments"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const UserBankPayments());
-                                  },
-                                ),
-                              ),
-                            ],
+                                const Text("Open Account"),
+                              ],
+                            ),
+                            onTap: () async {
+                              await _launchInBrowser();
+                            },
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 18.0),
-                                        child: badge.Badge(
-                                          position: BadgePosition.bottomStart(),
-                                          toAnimate: false,
-                                          shape: BadgeShape.square,
-                                          badgeColor: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          badgeContent: isFetching
-                                              ? const Center(
-                                                  child: Text("loading..",
-                                                      style: TextStyle(
-                                                          color: Colors.white)),
-                                                )
-                                              : Column(
-                                                  children: [
-                                                    Text("${notRead.length}",
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.white)),
-                                                  ],
-                                                ),
-                                        ),
-                                      ),
-                                      Image.asset(
-                                        "assets/images/notification.png",
-                                        width: 60,
-                                        height: 60,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Notifications"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Get.to(() => const AllYourNotifications());
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/law.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Balance"),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    checkMtnBalance();
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/ecomobile.png",
-                                        width: 70,
-                                        height: 70,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text("Open Account"),
-                                    ],
-                                  ),
-                                  onTap: () async {
-                                    await _launchInBrowser();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           )),
     );
   }

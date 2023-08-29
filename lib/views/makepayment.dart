@@ -444,7 +444,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(12))),
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.text,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return "Please enter reference";
@@ -688,7 +688,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 const EdgeInsets.only(top: 12.0, bottom: 12),
                             child: Text(
                               buttonText,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ))
                       : Container(),
