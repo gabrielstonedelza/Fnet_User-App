@@ -779,12 +779,10 @@ class _MakePaymentState extends State<MakePayment> {
                                       confirm: RawMaterialButton(
                                         onPressed: () {
                                           processPayment(context);
-                                          if (depositType == "Bank") {
-                                            payBankRequestDeposit();
-                                          }
-                                          if (depositType == "Cash") {
-                                            payCashRequestDeposit();
-                                          }
+                                          payBankRequestDeposit();
+                                          // if (depositType == "Bank") {
+                                          //   payBankRequestDeposit();
+                                          // }
                                         },
                                         shape: const StadiumBorder(),
                                         fillColor: primaryColor,
