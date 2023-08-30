@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fnet_new/loadingui.dart';
 import 'package:fnet_new/sendsms.dart';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:fnet_new/views/bankpayments.dart';
@@ -694,12 +695,7 @@ class _MakePaymentState extends State<MakePayment> {
                           ))
                       : Container(),
                   isPosting && !hasErrors
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 5,
-                            color: primaryColor,
-                          ),
-                        )
+                      ? const LoadingUi()
                       : hasSelectedModeOfPayment
                           ? RawMaterialButton(
                               onPressed: () {
@@ -764,47 +760,51 @@ class _MakePaymentState extends State<MakePayment> {
                                         backgroundColor: Colors.red);
                                     return;
                                   } else {
+                                    Get.defaultDialog(
+                                      title: "Confirm Payment",
+                                      middleText:
+                                          "Are you sure you want to make payment?",
+                                      content: Container(),
+                                      cancel: RawMaterialButton(
+                                          shape: const StadiumBorder(),
+                                          fillColor: primaryColor,
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                          child: const Text(
+                                            "Cancel",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )),
+                                      confirm: RawMaterialButton(
+                                        onPressed: () {
+                                          processPayment(context);
+                                          if (depositType == "Bank") {
+                                            payBankRequestDeposit();
+                                          }
+                                          if (depositType == "Cash") {
+                                            payCashRequestDeposit();
+                                          }
+                                        },
+                                        shape: const StadiumBorder(),
+                                        fillColor: primaryColor,
+                                        child: const Text("Yes",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                    );
                                     // setState(() {
                                     //   hasErrors = false;
                                     // });
-                                    processPayment(context);
-                                    if (depositType == "Bank") {
-                                      payBankRequestDeposit();
-                                    }
-                                    if (depositType == "Cash") {
-                                      payCashRequestDeposit();
-                                    }
+                                    // processPayment(context);
+                                    // if (depositType == "Bank") {
+                                    //   payBankRequestDeposit();
+                                    // }
+                                    // if (depositType == "Cash") {
+                                    //   payCashRequestDeposit();
+                                    // }
                                   }
                                   //  check before save
-                                  //   Get.defaultDialog(
-                                  //     title: "Confirm Payment",
-                                  //     middleText: "Are you sure you want to make payment?",
-                                  //     content: Container(),
-                                  //     cancel: RawMaterialButton(
-                                  //         shape: const StadiumBorder(),
-                                  //         fillColor: primaryColor,
-                                  //         onPressed: () {
-                                  //           Get.back();
-                                  //         },
-                                  //         child: const Text(
-                                  //           "Cancel",
-                                  //           style: TextStyle(color: Colors.white),
-                                  //         )),
-                                  //
-                                  //     confirm: RawMaterialButton(onPressed: (){
-                                  //       processPayment(context);
-                                  //       if(depositType == "Bank"){
-                                  //         payBankRequestDeposit();
-                                  //       }
-                                  //       if(depositType == "Cash"){
-                                  //         payCashRequestDeposit();
-                                  //       }
-                                  //     },
-                                  //       shape: const StadiumBorder(),
-                                  //       fillColor: primaryColor,
-                                  //       child: const Text("Yes",style: TextStyle(color: Colors.white)),
-                                  //     ),
-                                  //   );
                                 }
                               },
                               shape: const StadiumBorder(),
