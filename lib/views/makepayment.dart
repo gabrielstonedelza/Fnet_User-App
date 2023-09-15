@@ -174,9 +174,6 @@ class _MakePaymentState extends State<MakePayment> {
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: snackColor);
-      Get.offAll(() => const HomePage(
-            message: null,
-          ));
     } else {
       Get.snackbar("Approve Error", response.body.toString(),
           colorText: defaultTextColor,
@@ -185,7 +182,7 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  processPayment(context) async {
+  processPayment() async {
     const registerUrl = "https://fnetghana.xyz/make_payments/";
     final myLink = Uri.parse(registerUrl);
     final res = await http.post(myLink, headers: {
@@ -204,6 +201,9 @@ class _MakePaymentState extends State<MakePayment> {
       "transaction_id2": _referenceController2.text,
     });
     if (res.statusCode == 201) {
+      setState(() {
+        isPosting = false;
+      });
       Get.snackbar("Congratulations", "Payment is sent for approval",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
@@ -699,7 +699,9 @@ class _MakePaymentState extends State<MakePayment> {
                       : hasSelectedModeOfPayment
                           ? RawMaterialButton(
                               onPressed: () {
-                                _startPosting();
+                                setState(() {
+                                  isPosting = true;
+                                });
                                 if (!_formKey.currentState!.validate()) {
                                   return;
                                 } else {
@@ -760,37 +762,37 @@ class _MakePaymentState extends State<MakePayment> {
                                         backgroundColor: Colors.red);
                                     return;
                                   } else {
-                                    Get.defaultDialog(
-                                      title: "Confirm Payment",
-                                      middleText:
-                                          "Are you sure you want to make payment?",
-                                      content: Container(),
-                                      cancel: RawMaterialButton(
-                                          shape: const StadiumBorder(),
-                                          fillColor: primaryColor,
-                                          onPressed: () {
-                                            Get.back();
-                                          },
-                                          child: const Text(
-                                            "Cancel",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )),
-                                      confirm: RawMaterialButton(
-                                        onPressed: () {
-                                          processPayment(context);
-                                          payBankRequestDeposit();
-                                          // if (depositType == "Bank") {
-                                          //   payBankRequestDeposit();
-                                          // }
-                                        },
-                                        shape: const StadiumBorder(),
-                                        fillColor: primaryColor,
-                                        child: const Text("Yes",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                    );
+                                    // Get.defaultDialog(
+                                    //   title: "Confirm Payment",
+                                    //   middleText:
+                                    //       "Are you sure you want to make payment?",
+                                    //   content: Container(),
+                                    //   cancel: RawMaterialButton(
+                                    //       shape: const StadiumBorder(),
+                                    //       fillColor: primaryColor,
+                                    //       onPressed: () {
+                                    //         Get.back();
+                                    //       },
+                                    //       child: const Text(
+                                    //         "Cancel",
+                                    //         style:
+                                    //             TextStyle(color: Colors.white),
+                                    //       )),
+                                    //   confirm: RawMaterialButton(
+                                    //     onPressed: () {
+                                    //       processPayment(context);
+                                    //       payBankRequestDeposit();
+                                    //       // if (depositType == "Bank") {
+                                    //       //   payBankRequestDeposit();
+                                    //       // }
+                                    //     },
+                                    //     shape: const StadiumBorder(),
+                                    //     fillColor: primaryColor,
+                                    //     child: const Text("Yes",
+                                    //         style:
+                                    //             TextStyle(color: Colors.white)),
+                                    //   ),
+                                    // );
                                     // setState(() {
                                     //   hasErrors = false;
                                     // });
@@ -801,6 +803,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     // if (depositType == "Cash") {
                                     //   payCashRequestDeposit();
                                     // }
+                                    processPayment();
+                                    payBankRequestDeposit();
                                   }
                                   //  check before save
                                 }
@@ -863,9 +867,4 @@ class _MakePaymentState extends State<MakePayment> {
       _currentCashAtLocation2 = newValueSelected;
     });
   }
-  // void _onDropDownItemSelectedPaymentAction(newValueSelected) {
-  //   setState(() {
-  //     _currentPaymentAction = newValueSelected;
-  //   });
-  // }
 }

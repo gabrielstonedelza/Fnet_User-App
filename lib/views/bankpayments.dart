@@ -12,17 +12,24 @@ class BankPayments extends StatefulWidget {
   final bank;
   final amount_delivered;
   final agent;
-  const BankPayments({Key? key,this.bank,this.amount_delivered,this.agent}) : super(key: key);
+  const BankPayments({Key? key, this.bank, this.amount_delivered, this.agent})
+      : super(key: key);
 
   @override
-  _BankPaymentsState createState() => _BankPaymentsState(bank:this.bank,amount_delivered:this.amount_delivered,agent:this.agent);
+  _BankPaymentsState createState() => _BankPaymentsState(
+      bank: this.bank,
+      amount_delivered: this.amount_delivered,
+      agent: this.agent);
 }
 
 class _BankPaymentsState extends State<BankPayments> {
   final bank;
   final amount_delivered;
   final agent;
-  _BankPaymentsState({ required this.bank,required this.amount_delivered,required this.agent});
+  _BankPaymentsState(
+      {required this.bank,
+      required this.amount_delivered,
+      required this.agent});
   bool isLoading = true;
   late String uToken = "";
   final storage = GetStorage();
@@ -33,16 +40,20 @@ class _BankPaymentsState extends State<BankPayments> {
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController = TextEditingController();
-  late final TextEditingController _locationController = TextEditingController();
-  late final TextEditingController _leftWithController = TextEditingController();
-  late final TextEditingController _leftWithPhoneController = TextEditingController();
-  late final TextEditingController _referenceIdController = TextEditingController();
+  late final TextEditingController _locationController =
+      TextEditingController();
+  late final TextEditingController _leftWithController =
+      TextEditingController();
+  late final TextEditingController _leftWithPhoneController =
+      TextEditingController();
+  late final TextEditingController _referenceIdController =
+      TextEditingController();
 
-  fetchUser()async{
+  fetchUser() async {
     final agentUrl = "https://fnetghana.xyz/get_agent/$agent/";
     final agentLink = Uri.parse(agentUrl);
     http.Response res = await http.get(agentLink);
-    if(res.statusCode == 200){
+    if (res.statusCode == 200) {
       final codeUnits = res.body;
       var jsonData = jsonDecode(codeUnits);
       var myUser = jsonData;
@@ -60,14 +71,14 @@ class _BankPaymentsState extends State<BankPayments> {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Token $uToken"
     }, body: {
-      "location":_locationController.text,
+      "location": _locationController.text,
       "amount": _amountController.text,
       "left_with": _leftWithController.text,
       "left_with_phone": _leftWithPhoneController.text,
       "reference_id": _referenceIdController.text,
-      "app_version" : "4"
+      "app_version": "4"
     });
-    if(res.statusCode == 201){
+    if (res.statusCode == 201) {
       Get.snackbar("Congratulations", "your reference was added",
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
@@ -75,14 +86,15 @@ class _BankPaymentsState extends State<BankPayments> {
       String telnum1 = agentPhone;
       telnum1 = telnum1.replaceFirst("0", '+233');
       String telnum2 = _leftWithPhoneController.text;
-      telnum2= telnum2.replaceFirst("0", '+233');
+      telnum2 = telnum2.replaceFirst("0", '+233');
       sendSms.sendMySms(telnum2, "FNET",
           "Hello $agent,reference for your payment GHC$amount_delivered made at $bank is ${_referenceIdController.text}.Thank you");
       sendSms.sendMySms(telnum2, "FNET",
           "Hello ${_leftWithController.text.capitalize},this (${_referenceIdController.text}) reference shows that $agent delivered an amount of GHC$amount_delivered to you at $bank successfully,.Thank you");
-      Get.offAll(() => const HomePage(message: null,));
-    }
-    else{
+      Get.offAll(() => const HomePage(
+            message: null,
+          ));
+    } else {
       Get.snackbar("Request Error", res.body.toString(),
           colorText: defaultTextColor,
           snackPosition: SnackPosition.BOTTOM,
@@ -94,22 +106,23 @@ class _BankPaymentsState extends State<BankPayments> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(storage.read("usertoken") != null){
+    if (storage.read("usertoken") != null) {
       setState(() {
         uToken = storage.read("usertoken");
       });
     }
-    if(storage.read("username") != null){
+    if (storage.read("username") != null) {
       setState(() {
         username = storage.read("username");
       });
     }
     fetchUser();
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -118,24 +131,29 @@ class _BankPaymentsState extends State<BankPayments> {
           title: const Text("Add bank Reference"),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_sharp),
-            onPressed: (){
+            onPressed: () {
               Get.defaultDialog(
                 buttonColor: primaryColor,
                 title: "Form Error",
-                middleText: "Please enter receiver's name,phone,reference and press save",
+                middleText:
+                    "Please enter receiver's name,phone,reference and press save",
                 confirm: RawMaterialButton(
                     shape: const StadiumBorder(),
                     fillColor: primaryColor,
-                    onPressed: (){
+                    onPressed: () {
                       Get.back();
-                    }, child: const Text("close",style: TextStyle(color: Colors.white),)),
+                    },
+                    child: const Text(
+                      "close",
+                      style: TextStyle(color: Colors.white),
+                    )),
               );
             },
           ),
         ),
         body: ListView(
           children: [
-            const SizedBox(height:30),
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Form(
@@ -146,7 +164,7 @@ class _BankPaymentsState extends State<BankPayments> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: TextFormField(
-                        onTap: (){
+                        onTap: () {
                           Get.snackbar("Sorry", "this field is not editable",
                               colorText: defaultTextColor,
                               snackPosition: SnackPosition.BOTTOM,
@@ -174,7 +192,7 @@ class _BankPaymentsState extends State<BankPayments> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: TextFormField(
-                        onTap: (){
+                        onTap: () {
                           Get.snackbar("Sorry", "this field is not editable",
                               colorText: defaultTextColor,
                               snackPosition: SnackPosition.BOTTOM,
@@ -219,7 +237,7 @@ class _BankPaymentsState extends State<BankPayments> {
                                 borderRadius: BorderRadius.circular(12))),
                         keyboardType: TextInputType.text,
                         validator: (value) {
-                          if(value!.isEmpty){
+                          if (value!.isEmpty) {
                             return "Please enter receiver name";
                           }
                         },
@@ -245,7 +263,7 @@ class _BankPaymentsState extends State<BankPayments> {
                                 borderRadius: BorderRadius.circular(12))),
                         keyboardType: TextInputType.number,
                         validator: (value) {
-                          if(value!.isEmpty){
+                          if (value!.isEmpty) {
                             return "Please enter receiver's phone";
                           }
                         },
@@ -259,7 +277,6 @@ class _BankPaymentsState extends State<BankPayments> {
                         cursorRadius: const Radius.elliptical(10, 10),
                         cursorWidth: 10,
                         decoration: InputDecoration(
-
                             labelText: "Enter reference id",
                             labelStyle: const TextStyle(color: secondaryColor),
                             focusColor: primaryColor,
@@ -272,13 +289,15 @@ class _BankPaymentsState extends State<BankPayments> {
                                 borderRadius: BorderRadius.circular(12))),
                         keyboardType: TextInputType.text,
                         validator: (value) {
-                          if(value!.isEmpty){
+                          if (value!.isEmpty) {
                             return "Please enter reference id";
                           }
                         },
                       ),
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     RawMaterialButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) {
@@ -295,20 +314,30 @@ class _BankPaymentsState extends State<BankPayments> {
                               confirm: RawMaterialButton(
                                   shape: const StadiumBorder(),
                                   fillColor: primaryColor,
-                                  onPressed: (){
+                                  onPressed: () {
                                     processBankPayments();
                                     Get.back();
-                                  }, child: const Text("Yes",style: TextStyle(color: Colors.white),)),
+                                  },
+                                  child: const Text(
+                                    "Yes",
+                                    style: TextStyle(color: Colors.white),
+                                  )),
                               cancel: RawMaterialButton(
                                   shape: const StadiumBorder(),
                                   fillColor: primaryColor,
-                                  onPressed: (){Get.back();},
-                                  child: const Text("Cancel",style: TextStyle(color: Colors.white),))
-                          );
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.white),
+                                  )));
                         }
                       },
                       shape: const StadiumBorder(),
                       elevation: 8,
+                      fillColor: primaryColor,
+                      splashColor: defaultColor,
                       child: const Text(
                         "Save",
                         style: TextStyle(
@@ -316,8 +345,6 @@ class _BankPaymentsState extends State<BankPayments> {
                             fontSize: 20,
                             color: Colors.white),
                       ),
-                      fillColor: primaryColor,
-                      splashColor: defaultColor,
                     ),
                   ],
                 ),
@@ -328,5 +355,4 @@ class _BankPaymentsState extends State<BankPayments> {
       ),
     );
   }
-
 }
