@@ -248,7 +248,7 @@ class _BankDepositState extends State<BankDeposit> {
     await dialer.dial('*171\%23#');
   }
 
-  sendOtp() async {
+  Future<void> sendOtp() async {
     const otpUrl = "https://fnetghana.xyz/send_otp_to_customer_admin/";
     final myLink = Uri.parse(otpUrl);
     final res = await http.post(myLink, headers: {
@@ -309,7 +309,7 @@ class _BankDepositState extends State<BankDeposit> {
   ];
   final LocationController locController = Get.find();
 
-  processDeposit() async {
+  Future<void> processDeposit() async {
     const depositUrl = "https://fnetghana.xyz/post_bank_deposit/";
     final myLink = Uri.parse(depositUrl);
     final res = await http.post(myLink, headers: {
@@ -322,8 +322,8 @@ class _BankDepositState extends State<BankDeposit> {
       "depositor_name": _depositorController.text,
       "account_number": _currentAccountNumberSelected,
       "account_name": _customerAccountNameController.text,
-      "user_location": locController.locationName,
-      "user_local_district": locController.localDistrict,
+      // "user_location": locController.locationName,
+      // "user_local_district": locController.localDistrict,
     });
     if (res.statusCode == 201) {
       if (accountNumbers.contains(_currentAccountNumberSelected) &&
@@ -545,7 +545,7 @@ class _BankDepositState extends State<BankDeposit> {
     }
   }
 
-  processAddPoints(int points) async {
+  Future<void> processAddPoints(int points) async {
     const depositUrl = "https://fnetghana.xyz/add_account_points/";
     final myLink = Uri.parse(depositUrl);
     final res = await http.post(myLink, headers: {
@@ -593,10 +593,6 @@ class _BankDepositState extends State<BankDeposit> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (kDebugMode) {
-      print(locController.locationName);
-      print(locController.localDistrict);
-    }
     if (storage.read("usertoken") != null) {
       setState(() {
         uToken = storage.read("usertoken");

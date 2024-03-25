@@ -12,7 +12,7 @@ class LocationController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    fetchLocation();
+    // fetchLocation();
   }
 
   Future<void> fetchLocation() async {
