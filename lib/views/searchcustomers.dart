@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:full_screen_image/full_screen_image.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -61,6 +62,7 @@ class _SearchCustomersState extends State<SearchCustomers> {
       });
     }
   }
+  bool isFullScreen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +121,9 @@ class _SearchCustomersState extends State<SearchCustomers> {
                           },
                           shape: const StadiumBorder(),
                           elevation: 8,
-                          child: const Icon(Icons.search,color: Colors.white,),
                           fillColor: primaryColor,
                           splashColor: defaultColor,
+                          child: const Icon(Icons.search,color: Colors.white,),
                         ),
                       ],
                     ),
@@ -155,13 +157,9 @@ class _SearchCustomersState extends State<SearchCustomers> {
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 18),
                                 child: ListTile(
-                                  leading: const CircleAvatar(
-                                      backgroundColor: primaryColor,
-                                      foregroundColor: Colors.white,
-                                      child: Icon(Icons.person)
-                                  ),
+
                                   title: Padding(
-                                    padding: const EdgeInsets.only(bottom: 15.0),
+                                    padding: const EdgeInsets.only(bottom: 10.0),
                                     child: Row(
                                       children: [
                                         const Padding(
@@ -201,6 +199,23 @@ class _SearchCustomersState extends State<SearchCustomers> {
                                       ),
                                     ],
                                   ),
+                                  trailing: items["get_customer_pic"] != ""
+                                      ? FullScreenWidget(
+                                    disposeLevel: DisposeLevel.High,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: CircleAvatar(
+                                        radius: 40,
+                                        backgroundImage: NetworkImage(
+                                          items["get_customer_pic"],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      : const CircleAvatar(
+                                      backgroundColor: primaryColor,
+                                      foregroundColor: Colors.white,
+                                      child: Icon(Icons.person)),
                                 ),
                               ),
                             ),

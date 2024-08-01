@@ -83,6 +83,14 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       // darkTheme: Themes.dark,
       theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: defaultTextColor1,
+              fontSize: 18),
+          elevation: 0,
+          backgroundColor: snackColor,
+        ),
         // scaffoldBackgroundColor: backgroundColor,
         dividerColor: addBack,
         // textTheme: GoogleFonts.sansitaSwashedTextTheme(Theme.of(context).textTheme),

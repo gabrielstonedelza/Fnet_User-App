@@ -1,10 +1,15 @@
 import 'dart:convert';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
+import 'package:get/get.dart' as myGet;
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../static/app_colors.dart';
 
@@ -20,6 +25,164 @@ class UpdateCustomersDetails extends StatefulWidget {
 }
 
 class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
+  File? image;
+
+  final picker = ImagePicker();
+  File? imageFile;
+  void showInstalled() {
+    showMaterialModalBottomSheet(
+      context: context,
+      builder: (context) => Card(
+        elevation: 12,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10), topLeft: Radius.circular(10))),
+        child: SizedBox(
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Center(
+                  child: Text("Select Source",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _imgFromGallery();
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/gallery.png",
+                          width: 50,
+                          height: 50,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: Text("Gallery",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        )
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/camera.png",
+                          width: 50,
+                          height: 50,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: Text("Camera",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _imgFromCamera() async {
+    await picker
+        .pickImage(source: ImageSource.camera, imageQuality: 50)
+        .then((value) {
+      if (value != null) {
+        // _cropImage(File(value.path));
+        setState(() {
+          uploadedPath = value.path;
+          imageFile = File(value.path);
+        });
+      }
+    });
+  }
+
+  _imgFromGallery() async {
+    await picker
+        .pickImage(source: ImageSource.gallery, imageQuality: 50)
+        .then((value) {
+      if (value != null) {
+        // _cropImage(File(value.path));
+        setState(() {
+          uploadedPath = value.path;
+          imageFile = File(value.path);
+        });
+      }
+    });
+  }
+
+
+  var dio = Dio();
+  bool isUpLoading = false;
+  late String uploadedPath = "";
+
+  Future<void> updateAndSaveCustomer(File file) async {
+    try {
+      isUpLoading = true;
+      //updating user profile details
+      String fileName = file.path.split('/').last;
+      var formData1 = FormData.fromMap({
+        'customer_pic':
+        await MultipartFile.fromFile(file.path, filename: fileName),
+        "name": _nameController.text,
+        "location": _locationController.text,
+        "id_type": _currentSelectedIdType,
+        "id_number": _idNumberController.text,
+        "digital_address": _digitalAddressController.text,
+        "phone": _phoneController.text
+      });
+      var response = await dio.put(
+        'https://fnetghana.xyz/update_customers_details/$id/',
+        data: formData1,
+        options: Options(headers: {
+          // "Authorization": "Token $uToken",
+          "HttpHeaders.acceptHeader": "accept: application/json",
+        }, contentType: Headers.formUrlEncodedContentType),
+      );
+      if (response.statusCode != 200) {
+        Get.snackbar("Sorry", "something went wrong. Please try again",
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red);
+      } else {
+        setState((){
+          isUpLoading = false;
+        });
+        Get.snackbar("Hurray 😀", "details updated successfully.",
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: defaultColor,
+            duration: const Duration(seconds: 5));
+        Get.offAll(() => const HomePage(
+          message: null,
+        ));
+      }
+    } on DioException catch (e) {
+      Get.snackbar("Sorry", e.toString(),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red);
+    } finally {
+      isUpLoading = false;
+    }
+  }
   final id;
   _UpdateCustomersDetailsState({required this.id});
   late String detailCustomerName = "";
@@ -60,7 +223,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
 
   final _formKey = GlobalKey<FormState>();
 
-  fetchData()async{
+  Future<void>fetchData()async{
     final requestUrl = "https://fnetghana.xyz/update_customers_details/$id/";
     final myLink = Uri.parse(requestUrl);
     http.Response response = await http.get(myLink);
@@ -75,6 +238,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
         detailCustomerDigitalAddress = jsonData['digital_address'];
         detailCustomersPhone = jsonData['phone'];
         detailCustomersDob = jsonData['date_of_birth'];
+        _currentSelectedIdType = detailIdType;
       });
 
       setState(() {
@@ -83,7 +247,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
     }
   }
 
-  updateCustomer()async{
+  Future<void>updateCustomer()async{
     final requestUrl = "https://fnetghana.xyz/update_customers_details/$id/";
     final myLink = Uri.parse(requestUrl);
     final response = await http.put(myLink, headers: {
@@ -137,7 +301,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
           )
       ) : ListView(
         children: [
-          const SizedBox(height: 30,),
+          const SizedBox(height: 10,),
           Padding(
             padding: const EdgeInsets.all(18.0),
             child: Form(
@@ -316,6 +480,18 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                       },
                     ),
                   ),
+                  Row(
+                      children: [
+                        const Icon(Icons.upload),
+                        const SizedBox(width:30),
+                        uploadedPath != "" ? const Text("Image picked",style:TextStyle(fontWeight:FontWeight.bold))
+                            : TextButton(
+                            onPressed:(){
+                              showInstalled();
+                            },
+                            child:const Text("Add or update Customer pic",style:TextStyle(fontWeight:FontWeight.bold))
+                        ),
+                      ]),
                   const SizedBox(
                     height: 20,
                   ),
@@ -334,13 +510,15 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                           Get.snackbar("Id Type Error", "Please select an id Type",snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red);
                           return;
                         }
-                        updateCustomer();
+                        updateAndSaveCustomer(imageFile!);
                       }
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)
                     ),
                     elevation: 8,
+                    fillColor: primaryColor,
+                    splashColor: defaultColor,
                     child: const Text(
                       "Update",
                       style: TextStyle(
@@ -348,8 +526,6 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                           fontSize: 20,
                           color: Colors.white),
                     ),
-                    fillColor: primaryColor,
-                    splashColor: defaultColor,
                   ),
                 ],
               ),
