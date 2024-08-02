@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'package:fnet_new/static/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:full_screen_image/full_screen_image.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
+import 'bigpicturepage.dart';
 
 
 
@@ -110,6 +114,10 @@ class _SearchCustomersState extends State<SearchCustomers> {
                         const SizedBox(height: 20,),
                         RawMaterialButton(
                           onPressed: () {
+                            FocusScopeNode currentFocus = FocusScope.of(context);
+                            if (!currentFocus.hasPrimaryFocus) {
+                              currentFocus.unfocus();
+                            }
                             setState(() {
                               isSearching = false;
                             });
@@ -200,17 +208,16 @@ class _SearchCustomersState extends State<SearchCustomers> {
                                     ],
                                   ),
                                   trailing: items["get_customer_pic"] != ""
-                                      ? FullScreenWidget(
-                                    disposeLevel: DisposeLevel.High,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
+                                      ? GestureDetector(
+                                      onTap:(){
+                                        Get.to(() => BigPicturePage(pic: customers[i]["get_customer_pic"],name:customers[i]['name']));
+                                      },
                                       child: CircleAvatar(
                                         radius: 40,
                                         backgroundImage: NetworkImage(
                                           items["get_customer_pic"],
                                         ),
-                                      ),
-                                    ),
+                                      )
                                   )
                                       : const CircleAvatar(
                                       backgroundColor: primaryColor,

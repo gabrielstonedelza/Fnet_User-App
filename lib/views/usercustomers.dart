@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../loadingui.dart';
+import 'bigpicturepage.dart';
 import 'editcustomer.dart';
 
 class UserCustomers extends StatefulWidget {
@@ -129,17 +130,18 @@ class _UserCustomersState extends State<UserCustomers> {
                                   // launchWhatsapp(message: "Hello", number: telnum);
                                 },
                                 trailing: items["get_customer_pic"] != ""
-                                    ? FullScreenWidget(
-                                  disposeLevel: DisposeLevel.High,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: NetworkImage(
-                                        items["get_customer_pic"],
-                                      ),
+                                    ?
+
+                                GestureDetector(
+                                  onTap:(){
+                                    Get.to(() => BigPicturePage(pic: allCustomers[i]["get_customer_pic"],name:allCustomers[i]['name']));
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(
+                                      items["get_customer_pic"],
                                     ),
-                                  ),
+                                  )
                                 )
                                     : const CircleAvatar(
                                         backgroundColor: primaryColor,
