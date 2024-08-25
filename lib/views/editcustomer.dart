@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart' as myGet;
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../static/app_colors.dart';
@@ -128,7 +127,6 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
     });
   }
 
-
   var dio = Dio();
   bool isUpLoading = false;
   late String uploadedPath = "";
@@ -194,12 +192,11 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
   late String detailIdNumber = "";
   bool isLoading = true;
 
-  late final TextEditingController _nameController = TextEditingController();
-  late final TextEditingController _locationController = TextEditingController();
-  late final TextEditingController _digitalAddressController = TextEditingController();
-  late final TextEditingController _phoneController = TextEditingController();
-  late final TextEditingController _idTypeController = TextEditingController();
-  late final TextEditingController _idNumberController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _locationController;
+  late final TextEditingController _digitalAddressController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _idNumberController;
 
   bool isPosting = false;
   final List idTypes = [
@@ -239,6 +236,11 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
         detailCustomersPhone = jsonData['phone'];
         detailCustomersDob = jsonData['date_of_birth'];
         _currentSelectedIdType = detailIdType;
+        _nameController = TextEditingController(text: detailCustomerName);
+        _locationController = TextEditingController(text: detailCustomerLocation);
+        _digitalAddressController = TextEditingController(text: detailCustomerDigitalAddress);
+        _phoneController = TextEditingController(text: detailCustomersPhone);
+        _idNumberController = TextEditingController(text: detailIdNumber);
       });
 
       setState(() {
@@ -312,7 +314,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      controller: _nameController..text= detailCustomerName,
+                      controller: _nameController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
@@ -338,7 +340,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      controller: _locationController..text= detailCustomerLocation,
+                      controller: _locationController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
@@ -398,11 +400,10 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                       ),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      controller: _idNumberController..text= detailIdNumber,
+                      controller: _idNumberController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
@@ -429,7 +430,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      controller: _digitalAddressController..text= detailCustomerDigitalAddress,
+                      controller: _digitalAddressController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
@@ -456,7 +457,7 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      controller: _phoneController..text= detailCustomersPhone,
+                      controller: _phoneController,
                       cursorColor: primaryColor,
                       cursorRadius: const Radius.elliptical(10, 10),
                       cursorWidth: 10,
@@ -510,7 +511,11 @@ class _UpdateCustomersDetailsState extends State<UpdateCustomersDetails> {
                           Get.snackbar("Id Type Error", "Please select an id Type",snackPosition: SnackPosition.BOTTOM,colorText: Colors.white,backgroundColor: Colors.red);
                           return;
                         }
-                        updateAndSaveCustomer(imageFile!);
+                        if(imageFile != null){
+                          updateAndSaveCustomer(imageFile!);
+                        }else{
+                          updateCustomer();
+                        }
                       }
                     },
                     shape: RoundedRectangleBorder(

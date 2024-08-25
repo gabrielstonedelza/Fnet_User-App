@@ -28,7 +28,7 @@ class _UserCustomersState extends State<UserCustomers> {
   final storage = GetStorage();
   late String username = "";
 
-  fetchCustomers() async {
+  Future<void>fetchCustomers() async {
     const url = "https://fnetghana.xyz/user_customers/";
     var myLink = Uri.parse(url);
     final response =
@@ -38,12 +38,16 @@ class _UserCustomersState extends State<UserCustomers> {
       final codeUnits = response.body.codeUnits;
       var jsonData = const Utf8Decoder().convert(codeUnits);
       allCustomers = json.decode(jsonData);
+      setState(() {
+        isLoading = false;
+        allCustomers = allCustomers;
+      });
     }
+    // else{
+    //   print(response.body);
+    // }
 
-    setState(() {
-      isLoading = false;
-      allCustomers = allCustomers;
-    });
+
   }
 
   void launchWhatsapp({@required number, @required message}) async {
@@ -123,7 +127,9 @@ class _UserCustomersState extends State<UserCustomers> {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                     return UpdateCustomersDetails(
-                                        id: allCustomers[i]['id']);
+                                        id: allCustomers[i]['id'],
+
+                                    );
                                   }));
                                   // String telnum = allCustomers[i]['phone'];
                                   // telnum = telnum.replaceFirst("0", '+233');
